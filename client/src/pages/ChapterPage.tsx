@@ -5,7 +5,7 @@ import { Link, useParams } from "wouter";
 import Layout from "@/components/Layout";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
-import { ChevronLeft, ChevronRight, BookOpen, Star, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Star, Sparkles, Gamepad2 } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
 const CHAPTER_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663320491203/hKSS9UgtAfoHXBDRJP86JE/gita-chapter-bg-BBW9CLzLwYMkBEiZBvVdpc.webp";
@@ -76,10 +76,18 @@ export default function ChapterPage() {
                 <span className="text-white text-sm">{chapter.theme}</span>
               </div>
               {chapterNum === 6 && (
-                <div className="flex items-center gap-2 bg-amber-400/20 border border-amber-400/40 rounded-full px-4 py-2">
-                  <Sparkles size={14} className="text-amber-400" />
-                  <span className="text-amber-300 text-sm font-semibold">{verses.length} verses with full explanations</span>
-                </div>
+                <>
+                  <div className="flex items-center gap-2 bg-amber-400/20 border border-amber-400/40 rounded-full px-4 py-2">
+                    <Sparkles size={14} className="text-amber-400" />
+                    <span className="text-amber-300 text-sm font-semibold">{verses.length} verses with full explanations</span>
+                  </div>
+                  <Link href={`/chapter/${chapterNum}/games`}>
+                    <div className="flex items-center gap-2 bg-pink-400/20 border border-pink-400/40 hover:bg-pink-400/30 rounded-full px-4 py-2 transition-all cursor-pointer">
+                      <Gamepad2 size={14} className="text-pink-300" />
+                      <span className="text-pink-200 text-sm font-semibold">5 Interactive Games</span>
+                    </div>
+                  </Link>
+                </>
               )}
             </div>
           </div>
@@ -102,6 +110,25 @@ export default function ChapterPage() {
               Showing {verses.length} key verse{verses.length !== 1 ? "s" : ""} from this chapter.
               {chapterNum !== 6 && " Upload additional chapter documents to unlock full verse-by-verse content."}
             </p>
+          </div>
+        )}
+
+        {chapterNum === 6 && (
+          <div className="mb-4">
+            <Link href={`/chapter/${chapterNum}/games`}>
+              <div className="bg-gradient-to-r from-pink-500 to-violet-600 rounded-2xl p-5 flex items-center justify-between shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-2xl">🎮</span>
+                    <span className="text-white font-kids font-bold text-lg">Play Learning Games!</span>
+                  </div>
+                  <p className="text-pink-100 font-kids text-sm">5 fun games: Match, Quiz, Fill-in-Blank, Scramble & Speed Round</p>
+                </div>
+                <div className="bg-white/20 rounded-full p-3 flex-shrink-0">
+                  <Gamepad2 size={24} className="text-white" />
+                </div>
+              </div>
+            </Link>
           </div>
         )}
 

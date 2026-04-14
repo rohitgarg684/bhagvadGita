@@ -7,6 +7,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import ChapterPage from "./pages/ChapterPage";
 import VersePage from "./pages/VersePage";
+import GamesPage from "./pages/GamesPage";
 
 function Router() {
   return (
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/chapter/:chapterNum" component={ChapterPage} />
       <Route path="/chapter/:chapterNum/verse/:verseNum" component={VersePage} />
+      <Route path="/chapter/:chapterNum/games" component={GamesPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
