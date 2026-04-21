@@ -219,8 +219,30 @@ export default function VersePage() {
             </div>
           </div>
 
+          {/* Prev / Next Shloka navigation at top */}
+          <div className="flex items-center justify-between mb-4">
+            {prevVerse ? (
+              <Link href={`/chapter/${chapterNum}/verse/${prevVerse.verse}`}>
+                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-orange-700 bg-orange-100 hover:bg-orange-200 border border-orange-300 transition-all">
+                  <ChevronLeft size={16} />
+                  <span className="hidden sm:inline">Prev Shloka</span>
+                  <span className="sm:hidden">Prev</span>
+                </button>
+              </Link>
+            ) : <div />}
+            {nextVerse ? (
+              <Link href={`/chapter/${chapterNum}/verse/${nextVerse.verse}`}>
+                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-orange-700 bg-orange-100 hover:bg-orange-200 border border-orange-300 transition-all">
+                  <span className="hidden sm:inline">Next Shloka</span>
+                  <span className="sm:hidden">Next</span>
+                  <ChevronRight size={16} />
+                </button>
+              </Link>
+            ) : <div />}
+          </div>
+
           {/* Shloka + IAST side-by-side on md+, stacked on mobile */}
-          <div className="flex flex-col md:flex-row gap-4 mb-4 items-stretch">
+          <div className="flex flex-col md:flex-row gap-4 items-start">
             {/* Devanagari Shloka */}
             <div className="bg-gradient-to-br from-red-900 to-red-800 rounded-2xl p-5 lg:p-6 shadow-md flex-1 flex flex-col">
               <div className="font-devanagari text-orange-100 text-2xl lg:text-3xl flex-1">
@@ -274,25 +296,31 @@ export default function VersePage() {
               )}
             </div>
 
-            {/* IAST Transliteration */}
+            {/* IAST + English meaning */}
             {verse.transliteration && (
-              <div className="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-5 flex-1 flex flex-col justify-center">
-                <p className="text-orange-600 text-xs font-semibold uppercase tracking-widest mb-2">IAST Transliteration</p>
-                <div className="transliteration-text text-orange-900 text-base lg:text-lg italic">
+              <div className="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-5 flex-1 flex flex-col">
+                <div className="transliteration-text text-orange-900 text-lg lg:text-xl italic flex-1">
                   {verse.transliteration.split('\n').map((line, i) => (
-                    <p key={i} className={i === 0 ? 'leading-snug mb-1 text-orange-700 font-semibold not-italic text-sm lg:text-base' : 'leading-relaxed'}>
+                    <p key={i} className={i === 0 ? 'leading-snug mb-1 text-orange-700 font-semibold not-italic text-base lg:text-lg' : 'leading-relaxed'}>
                       {line}
                     </p>
                   ))}
+                </div>
+                <div className="mt-4 pt-3 border-t border-orange-200">
+                  <p className="text-orange-900 text-base lg:text-lg leading-relaxed font-medium">
+                    "{verse.one_line_meaning}"
+                  </p>
                 </div>
               </div>
             )}
           </div>
 
-          {/* One-line meaning — always shown in header */}
-          <p className="text-orange-900 text-base lg:text-lg leading-relaxed font-medium">
-            "{verse.one_line_meaning}"
-          </p>
+          {/* Fallback: show meaning below if no transliteration box */}
+          {!verse.transliteration && (
+            <p className="mt-4 text-orange-900 text-base lg:text-lg leading-relaxed font-medium">
+              "{verse.one_line_meaning}"
+            </p>
+          )}
         </div>
 
         {/* Progress bar */}
