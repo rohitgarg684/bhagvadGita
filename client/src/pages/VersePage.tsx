@@ -26,14 +26,14 @@ type Tab =
   | "more_stories";
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: "meaning",     label: "Meaning",          icon: <Star size={15} /> },
-  { id: "story",       label: "Story",            icon: <BookMarked size={15} /> },
-  { id: "impact",      label: "Impact on Life",   icon: <Lightbulb size={15} /> },
-  { id: "reflection",  label: "Reflection",       icon: <MessageCircle size={15} /> },
-  { id: "detailed",    label: "Detailed Meaning", icon: <Sparkles size={15} /> },
-  { id: "kids",        label: "Kids Corner",      icon: <Baby size={15} /> },
-  { id: "grammar",     label: "Grammar",          icon: <GraduationCap size={15} /> },
-  { id: "more_stories",label: "More Stories",     icon: <Library size={15} /> },
+  { id: "meaning",     label: "Meaning",          icon: <Star size={18} /> },
+  { id: "story",       label: "Story",            icon: <BookMarked size={18} /> },
+  { id: "impact",      label: "Impact on Life",   icon: <Lightbulb size={18} /> },
+  { id: "reflection",  label: "Reflection",       icon: <MessageCircle size={18} /> },
+  { id: "detailed",    label: "Detailed Meaning", icon: <Sparkles size={18} /> },
+  { id: "kids",        label: "Kids Corner",      icon: <Baby size={18} /> },
+  { id: "grammar",     label: "Grammar",          icon: <GraduationCap size={18} /> },
+  { id: "more_stories",label: "More Stories",     icon: <Library size={18} /> },
 ];
 
 function formatText(text: string) {
@@ -216,7 +216,7 @@ export default function VersePage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  flex flex-col items-center gap-0.5 px-1 py-2.5 text-xs font-semibold rounded-lg transition-all
+                  flex flex-col items-center gap-1 px-1 py-3 text-sm font-semibold rounded-lg transition-all
                   ${activeTab === tab.id
                     ? "bg-amber-50 text-amber-700 border border-amber-300"
                     : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
@@ -235,7 +235,7 @@ export default function VersePage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  flex flex-col items-center gap-0.5 px-1 py-2.5 text-xs font-semibold rounded-lg transition-all
+                  flex flex-col items-center gap-1 px-1 py-3 text-sm font-semibold rounded-lg transition-all
                   ${activeTab === tab.id
                     ? "bg-amber-50 text-amber-700 border border-amber-300"
                     : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
