@@ -16,10 +16,18 @@ async function startServer() {
       ? path.resolve(__dirname, "public")
       : path.resolve(__dirname, "..", "dist", "public");
 
-  app.use(express.static(staticPath));
+  app.use(
+    "/assets",
+    express.static(path.join(staticPath, "assets"), {
+      maxAge: "1y",
+      immutable: true,
+    })
+  );
 
-  // Handle client-side routing - serve index.html for all routes
+  app.use(express.static(staticPath, { maxAge: 0 }));
+
   app.get("*", (_req, res) => {
+    res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
     res.sendFile(path.join(staticPath, "index.html"));
   });
 
