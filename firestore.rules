@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /gita_config/{doc} {
+      allow read: if request.auth != null;
+      allow write: if false;
+    }
+    match /gita_images/{imageId} {
+      allow read: if true;
+      allow write: if request.auth != null
+        && exists(/databases/$(database)/documents/gita_config/admin_emails)
+        && (
+          request.auth.token.email in get(/databases/$(database)/documents/gita_config/admin_emails).data.emails
+          || request.auth.token.email.matches('.*@gurukula[.]com')
+        );
+    }
+  }
+}

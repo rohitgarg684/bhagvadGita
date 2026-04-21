@@ -4,7 +4,8 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData } from "@/types/gita";
-import { BookOpen, Home, Menu, X, Star, ChevronRight } from "lucide-react";
+import { BookOpen, Home, Menu, X, Star, ChevronRight, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const data = gitaData as unknown as GitaData;
 
@@ -17,6 +18,7 @@ interface LayoutProps {
 export default function Layout({ children, kidsMode = false, onToggleKids }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [location] = useLocation();
+  const { user, isAdmin, signOut } = useAuth();
 
   const chapterGroups = [
     { label: "Karma Kanda", range: [1, 6], color: "text-amber-700" },
@@ -66,6 +68,21 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
               <Home size={15} />
               Home
             </Link>
+            {isAdmin && user && (
+              <button
+                onClick={signOut}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-amber-400/20 border border-amber-400/40 text-amber-200 hover:bg-amber-400/30 transition-all"
+                title="Sign out admin"
+              >
+                <img
+                  src={user.photoURL || ""}
+                  alt=""
+                  className="w-5 h-5 rounded-full"
+                  referrerPolicy="no-referrer"
+                />
+                <LogOut size={12} />
+              </button>
+            )}
           </div>
         </div>
       </header>

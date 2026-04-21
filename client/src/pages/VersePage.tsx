@@ -5,6 +5,7 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "wouter";
 import Layout from "@/components/Layout";
+import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
 import {
@@ -59,16 +60,16 @@ function formatText(text: string) {
   });
 }
 
-function VerseImage({ url, caption }: { url: string; caption?: string }) {
+function VerseImage({ imageKey, url, caption }: { imageKey: string; url: string; caption?: string }) {
   return (
-    <figure className="my-4 rounded-2xl overflow-hidden border border-border shadow-md">
-      <img src={url} alt={caption || "Verse illustration"} className="w-full object-cover max-h-72" loading="lazy" />
-      {caption && (
-        <figcaption className="text-sm text-muted-foreground italic px-4 py-2 bg-muted/50 text-center">
-          {caption}
-        </figcaption>
-      )}
-    </figure>
+    <EditableImage
+      imageKey={imageKey}
+      fallbackUrl={url}
+      alt={caption || "Verse illustration"}
+      caption={caption}
+      className="my-4 rounded-2xl overflow-hidden border border-border shadow-md"
+      imgClassName="w-full object-cover max-h-72"
+    />
   );
 }
 
@@ -306,7 +307,7 @@ export default function VersePage() {
         {activeTab === "meaning" && (
           <div className="verse-section space-y-5">
             {verse.images?.meaning && (
-              <VerseImage url={verse.images.meaning.url} caption={verse.images.meaning.caption} />
+              <VerseImage imageKey={`ch${chapterNum}_v${verseNum}_meaning`} url={verse.images.meaning.url} caption={verse.images.meaning.caption} />
             )}
 
             <div className="bg-card border border-border rounded-2xl p-5 lg:p-6">
@@ -369,7 +370,7 @@ export default function VersePage() {
             </div>
             {/* Story images after text */}
             {verse.images?.story && verse.images.story.map((img, i) => (
-              <VerseImage key={i} url={img.url} caption={img.caption} />
+              <VerseImage key={i} imageKey={`ch${chapterNum}_v${verseNum}_story_${i}`} url={img.url} caption={img.caption} />
             ))}
           </div>
         )}
@@ -378,7 +379,7 @@ export default function VersePage() {
         {activeTab === "impact" && verse.real_life_example && (
           <div className="verse-section space-y-5">
             {verse.images?.modern_life && (
-              <VerseImage url={verse.images.modern_life.url} caption={verse.images.modern_life.caption} />
+              <VerseImage imageKey={`ch${chapterNum}_v${verseNum}_modern_life`} url={verse.images.modern_life.url} caption={verse.images.modern_life.caption} />
             )}
             <div className="bg-gradient-to-br from-green-50 to-teal-50 border border-green-200 rounded-2xl p-5 lg:p-6">
               <p className="text-green-700 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -416,7 +417,7 @@ export default function VersePage() {
         {activeTab === "detailed" && (
           <div className="verse-section space-y-5">
             {verse.images?.detailed_meaning && (
-              <VerseImage url={verse.images.detailed_meaning.url} caption={verse.images.detailed_meaning.caption} />
+              <VerseImage imageKey={`ch${chapterNum}_v${verseNum}_detailed_meaning`} url={verse.images.detailed_meaning.url} caption={verse.images.detailed_meaning.caption} />
             )}
             {verse.detailed_meaning ? (
               <div className="bg-card border border-border rounded-2xl p-5 lg:p-6">
@@ -472,7 +473,7 @@ export default function VersePage() {
                   ))}
                 </div>
                 {verse.images?.kids_explain && (
-                  <VerseImage url={verse.images.kids_explain.url} caption={verse.images.kids_explain.caption} />
+                  <VerseImage imageKey={`ch${chapterNum}_v${verseNum}_kids_explain`} url={verse.images.kids_explain.url} caption={verse.images.kids_explain.caption} />
                 )}
               </div>
             ) : verse.concise_journey ? (
@@ -492,7 +493,7 @@ export default function VersePage() {
                   ))}
                 </div>
                 {verse.images?.kids_story && (
-                  <VerseImage url={verse.images.kids_story.url} caption={verse.images.kids_story.caption} />
+                  <VerseImage imageKey={`ch${chapterNum}_v${verseNum}_kids_story`} url={verse.images.kids_story.url} caption={verse.images.kids_story.caption} />
                 )}
               </div>
             ) : verse.story ? (
@@ -694,6 +695,7 @@ export default function VersePage() {
                 {verse.images?.more_stories?.[i] && (
                   <div className="px-5">
                     <VerseImage
+                      imageKey={`ch${chapterNum}_v${verseNum}_more_stories_${i}`}
                       url={verse.images.more_stories[i].url}
                       caption={verse.images.more_stories[i].caption}
                     />

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
+import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData } from "@/types/gita";
 import { BookOpen, Star, Users, Sparkles, ChevronRight, Play } from "lucide-react";
@@ -41,11 +42,13 @@ export default function Home() {
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
       {/* ── Hero Section ── */}
-      <section className="relative overflow-hidden min-h-[420px] lg:min-h-[520px]">
-        <img
-          src={HERO_IMG}
+      <section className="relative overflow-hidden min-h-[420px] lg:min-h-[520px] group">
+        <EditableImage
+          imageKey="home_hero"
+          fallbackUrl={HERO_IMG}
           alt="Krishna and Arjuna on the battlefield of Kurukshetra"
-          className="absolute inset-0 w-full h-full object-cover object-center"
+          asBg
+          imgClassName="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-indigo-950/90 via-indigo-900/70 to-transparent" />
         <div className="relative z-10 px-6 py-16 lg:py-24 max-w-2xl">
@@ -106,11 +109,13 @@ export default function Home() {
 
       {/* ── Chapter 6 Feature Banner ── */}
       <section className="px-4 py-8 lg:py-10 max-w-5xl mx-auto">
-        <div className="relative rounded-2xl overflow-hidden shadow-xl">
-          <img
-            src={kidsMode ? KIDS_IMG : MEDITATION_IMG}
-            alt="Meditation"
-            className="absolute inset-0 w-full h-full object-cover"
+        <div className="relative rounded-2xl overflow-hidden shadow-xl group">
+          <EditableImage
+            imageKey={kidsMode ? "home_kids" : "home_meditation"}
+            fallbackUrl={kidsMode ? KIDS_IMG : MEDITATION_IMG}
+            alt={kidsMode ? "Kids mode banner" : "Meditation"}
+            asBg
+            imgClassName="absolute inset-0 w-full h-full object-cover"
           />
           <div className={`absolute inset-0 ${kidsMode ? "bg-amber-900/70" : "bg-indigo-950/75"}`} />
           <div className="relative z-10 p-6 lg:p-8 flex flex-col lg:flex-row items-start lg:items-center gap-4 justify-between">

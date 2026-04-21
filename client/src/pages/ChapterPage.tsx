@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Link, useParams } from "wouter";
 import Layout from "@/components/Layout";
+import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
 import { ChevronLeft, ChevronRight, BookOpen, Star, Sparkles, Gamepad2 } from "lucide-react";
@@ -29,11 +30,13 @@ export default function ChapterPage() {
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
       {/* Chapter Header */}
-      <div className="relative overflow-hidden">
-        <img
-          src={CHAPTER_BG}
+      <div className="relative overflow-hidden group">
+        <EditableImage
+          imageKey="chapter_bg"
+          fallbackUrl={CHAPTER_BG}
           alt="Sanskrit manuscript"
-          className="absolute inset-0 w-full h-full object-cover opacity-20"
+          asBg
+          imgClassName="absolute inset-0 w-full h-full object-cover opacity-20"
         />
         <div className="relative z-10 bg-gradient-to-b from-indigo-950 to-indigo-900 px-6 py-10 lg:py-14">
           {/* Breadcrumb */}
