@@ -2,7 +2,7 @@
 // Tabs: Meaning | Story | Impact | Reflection | Detailed Meaning | Kids Corner | Grammar | More Stories
 // Header: Devanagari shloka + IAST transliteration + one-line meaning always shown at top
 // Design: Light Vedic Learning Platform — warm saffron header, cream content, orange accents (Gurukula palette)
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useParams } from "wouter";
 import Layout from "@/components/Layout";
 import EditableImage from "@/components/EditableImage";
@@ -97,29 +97,56 @@ export default function VersePage() {
   const [activeTab, setActiveTab] = useState<Tab>("meaning");
   const [kidsMode, setKidsMode] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
-  const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const [audioCurrentTime, setAudioCurrentTime] = useState(0);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setActiveTab("meaning");
     window.scrollTo({ top: 0, behavior: "smooth" });
-    // Stop audio when navigating to a new verse
-    if (audioEl) { audioEl.pause(); setAudioPlaying(false); }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.removeAttribute("src");
+      audioRef.current.load();
+      audioRef.current = null;
+    }
+    setAudioPlaying(false);
+    setAudioDuration(0);
+    setAudioCurrentTime(0);
   }, [chapterNum, verseNum]);
 
+  const initAudio = useCallback((url: string) => {
+    if (audioRef.current) return audioRef.current;
+    const a = new Audio(url);
+    a.addEventListener("loadedmetadata", () => setAudioDuration(a.duration));
+    a.addEventListener("timeupdate", () => setAudioCurrentTime(a.currentTime));
+    a.addEventListener("ended", () => { setAudioPlaying(false); setAudioCurrentTime(0); });
+    audioRef.current = a;
+    return a;
+  }, []);
+
   function toggleAudio(url: string) {
-    if (!audioEl) {
-      const a = new Audio(url);
-      a.onended = () => setAudioPlaying(false);
-      a.play();
-      setAudioEl(a);
-      setAudioPlaying(true);
-    } else if (audioPlaying) {
-      audioEl.pause();
+    const a = initAudio(url);
+    if (audioPlaying) {
+      a.pause();
       setAudioPlaying(false);
     } else {
-      audioEl.play();
+      a.play();
       setAudioPlaying(true);
     }
+  }
+
+  function seekAudio(time: number) {
+    if (audioRef.current) {
+      audioRef.current.currentTime = time;
+      setAudioCurrentTime(time);
+    }
+  }
+
+  function formatTime(seconds: number): string {
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
   }
 
   const chapter = data.chapters.find((c) => c.chapter === chapterNum);
@@ -165,7 +192,7 @@ export default function VersePage() {
       {/* Verse Header — warm cream/saffron */}
       <div className="bg-gradient-to-b from-orange-50 to-amber-50 border-b border-orange-200 px-4 py-6 lg:py-8">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-orange-700 text-sm mb-4 flex-wrap">
+        <div className="max-w-5xl mx-auto flex items-center gap-1.5 text-orange-700 text-sm mb-4 flex-wrap">
           <Link href="/" className="hover:text-orange-900 transition-colors">Home</Link>
           <ChevronRight size={12} />
           <Link href={`/chapter/${chapterNum}`} className="hover:text-orange-900 transition-colors">
@@ -175,7 +202,7 @@ export default function VersePage() {
           <span className="text-orange-900 font-semibold">Verse {verseNum}</span>
         </div>
 
-        <div className="max-w-5xl">
+        <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-orange-600 text-xl">{chapter.icon}</span>
             <div>
@@ -201,18 +228,44 @@ export default function VersePage() {
               </div>
               {verse.audio_url && (
                 <div className="mt-4 pt-3 border-t border-white/20">
-                  <button
-                    onClick={() => toggleAudio(verse.audio_url!)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
-                      audioPlaying
-                        ? "bg-orange-400 text-red-900 shadow-lg scale-105"
-                        : "bg-white/20 text-orange-100 hover:bg-white/30"
-                    }`}
-                  >
-                    {audioPlaying ? <Pause size={16} /> : <Play size={16} />}
-                    {audioPlaying ? "Pause Shloka" : "▶ Listen to Shloka"}
-                    {!audioPlaying && <Volume2 size={14} className="opacity-70" />}
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => toggleAudio(verse.audio_url!)}
+                      className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                        audioPlaying
+                          ? "bg-orange-400 text-red-900 shadow-lg"
+                          : "bg-white/20 text-orange-100 hover:bg-white/30"
+                      }`}
+                    >
+                      {audioPlaying ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <input
+                        type="range"
+                        min={0}
+                        max={audioDuration || 0}
+                        step={0.1}
+                        value={audioCurrentTime}
+                        onChange={(e) => seekAudio(parseFloat(e.target.value))}
+                        className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-white/20
+                          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
+                          [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-400 [&::-webkit-slider-thumb]:shadow-md
+                          [&::-webkit-slider-thumb]:hover:bg-orange-300 [&::-webkit-slider-thumb]:transition-colors
+                          [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full
+                          [&::-moz-range-thumb]:bg-orange-400 [&::-moz-range-thumb]:border-0"
+                        style={{
+                          background: audioDuration
+                            ? `linear-gradient(to right, rgb(251 146 60) ${(audioCurrentTime / audioDuration) * 100}%, rgba(255,255,255,0.2) ${(audioCurrentTime / audioDuration) * 100}%)`
+                            : "rgba(255,255,255,0.2)",
+                        }}
+                      />
+                      <div className="flex justify-between text-xs text-orange-200/80 mt-1 px-0.5">
+                        <span>{formatTime(audioCurrentTime)}</span>
+                        <span>{audioDuration ? formatTime(audioDuration) : "—:——"}</span>
+                      </div>
+                    </div>
+                    <Volume2 size={16} className="flex-shrink-0 text-orange-200/60" />
+                  </div>
                 </div>
               )}
             </div>
@@ -240,7 +293,7 @@ export default function VersePage() {
 
         {/* Progress bar */}
         {verses.length > 1 && (
-          <div className="mt-4 max-w-5xl">
+          <div className="mt-4 max-w-5xl mx-auto">
               <div className="flex justify-between text-sm text-orange-700 mb-1">
               <span>Verse {verseIndex + 1} of {verses.length}</span>
               <span>{Math.round(progressPct)}% complete</span>
