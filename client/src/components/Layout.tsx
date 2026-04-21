@@ -82,7 +82,8 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
         {/* Sidebar */}
         <aside
           className={`
-            fixed lg:stic        top-16 left-0 z-40 h-[calc(100vh-4rem)]        w-72 bg-sidebar overflow-y-auto
+            fixed lg:sticky top-16 left-0 z-40 h-[calc(100vh-4rem)]
+            w-72 bg-sidebar overflow-y-auto
             transform transition-transform duration-300 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
             flex-shrink-0 border-r border-sidebar-border
