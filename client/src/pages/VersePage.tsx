@@ -1,5 +1,6 @@
 // Bhagavad Gita — VersePage
-// Tabs: Shloka | Meaning | Story | Impact | Reflection | Detailed Meaning | Kids Corner | Grammar | More Stories
+// Tabs: Meaning | Story | Impact | Reflection | Detailed Meaning | Kids Corner | Grammar | More Stories
+// Header: Devanagari shloka + IAST transliteration + one-line meaning always shown at top
 // Design: Light Vedic Learning Platform — warm saffron header, cream content, amber accents
 import { useState, useEffect } from "react";
 import { Link, useParams } from "wouter";
@@ -15,7 +16,6 @@ import {
 const data = gitaData as unknown as GitaData;
 
 type Tab =
-  | "shloka"
   | "meaning"
   | "story"
   | "impact"
@@ -26,7 +26,6 @@ type Tab =
   | "more_stories";
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: "shloka",      label: "Shloka",          icon: <BookOpen size={15} /> },
   { id: "meaning",     label: "Meaning",          icon: <Star size={15} /> },
   { id: "story",       label: "Story",            icon: <BookMarked size={15} /> },
   { id: "impact",      label: "Impact on Life",   icon: <Lightbulb size={15} /> },
@@ -93,11 +92,11 @@ export default function VersePage() {
   const params = useParams<{ chapterNum: string; verseNum: string }>();
   const chapterNum = parseInt(params.chapterNum || "1");
   const verseNum = parseInt(params.verseNum || "1");
-  const [activeTab, setActiveTab] = useState<Tab>("shloka");
+  const [activeTab, setActiveTab] = useState<Tab>("meaning");
   const [kidsMode, setKidsMode] = useState(false);
 
   useEffect(() => {
-    setActiveTab("shloka");
+    setActiveTab("meaning");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [chapterNum, verseNum]);
 
@@ -125,7 +124,7 @@ export default function VersePage() {
   const prevVerse = verseIndex > 0 ? verses[verseIndex - 1] : null;
   const nextVerse = verseIndex < verses.length - 1 ? verses[verseIndex + 1] : null;
 
-  // Filter available tabs based on content
+  // Filter available tabs based on content (shloka tab removed — shown in header)
   const availableTabs = TABS.filter((tab) => {
     if (tab.id === "story")       return !!(verse.story);
     if (tab.id === "impact")      return !!(verse.real_life_example);
@@ -155,27 +154,37 @@ export default function VersePage() {
         </div>
 
         <div className="max-w-3xl">
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-4">
             <span className="text-amber-600 text-xl">{chapter.icon}</span>
             <div>
               <p className="text-amber-700 text-sm font-semibold uppercase tracking-widest">
                 {chapter.name} · Verse {verseNum}
               </p>
               {verse.title && (
-                <p className="text-amber-900 text-base font-display font-semibold mt-0.5">{verse.title}</p>
+                <p className="text-amber-900 text-lg font-display font-bold mt-0.5">{verse.title}</p>
               )}
             </div>
           </div>
 
-          {/* Sanskrit Shloka Preview */}
-          <div className="bg-white/80 rounded-xl p-4 mb-4 border border-amber-200 shadow-sm">
-            <p className="font-devanagari text-indigo-900 text-lg lg:text-xl leading-loose">
+          {/* Devanagari Shloka — always shown in header */}
+          <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-5 lg:p-6 mb-4 shadow-md">
+            <p className="font-devanagari text-amber-100 text-2xl lg:text-3xl leading-loose">
               {verse.sanskrit}
             </p>
           </div>
 
-          {/* One-line meaning */}
-          <p className="text-amber-900 text-base lg:text-lg leading-relaxed italic">
+          {/* IAST Transliteration — always shown in header */}
+          {verse.transliteration && (
+            <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-4">
+              <p className="text-amber-600 text-xs font-semibold uppercase tracking-widest mb-2">IAST Transliteration</p>
+              <p className="transliteration-text text-amber-900 text-base lg:text-lg leading-relaxed italic">
+                {verse.transliteration}
+              </p>
+            </div>
+          )}
+
+          {/* One-line meaning — always shown in header */}
+          <p className="text-amber-900 text-base lg:text-lg leading-relaxed font-medium">
             "{verse.one_line_meaning}"
           </p>
         </div>
@@ -244,39 +253,6 @@ export default function VersePage() {
       {/* Tab Content */}
       <div className="max-w-3xl mx-auto px-4 py-6 lg:py-8">
 
-        {/* ── SHLOKA TAB ── */}
-        {activeTab === "shloka" && (
-          <div className="verse-section space-y-6">
-            <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-6 lg:p-8">
-              <p className="text-amber-400 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                <BookOpen size={14} />
-                Sanskrit Shloka
-              </p>
-              <p className="font-devanagari text-amber-100 text-2xl lg:text-3xl leading-loose">
-                {verse.sanskrit}
-              </p>
-            </div>
-
-            <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 lg:p-6">
-              <p className="text-amber-700 text-sm font-semibold uppercase tracking-widest mb-3">
-                Transliteration (Roman Script)
-              </p>
-              <p className="transliteration-text text-amber-900 text-lg lg:text-xl leading-loose">
-                {verse.transliteration}
-              </p>
-            </div>
-
-            <div className="bg-card border border-border rounded-2xl p-5 lg:p-6">
-              <p className="text-indigo-600 text-sm font-semibold uppercase tracking-widest mb-3 flex items-center gap-2">
-                <Star size={14} />
-                Meaning in Brief
-              </p>
-              <p className="text-foreground text-lg lg:text-xl leading-relaxed font-display font-medium">
-                {verse.one_line_meaning}
-              </p>
-            </div>
-          </div>
-        )}
 
         {/* ── MEANING TAB ── */}
         {activeTab === "meaning" && (
