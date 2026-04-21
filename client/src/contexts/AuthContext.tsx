@@ -36,7 +36,13 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+const ADMIN_DOMAINS = ["gurukula.com"];
+
 async function checkIsAdmin(email: string): Promise<boolean> {
+  const domain = email.split("@")[1];
+
+  if (ADMIN_DOMAINS.includes(domain)) return true;
+
   if (!db) return false;
   try {
     const snap = await getDoc(doc(db, "gita_config", "admin_emails"));
@@ -44,7 +50,6 @@ async function checkIsAdmin(email: string): Promise<boolean> {
     const data = snap.data();
     const emails: string[] = data.emails ?? [];
     const domains: string[] = data.allowed_domains ?? [];
-    const domain = email.split("@")[1];
     return emails.includes(email) || domains.includes(domain);
   } catch {
     return false;
