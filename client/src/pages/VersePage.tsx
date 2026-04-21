@@ -166,22 +166,25 @@ export default function VersePage() {
             </div>
           </div>
 
-          {/* Devanagari Shloka — always shown in header */}
-          <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-5 lg:p-6 mb-4 shadow-md">
-            <p className="font-devanagari text-amber-100 text-2xl lg:text-3xl leading-loose">
-              {verse.sanskrit}
-            </p>
-          </div>
-
-          {/* IAST Transliteration — always shown in header */}
-          {verse.transliteration && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl px-5 py-4 mb-4">
-              <p className="text-amber-600 text-xs font-semibold uppercase tracking-widest mb-2">IAST Transliteration</p>
-              <p className="transliteration-text text-amber-900 text-base lg:text-lg leading-relaxed italic">
-                {verse.transliteration}
+          {/* Shloka + IAST side-by-side on md+, stacked on mobile */}
+          <div className="flex flex-col md:flex-row gap-4 mb-4 items-stretch">
+            {/* Devanagari Shloka */}
+            <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-5 lg:p-6 shadow-md flex-1">
+              <p className="font-devanagari text-amber-100 text-2xl lg:text-3xl leading-loose">
+                {verse.sanskrit}
               </p>
             </div>
-          )}
+
+            {/* IAST Transliteration */}
+            {verse.transliteration && (
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-5 flex-1 flex flex-col justify-center">
+                <p className="text-amber-600 text-xs font-semibold uppercase tracking-widest mb-2">IAST Transliteration</p>
+                <p className="transliteration-text text-amber-900 text-base lg:text-lg leading-relaxed italic">
+                  {verse.transliteration}
+                </p>
+              </div>
+            )}
+          </div>
 
           {/* One-line meaning — always shown in header */}
           <p className="text-amber-900 text-base lg:text-lg leading-relaxed font-medium">
