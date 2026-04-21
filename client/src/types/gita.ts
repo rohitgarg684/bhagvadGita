@@ -47,6 +47,7 @@ export interface Verse {
   verse: number;
   chapter: number;
   title?: string;
+  audio_url?: string;
   sanskrit: string;
   transliteration: string;
   one_line_meaning: string;

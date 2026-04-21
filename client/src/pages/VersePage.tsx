@@ -10,7 +10,8 @@ import type { GitaData, Verse } from "@/types/gita";
 import {
   ChevronLeft, ChevronRight, BookOpen, Star, Sparkles,
   BookMarked, Lightbulb, Baby, GraduationCap, Heart,
-  MessageCircle, Library, FlameKindling, Leaf
+  MessageCircle, Library, FlameKindling, Leaf,
+  Volume2, Pause, Play
 } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
@@ -94,11 +95,31 @@ export default function VersePage() {
   const verseNum = parseInt(params.verseNum || "1");
   const [activeTab, setActiveTab] = useState<Tab>("meaning");
   const [kidsMode, setKidsMode] = useState(false);
+  const [audioPlaying, setAudioPlaying] = useState(false);
+  const [audioEl, setAudioEl] = useState<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     setActiveTab("meaning");
     window.scrollTo({ top: 0, behavior: "smooth" });
+    // Stop audio when navigating to a new verse
+    if (audioEl) { audioEl.pause(); setAudioPlaying(false); }
   }, [chapterNum, verseNum]);
+
+  function toggleAudio(url: string) {
+    if (!audioEl) {
+      const a = new Audio(url);
+      a.onended = () => setAudioPlaying(false);
+      a.play();
+      setAudioEl(a);
+      setAudioPlaying(true);
+    } else if (audioPlaying) {
+      audioEl.pause();
+      setAudioPlaying(false);
+    } else {
+      audioEl.play();
+      setAudioPlaying(true);
+    }
+  }
 
   const chapter = data.chapters.find((c) => c.chapter === chapterNum);
   const verses: Verse[] = chapterNum === 6
@@ -169,10 +190,26 @@ export default function VersePage() {
           {/* Shloka + IAST side-by-side on md+, stacked on mobile */}
           <div className="flex flex-col md:flex-row gap-4 mb-4 items-stretch">
             {/* Devanagari Shloka */}
-            <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-5 lg:p-6 shadow-md flex-1">
-              <p className="font-devanagari text-amber-100 text-2xl lg:text-3xl leading-loose">
+            <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-5 lg:p-6 shadow-md flex-1 flex flex-col">
+              <p className="font-devanagari text-amber-100 text-2xl lg:text-3xl leading-loose flex-1">
                 {verse.sanskrit}
               </p>
+              {verse.audio_url && (
+                <div className="mt-4 pt-3 border-t border-white/20">
+                  <button
+                    onClick={() => toggleAudio(verse.audio_url!)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
+                      audioPlaying
+                        ? "bg-amber-400 text-indigo-900 shadow-lg scale-105"
+                        : "bg-white/20 text-amber-100 hover:bg-white/30"
+                    }`}
+                  >
+                    {audioPlaying ? <Pause size={16} /> : <Play size={16} />}
+                    {audioPlaying ? "Pause Shloka" : "▶ Listen to Shloka"}
+                    {!audioPlaying && <Volume2 size={14} className="opacity-70" />}
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* IAST Transliteration */}
