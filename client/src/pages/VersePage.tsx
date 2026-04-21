@@ -26,15 +26,15 @@ type Tab =
   | "more_stories";
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: "shloka",      label: "Shloka",          icon: <BookOpen size={13} /> },
-  { id: "meaning",     label: "Meaning",          icon: <Star size={13} /> },
-  { id: "story",       label: "Story",            icon: <BookMarked size={13} /> },
-  { id: "impact",      label: "Impact on Life",   icon: <Lightbulb size={13} /> },
-  { id: "reflection",  label: "Reflection",       icon: <MessageCircle size={13} /> },
-  { id: "detailed",    label: "Detailed Meaning", icon: <Sparkles size={13} /> },
-  { id: "kids",        label: "Kids Corner",      icon: <Baby size={13} /> },
-  { id: "grammar",     label: "Grammar",          icon: <GraduationCap size={13} /> },
-  { id: "more_stories",label: "More Stories",     icon: <Library size={13} /> },
+  { id: "shloka",      label: "Shloka",          icon: <BookOpen size={15} /> },
+  { id: "meaning",     label: "Meaning",          icon: <Star size={15} /> },
+  { id: "story",       label: "Story",            icon: <BookMarked size={15} /> },
+  { id: "impact",      label: "Impact on Life",   icon: <Lightbulb size={15} /> },
+  { id: "reflection",  label: "Reflection",       icon: <MessageCircle size={15} /> },
+  { id: "detailed",    label: "Detailed Meaning", icon: <Sparkles size={15} /> },
+  { id: "kids",        label: "Kids Corner",      icon: <Baby size={15} /> },
+  { id: "grammar",     label: "Grammar",          icon: <GraduationCap size={15} /> },
+  { id: "more_stories",label: "More Stories",     icon: <Library size={15} /> },
 ];
 
 function formatText(text: string) {
@@ -43,19 +43,19 @@ function formatText(text: string) {
     if (!line.trim()) return <br key={i} />;
     if (/^Step \d+/.test(line)) {
       return (
-        <h5 key={i} className="font-semibold text-indigo-800 mt-4 mb-2 text-sm border-l-2 border-amber-400 pl-3">
+        <h5 key={i} className="font-semibold text-indigo-800 mt-4 mb-2 text-base border-l-2 border-amber-400 pl-3">
           {line}
         </h5>
       );
     }
     if (/^\d+\.\s/.test(line) && line.length < 80) {
       return (
-        <h5 key={i} className="font-semibold text-indigo-800 mt-4 mb-2 text-sm">
+        <h5 key={i} className="font-semibold text-indigo-800 mt-4 mb-2 text-base">
           {line}
         </h5>
       );
     }
-    return <p key={i} className="my-1.5 leading-relaxed">{line}</p>;
+    return <p key={i} className="my-2 text-base leading-relaxed">{line}</p>;
   });
 }
 
@@ -64,7 +64,7 @@ function VerseImage({ url, caption }: { url: string; caption?: string }) {
     <figure className="my-4 rounded-2xl overflow-hidden border border-border shadow-md">
       <img src={url} alt={caption || "Verse illustration"} className="w-full object-cover max-h-72" loading="lazy" />
       {caption && (
-        <figcaption className="text-xs text-muted-foreground italic px-4 py-2 bg-muted/50 text-center">
+        <figcaption className="text-sm text-muted-foreground italic px-4 py-2 bg-muted/50 text-center">
           {caption}
         </figcaption>
       )}
@@ -144,7 +144,7 @@ export default function VersePage() {
       {/* Verse Header — warm cream/saffron */}
       <div className="bg-gradient-to-b from-amber-50 to-orange-50 border-b border-amber-200 px-4 py-6 lg:py-8">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-amber-700 text-xs mb-4 flex-wrap">
+        <div className="flex items-center gap-1.5 text-amber-700 text-sm mb-4 flex-wrap">
           <Link href="/" className="hover:text-amber-900 transition-colors">Home</Link>
           <ChevronRight size={12} />
           <Link href={`/chapter/${chapterNum}`} className="hover:text-amber-900 transition-colors">
@@ -158,11 +158,11 @@ export default function VersePage() {
           <div className="flex items-center gap-2 mb-3">
             <span className="text-amber-600 text-xl">{chapter.icon}</span>
             <div>
-              <p className="text-amber-700 text-xs font-semibold uppercase tracking-widest">
+              <p className="text-amber-700 text-sm font-semibold uppercase tracking-widest">
                 {chapter.name} · Verse {verseNum}
               </p>
               {verse.title && (
-                <p className="text-amber-900 text-sm font-display font-semibold mt-0.5">{verse.title}</p>
+                <p className="text-amber-900 text-base font-display font-semibold mt-0.5">{verse.title}</p>
               )}
             </div>
           </div>
@@ -175,7 +175,7 @@ export default function VersePage() {
           </div>
 
           {/* One-line meaning */}
-          <p className="text-amber-900 text-sm lg:text-base leading-relaxed italic">
+          <p className="text-amber-900 text-base lg:text-lg leading-relaxed italic">
             "{verse.one_line_meaning}"
           </p>
         </div>
@@ -183,7 +183,7 @@ export default function VersePage() {
         {/* Progress bar */}
         {verses.length > 1 && (
           <div className="mt-4 max-w-3xl">
-            <div className="flex justify-between text-xs text-amber-700 mb-1">
+              <div className="flex justify-between text-sm text-amber-700 mb-1">
               <span>Verse {verseIndex + 1} of {verses.length}</span>
               <span>{Math.round(progressPct)}% complete</span>
             </div>
@@ -207,7 +207,7 @@ export default function VersePage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] font-semibold rounded-lg transition-all
+                  flex flex-col items-center gap-0.5 px-1 py-2.5 text-xs font-semibold rounded-lg transition-all
                   ${activeTab === tab.id
                     ? "bg-amber-50 text-amber-700 border border-amber-300"
                     : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
@@ -226,7 +226,7 @@ export default function VersePage() {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  flex flex-col items-center gap-0.5 px-1 py-2 text-[10px] font-semibold rounded-lg transition-all
+                  flex flex-col items-center gap-0.5 px-1 py-2.5 text-xs font-semibold rounded-lg transition-all
                   ${activeTab === tab.id
                     ? "bg-amber-50 text-amber-700 border border-amber-300"
                     : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
@@ -248,30 +248,30 @@ export default function VersePage() {
         {activeTab === "shloka" && (
           <div className="verse-section space-y-6">
             <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-6 lg:p-8">
-              <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                <BookOpen size={12} />
+              <p className="text-amber-400 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+                <BookOpen size={14} />
                 Sanskrit Shloka
               </p>
-              <p className="font-devanagari text-amber-100 text-xl lg:text-2xl leading-loose">
+              <p className="font-devanagari text-amber-100 text-2xl lg:text-3xl leading-loose">
                 {verse.sanskrit}
               </p>
             </div>
 
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 lg:p-6">
-              <p className="text-amber-700 text-xs font-semibold uppercase tracking-widest mb-3">
+              <p className="text-amber-700 text-sm font-semibold uppercase tracking-widest mb-3">
                 Transliteration (Roman Script)
               </p>
-              <p className="transliteration-text text-amber-900 text-base lg:text-lg leading-loose">
+              <p className="transliteration-text text-amber-900 text-lg lg:text-xl leading-loose">
                 {verse.transliteration}
               </p>
             </div>
 
             <div className="bg-card border border-border rounded-2xl p-5 lg:p-6">
-              <p className="text-indigo-600 text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-2">
-                <Star size={12} />
+              <p className="text-indigo-600 text-sm font-semibold uppercase tracking-widest mb-3 flex items-center gap-2">
+                <Star size={14} />
                 Meaning in Brief
               </p>
-              <p className="text-foreground text-base lg:text-lg leading-relaxed font-display font-medium">
+              <p className="text-foreground text-lg lg:text-xl leading-relaxed font-display font-medium">
                 {verse.one_line_meaning}
               </p>
             </div>
@@ -286,11 +286,11 @@ export default function VersePage() {
             )}
 
             <div className="bg-card border border-border rounded-2xl p-5 lg:p-6">
-              <p className="text-amber-600 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                <Star size={12} />
+              <p className="text-amber-600 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+                <Star size={14} />
                 Core Meaning
               </p>
-              <p className="font-display text-xl lg:text-2xl font-semibold text-foreground leading-relaxed mb-4">
+              <p className="font-display text-2xl lg:text-3xl font-semibold text-foreground leading-relaxed mb-4">
                 {verse.one_line_meaning}
               </p>
               {verse.concise_journey && (
@@ -298,7 +298,7 @@ export default function VersePage() {
                   <div className="lotus-divider my-4">
                     <span className="text-amber-400 text-sm">✿</span>
                   </div>
-                  <p className="text-foreground/80 text-base leading-relaxed">
+                  <p className="text-foreground/80 text-lg leading-relaxed">
                     {verse.concise_journey}
                   </p>
                 </>
@@ -307,11 +307,11 @@ export default function VersePage() {
 
             {verse.meaning_detail && (
               <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 lg:p-6">
-                <p className="text-indigo-700 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <Sparkles size={12} />
+                <p className="text-indigo-700 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <Sparkles size={14} />
                   Detailed Explanation
                 </p>
-                <div className="text-indigo-900 text-sm leading-relaxed">
+                <div className="text-indigo-900 text-base leading-relaxed">
                   {formatText(verse.meaning_detail)}
                 </div>
               </div>
@@ -319,11 +319,11 @@ export default function VersePage() {
 
             {verse.final_takeaway && (
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 lg:p-6">
-                <p className="text-amber-700 text-xs font-semibold uppercase tracking-widest mb-3 flex items-center gap-2">
-                  <Heart size={12} />
+                <p className="text-amber-700 text-sm font-semibold uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <Heart size={14} />
                   Final Takeaway
                 </p>
-                <div className="text-amber-900 text-sm leading-relaxed">
+                <div className="text-amber-900 text-base leading-relaxed">
                   {formatText(verse.final_takeaway)}
                 </div>
               </div>
@@ -335,11 +335,11 @@ export default function VersePage() {
         {activeTab === "story" && verse.story && (
           <div className="verse-section space-y-5">
             <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-5 lg:p-6">
-              <p className="text-orange-700 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                <BookMarked size={12} />
+              <p className="text-orange-700 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+                <BookMarked size={14} />
                 Story from the Mahabharata
               </p>
-              <div className="text-orange-900 text-sm leading-relaxed">
+              <div className="text-orange-900 text-base leading-relaxed">
                 {formatText(verse.story)}
               </div>
             </div>
@@ -357,11 +357,11 @@ export default function VersePage() {
               <VerseImage url={verse.images.modern_life.url} caption={verse.images.modern_life.caption} />
             )}
             <div className="bg-gradient-to-br from-green-50 to-teal-50 border border-green-200 rounded-2xl p-5 lg:p-6">
-              <p className="text-green-700 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                <Lightbulb size={12} />
+              <p className="text-green-700 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+                <Lightbulb size={14} />
                 Impact on Current Life
               </p>
-              <div className="text-green-900 text-sm leading-relaxed">
+              <div className="text-green-900 text-base leading-relaxed">
                 {formatText(verse.real_life_example)}
               </div>
             </div>
@@ -372,15 +372,15 @@ export default function VersePage() {
         {activeTab === "reflection" && verse.reflection && (
           <div className="verse-section space-y-5">
             <div className="bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-200 rounded-2xl p-6 lg:p-8">
-              <p className="text-violet-700 text-xs font-semibold uppercase tracking-widest mb-5 flex items-center gap-2">
-                <MessageCircle size={12} />
+              <p className="text-violet-700 text-sm font-semibold uppercase tracking-widest mb-5 flex items-center gap-2">
+                <MessageCircle size={14} />
                 Reflection — Questions for Contemplation
               </p>
               <div className="space-y-4">
                 {verse.reflection.split('\n').filter(l => l.trim()).map((line, i) => (
                   <div key={i} className="flex items-start gap-3 bg-white/60 rounded-xl p-4 border border-violet-100">
                     <span className="text-violet-400 mt-0.5 flex-shrink-0 text-lg">◈</span>
-                    <p className="text-violet-900 text-base leading-relaxed font-display font-medium">{line}</p>
+                    <p className="text-violet-900 text-lg leading-relaxed font-display font-medium">{line}</p>
                   </div>
                 ))}
               </div>
@@ -396,21 +396,21 @@ export default function VersePage() {
             )}
             {verse.detailed_meaning ? (
               <div className="bg-card border border-border rounded-2xl p-5 lg:p-6">
-                <p className="text-teal-600 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <Sparkles size={12} />
+                <p className="text-teal-600 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <Sparkles size={14} />
                   Detailed Gita Journey — Step by Step
                 </p>
-                <div className="text-foreground/80 text-sm leading-relaxed">
+                <div className="text-foreground/80 text-base leading-relaxed">
                   {formatText(verse.detailed_meaning)}
                 </div>
               </div>
             ) : verse.full_journey_text ? (
               <div className="bg-card border border-border rounded-2xl p-5 lg:p-6">
-                <p className="text-teal-600 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <Sparkles size={12} />
+                <p className="text-teal-600 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <Sparkles size={14} />
                   Full Gita Journey — Word by Word
                 </p>
-                <div className="text-foreground/80 text-sm leading-relaxed space-y-1">
+                <div className="text-foreground/80 text-base leading-relaxed space-y-1">
                   {formatText(verse.full_journey_text)}
                 </div>
               </div>
@@ -423,14 +423,14 @@ export default function VersePage() {
           <div className="verse-section kids-mode space-y-5">
             {/* Sacred Words */}
             <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-300 rounded-2xl p-5">
-              <p className="text-yellow-700 font-kids font-bold text-sm mb-3 flex items-center gap-2">
-                <Baby size={16} />
+              <p className="text-yellow-700 font-kids font-bold text-base mb-3 flex items-center gap-2">
+                <Baby size={18} />
                 🌟 The Sacred Words
               </p>
               <p className="font-devanagari text-indigo-900 text-lg leading-loose mb-3">
                 {verse.sanskrit.split('\n')[0]}
               </p>
-              <p className="text-amber-800 font-kids text-base font-semibold">
+              <p className="text-amber-800 font-kids text-lg font-semibold">
                 "{verse.one_line_meaning}"
               </p>
             </div>
@@ -438,11 +438,11 @@ export default function VersePage() {
             {/* Explanation script */}
             {verse.kids_content?.explanation_script ? (
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-5">
-                <p className="text-blue-700 font-kids font-bold text-sm mb-3 flex items-center gap-2">
-                  <MessageCircle size={14} />
+                <p className="text-blue-700 font-kids font-bold text-base mb-3 flex items-center gap-2">
+                  <MessageCircle size={16} />
                   💡 How to Understand This
                 </p>
-                <div className="text-blue-900 font-kids text-base leading-relaxed">
+                <div className="text-blue-900 font-kids text-lg leading-relaxed">
                   {verse.kids_content.explanation_script.split('\n').filter(l => l.trim()).map((line, i) => (
                     <p key={i} className="mb-2">{line}</p>
                   ))}
@@ -453,16 +453,16 @@ export default function VersePage() {
               </div>
             ) : verse.concise_journey ? (
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-5">
-                <p className="text-blue-700 font-kids font-bold text-sm mb-3">💡 What does this mean?</p>
-                <p className="text-blue-900 font-kids text-base leading-relaxed">{verse.concise_journey}</p>
+                <p className="text-blue-700 font-kids font-bold text-base mb-3">💡 What does this mean?</p>
+                <p className="text-blue-900 font-kids text-lg leading-relaxed">{verse.concise_journey}</p>
               </div>
             ) : null}
 
             {/* Kids story */}
             {verse.kids_content?.story ? (
               <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-2xl p-5">
-                <p className="text-orange-700 font-kids font-bold text-sm mb-3">📖 A Story to Remember</p>
-                <div className="text-orange-900 font-kids text-sm leading-relaxed">
+                <p className="text-orange-700 font-kids font-bold text-base mb-3">📖 A Story to Remember</p>
+                <div className="text-orange-900 font-kids text-base leading-relaxed">
                   {verse.kids_content.story.split('\n').filter(l => l.trim()).map((line, i) => (
                     <p key={i} className="mb-2">{line}</p>
                   ))}
@@ -473,8 +473,8 @@ export default function VersePage() {
               </div>
             ) : verse.story ? (
               <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-2xl p-5">
-                <p className="text-orange-700 font-kids font-bold text-sm mb-3">📖 A Story to Remember</p>
-                <div className="text-orange-900 font-kids text-sm leading-relaxed">
+                <p className="text-orange-700 font-kids font-bold text-base mb-3">📖 A Story to Remember</p>
+                <div className="text-orange-900 font-kids text-base leading-relaxed">
                   {verse.story.split('\n').slice(0, 8).map((line, i) => (
                     line.trim() ? <p key={i} className="mb-2">{line}</p> : null
                   ))}
@@ -485,8 +485,8 @@ export default function VersePage() {
             {/* Kids reflection */}
             {(verse.kids_content?.reflection || verse.reflection) && (
               <div className="bg-gradient-to-br from-purple-50 to-violet-50 border-2 border-purple-200 rounded-2xl p-5">
-                <p className="text-purple-700 font-kids font-bold text-sm mb-3">🤔 Think About It!</p>
-                <div className="text-purple-900 font-kids text-sm leading-relaxed space-y-2">
+                <p className="text-purple-700 font-kids font-bold text-base mb-3">🤔 Think About It!</p>
+                <div className="text-purple-900 font-kids text-base leading-relaxed space-y-2">
                   {(verse.kids_content?.reflection || verse.reflection || '').split('\n').filter(l => l.trim()).map((line, i) => (
                     <p key={i} className="flex items-start gap-2">
                       <span className="text-purple-400 flex-shrink-0">◈</span>
@@ -500,8 +500,8 @@ export default function VersePage() {
             {/* Takeaway for kids */}
             {verse.final_takeaway && (
               <div className="bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-200 rounded-2xl p-5">
-                <p className="text-pink-700 font-kids font-bold text-sm mb-3">⭐ Remember This!</p>
-                <div className="text-pink-900 font-kids text-base font-semibold leading-relaxed">
+                <p className="text-pink-700 font-kids font-bold text-base mb-3">⭐ Remember This!</p>
+                <div className="text-pink-900 font-kids text-lg font-semibold leading-relaxed">
                   {verse.final_takeaway.split('\n').slice(0, 4).map((line, i) => (
                     line.trim() ? <p key={i} className="mb-1">{line}</p> : null
                   ))}
@@ -512,7 +512,7 @@ export default function VersePage() {
             {/* Challenge */}
             <div className="bg-indigo-900 rounded-2xl p-5 text-center">
               <p className="text-amber-300 font-kids font-bold text-base mb-2">🎯 Challenge!</p>
-              <p className="text-indigo-100 font-kids text-sm">
+              <p className="text-indigo-100 font-kids text-base">
                 Can you explain this verse to a friend in your own words?
                 Try telling the story to someone in your family!
               </p>
@@ -531,14 +531,14 @@ export default function VersePage() {
                       <GraduationCap size={14} className="text-violet-600" />
                       पदच्छेदः (Padacchedaḥ — Word Separation)
                     </h5>
-                    <p className="font-devanagari text-sm leading-relaxed text-gray-700">{verse.rich_grammar.padacchedah}</p>
+                    <p className="font-devanagari text-base leading-relaxed text-gray-700">{verse.rich_grammar.padacchedah}</p>
                   </div>
                 )}
 
                 {verse.rich_grammar.pratipadarthah && (
                   <div className="bg-card border border-border rounded-2xl p-5">
-                    <h5 className="font-devanagari font-bold text-violet-800 text-base mb-4">पदार्थः (Pratipadārthaḥ — Word Meanings)</h5>
-                    <div className="text-sm leading-relaxed text-gray-700">
+                    <h5 className="font-devanagari font-bold text-violet-800 text-lg mb-4">पदार्थः (Pratipadārthaḥ — Word Meanings)</h5>
+                    <div className="text-base leading-relaxed text-gray-700">
                       {verse.rich_grammar.pratipadarthah.split('|').map((item, i) => {
                         const [word, meaning] = item.split('=').map(s => s.trim());
                         if (!word || !meaning) return null;
@@ -557,7 +557,7 @@ export default function VersePage() {
                 {verse.rich_grammar.padaparicayah && verse.rich_grammar.padaparicayah.length > 0 && (
                   <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5 overflow-x-auto">
                     <h5 className="font-devanagari font-bold text-violet-800 text-base mb-4">पदपरिचयः (Padaparicayaḥ — Word Analysis Table)</h5>
-                    <table className="w-full text-xs border-collapse min-w-[500px]">
+                    <table className="w-full text-sm border-collapse min-w-[500px]">
                       <thead>
                         <tr className="bg-violet-100">
                           <th className="font-devanagari text-left p-2 border border-violet-200 text-violet-800">Word</th>
@@ -591,16 +591,16 @@ export default function VersePage() {
                 {verse.rich_grammar.anvayah && (
                   <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5">
                     <h5 className="font-devanagari font-bold text-violet-800 text-base mb-3">अन्वयः (Anvayaḥ — Prose Order)</h5>
-                    <p className="font-devanagari text-sm leading-relaxed text-violet-900">{verse.rich_grammar.anvayah}</p>
+                    <p className="font-devanagari text-base leading-relaxed text-violet-900">{verse.rich_grammar.anvayah}</p>
                   </div>
                 )}
 
                 {verse.rich_grammar.sandhi && (
                   <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
                     <h5 className="font-devanagari font-bold text-amber-800 text-base mb-3">सन्धि (Sandhi — Phonetic Combinations)</h5>
-                    <div className="text-sm leading-relaxed text-amber-900">
+                    <div className="text-base leading-relaxed text-amber-900">
                       {verse.rich_grammar.sandhi.split('|').map((item, i) => (
-                        <p key={i} className="font-devanagari py-1">{item.trim()}</p>
+                        <p key={i} className="font-devanagari py-1.5">{item.trim()}</p>
                       ))}
                     </div>
                   </div>
@@ -609,9 +609,9 @@ export default function VersePage() {
                 {verse.rich_grammar.samasa && (
                   <div className="bg-teal-50 border border-teal-200 rounded-2xl p-5">
                     <h5 className="font-devanagari font-bold text-teal-800 text-base mb-3">समासः (Samāsa — Compound Words)</h5>
-                    <div className="text-sm leading-relaxed text-teal-900">
+                    <div className="text-base leading-relaxed text-teal-900">
                       {verse.rich_grammar.samasa.split('|').map((item, i) => (
-                        <p key={i} className="font-devanagari py-1">{item.trim()}</p>
+                        <p key={i} className="font-devanagari py-1.5">{item.trim()}</p>
                       ))}
                     </div>
                   </div>
@@ -620,9 +620,9 @@ export default function VersePage() {
                 {verse.rich_grammar.other && (
                   <div className="bg-card border border-border rounded-2xl p-5">
                     <h5 className="font-devanagari font-bold text-violet-800 text-base mb-3">अन्य व्याकरण (Other Grammatical Aspects)</h5>
-                    <div className="text-sm leading-relaxed text-gray-700">
+                    <div className="text-base leading-relaxed text-gray-700">
                       {verse.rich_grammar.other.split('|').map((item, i) => (
-                        <p key={i} className="font-devanagari py-1">{item.trim()}</p>
+                        <p key={i} className="font-devanagari py-1.5">{item.trim()}</p>
                       ))}
                     </div>
                   </div>
@@ -630,17 +630,17 @@ export default function VersePage() {
               </>
             ) : verse.grammar_notes ? (
               <div className="bg-card border border-border rounded-2xl p-5 lg:p-6">
-                <p className="text-violet-600 text-xs font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
-                  <GraduationCap size={12} />
+                <p className="text-violet-600 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <GraduationCap size={14} />
                   Sanskrit Grammar (Samskritam)
                 </p>
-                <div className="text-foreground/80 text-sm leading-relaxed">
+                <div className="text-foreground/80 text-base leading-relaxed">
                   {verse.grammar_notes.split('\n').map((line, i) => {
                     if (!line.trim()) return <br key={i} />;
                     if (line.includes('पदच्छेदः') || line.includes('अन्वयः') || line.includes('पदार्थः') || line.includes('समासः') || line.includes('सन्धि')) {
                       return <h5 key={i} className="font-devanagari font-bold text-violet-800 text-base mt-4 mb-2">{line}</h5>;
                     }
-                    return <p key={i} className="my-1 font-devanagari text-sm leading-relaxed text-gray-700">{line}</p>;
+                    return <p key={i} className="my-1.5 font-devanagari text-base leading-relaxed text-gray-700">{line}</p>;
                   })}
                 </div>
               </div>
@@ -651,8 +651,8 @@ export default function VersePage() {
         {/* ── MORE STORIES TAB ── Title → Image → Story body */}
         {activeTab === "more_stories" && verse.more_stories && (
           <div className="verse-section space-y-6">
-            <p className="text-rose-700 text-xs font-semibold uppercase tracking-widest flex items-center gap-2">
-              <Library size={12} />
+            <p className="text-rose-700 text-sm font-semibold uppercase tracking-widest flex items-center gap-2">
+              <Library size={14} />
               More Stories &amp; Insights
             </p>
 
@@ -660,7 +660,7 @@ export default function VersePage() {
               <div key={i} className="bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-200 rounded-2xl overflow-hidden">
                 {/* Story Title */}
                 <div className="px-5 pt-5 pb-3">
-                  <h4 className="font-display font-bold text-rose-800 text-base flex items-center gap-2">
+                  <h4 className="font-display font-bold text-rose-800 text-xl flex items-center gap-2">
                     <FlameKindling size={15} className="text-rose-500 flex-shrink-0" />
                     {story.title}
                   </h4>
@@ -678,7 +678,7 @@ export default function VersePage() {
 
                 {/* Story Body */}
                 <div className="px-5 pb-5">
-                  <div className="text-rose-900 text-sm leading-relaxed">
+                  <div className="text-rose-900 text-base leading-relaxed">
                     {formatText(story.body)}
                   </div>
                 </div>
@@ -691,10 +691,10 @@ export default function VersePage() {
         <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
           {prevVerse ? (
             <Link href={`/chapter/${chapterNum}/verse/${prevVerse.verse}`}>
-              <button className="flex items-center gap-2 bg-card border border-border hover:border-amber-300 rounded-xl px-4 py-3 text-sm font-semibold text-foreground transition-all group">
-                <ChevronLeft size={16} className="group-hover:text-amber-500" />
+              <button className="flex items-center gap-2 bg-card border border-border hover:border-amber-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group">
+                <ChevronLeft size={18} className="group-hover:text-amber-500" />
                 <div className="text-left hidden sm:block">
-                  <div className="text-xs text-muted-foreground">Previous</div>
+                  <div className="text-sm text-muted-foreground">Previous</div>
                   <div>Verse {prevVerse.verse}</div>
                 </div>
                 <span className="sm:hidden">Prev</span>
@@ -717,9 +717,9 @@ export default function VersePage() {
 
           {nextVerse ? (
             <Link href={`/chapter/${chapterNum}/verse/${nextVerse.verse}`}>
-              <button className="flex items-center gap-2 bg-card border border-border hover:border-amber-300 rounded-xl px-4 py-3 text-sm font-semibold text-foreground transition-all group">
+              <button className="flex items-center gap-2 bg-card border border-border hover:border-amber-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group">
                 <div className="text-right hidden sm:block">
-                  <div className="text-xs text-muted-foreground">Next</div>
+                  <div className="text-sm text-muted-foreground">Next</div>
                   <div>Verse {nextVerse.verse}</div>
                 </div>
                 <span className="sm:hidden">Next</span>

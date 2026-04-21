@@ -28,7 +28,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
     <div className={`min-h-screen flex flex-col ${kidsMode ? "kids-mode" : ""}`}>
       {/* Top Navigation Bar */}
       <header className="sticky top-0 z-50 bg-vedic-hero border-b border-white/10 shadow-lg">
-        <div className="flex items-center justify-between px-4 h-14">
+        <div className="flex items-center justify-between px-4 h-16">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -38,8 +38,8 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
               {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="text-white text-xl">🕉</span>
-              <span className="font-display text-white font-semibold text-base lg:text-lg tracking-wide group-hover:text-amber-100 transition-colors">
+              <span className="text-white text-2xl">🕉</span>
+              <span className="font-display text-white font-semibold text-lg lg:text-xl tracking-wide group-hover:text-amber-100 transition-colors">
                 Bhagavad Gita
               </span>
             </Link>
@@ -49,21 +49,21 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
             {onToggleKids && (
               <button
                 onClick={onToggleKids}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-semibold transition-all ${
                   kidsMode
                     ? "bg-white text-amber-700 font-bold"
                     : "bg-white/20 text-white hover:bg-white/30"
                 }`}
               >
-                <Star size={12} />
+                <Star size={14} />
                 {kidsMode ? "Kids Mode ON" : "Kids Mode"}
               </button>
             )}
             <Link
               href="/"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-white hover:text-amber-100 hover:bg-white/20 transition-all"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-white hover:text-amber-100 hover:bg-white/20 transition-all"
             >
-              <Home size={13} />
+              <Home size={15} />
               Home
             </Link>
           </div>
@@ -82,8 +82,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
         {/* Sidebar */}
         <aside
           className={`
-            fixed lg:sticky top-14 left-0 z-40 h-[calc(100vh-3.5rem)]
-            w-72 bg-sidebar overflow-y-auto
+            fixed lg:stic        top-16 left-0 z-40 h-[calc(100vh-4rem)]        w-72 bg-sidebar overflow-y-auto
             transform transition-transform duration-300 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
             flex-shrink-0 border-r border-sidebar-border
@@ -91,15 +90,15 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
         >
           <div className="p-4">
             <div className="flex items-center gap-2 mb-5 px-2">
-              <BookOpen size={15} className="text-amber-600" />
-              <span className="text-amber-700 text-xs font-semibold uppercase tracking-widest">
+              <BookOpen size={17} className="text-amber-600" />
+              <span className="text-amber-700 text-sm font-semibold uppercase tracking-widest">
                 18 Chapters
               </span>
             </div>
 
             {chapterGroups.map((group) => (
               <div key={group.label} className="mb-5">
-                <p className={`text-xs font-semibold uppercase tracking-widest px-2 mb-2 ${group.color}`}>
+                <p className={`text-sm font-semibold uppercase tracking-widest px-2 mb-2 ${group.color}`}>
                   {group.label}
                 </p>
                 <div className="space-y-0.5">
@@ -113,7 +112,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
                           href={`/chapter/${ch.chapter}`}
                           onClick={() => setSidebarOpen(false)}
                           className={`
-                            flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all group
+                            flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-base transition-all group
                             ${isActive
                               ? "bg-amber-100 text-amber-900 font-semibold border-l-2 border-amber-500"
                               : "text-gray-700 hover:bg-amber-50 hover:text-gray-900"
@@ -122,7 +121,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
                         >
                           <span className="text-base leading-none w-5 text-center">{ch.icon}</span>
                           <span className="flex-1 min-w-0">
-                            <span className="text-xs opacity-60 mr-1">Ch.{ch.chapter}</span>
+                            <span className="text-sm opacity-60 mr-1">Ch.{ch.chapter}</span>
                             <span className="truncate">{ch.name}</span>
                           </span>
                           {isActive && <ChevronRight size={12} className="opacity-60" />}
