@@ -175,7 +175,7 @@ export default function VersePage() {
           <span className="text-amber-900 font-semibold">Verse {verseNum}</span>
         </div>
 
-        <div className="max-w-3xl">
+        <div className="max-w-5xl">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-amber-600 text-xl">{chapter.icon}</span>
             <div>
@@ -240,7 +240,7 @@ export default function VersePage() {
 
         {/* Progress bar */}
         {verses.length > 1 && (
-          <div className="mt-4 max-w-3xl">
+          <div className="mt-4 max-w-5xl">
               <div className="flex justify-between text-sm text-amber-700 mb-1">
               <span>Verse {verseIndex + 1} of {verses.length}</span>
               <span>{Math.round(progressPct)}% complete</span>
@@ -257,7 +257,7 @@ export default function VersePage() {
 
       {/* Tab Navigation — two-line grid, evenly spaced */}
       <div className="sticky top-14 z-30 bg-white border-b border-border shadow-sm">
-        <div className="max-w-4xl mx-auto px-2 py-1">
+        <div className="max-w-5xl mx-auto px-2 py-1">
           <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${Math.ceil(availableTabs.length / 2)}, 1fr)` }}>
             {/* First row */}
             {availableTabs.slice(0, Math.ceil(availableTabs.length / 2)).map((tab) => (
@@ -300,7 +300,7 @@ export default function VersePage() {
       </div>
 
       {/* Tab Content */}
-      <div className="max-w-3xl mx-auto px-4 py-6 lg:py-8">
+      <div className="max-w-5xl mx-auto px-4 py-6 lg:py-8">
 
 
         {/* ── MEANING TAB ── */}
