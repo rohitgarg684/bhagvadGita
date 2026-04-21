@@ -14,14 +14,14 @@ export default function LoginPage() {
   }, [loading, isAdmin, user, navigate]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-indigo-950 to-indigo-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-b from-red-950 to-red-900 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <span className="text-amber-400 text-4xl">🕉</span>
+          <span className="text-orange-400 text-4xl">🕉</span>
           <h1 className="text-white font-display text-2xl font-bold mt-3">
             Admin Login
           </h1>
-          <p className="text-indigo-300 text-sm mt-2">
+          <p className="text-red-300 text-sm mt-2">
             Bhagavad Gita — Content Management
           </p>
         </div>
@@ -29,30 +29,30 @@ export default function LoginPage() {
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
           {loading ? (
             <div className="flex flex-col items-center gap-3 py-4">
-              <Loader2 size={24} className="text-amber-400 animate-spin" />
-              <p className="text-indigo-200 text-sm">Checking session...</p>
+              <Loader2 size={24} className="text-orange-400 animate-spin" />
+              <p className="text-red-200 text-sm">Checking session...</p>
             </div>
           ) : isAdmin && user ? (
             <div className="flex flex-col items-center gap-3 py-4">
               <img
                 src={user.photoURL || ""}
                 alt=""
-                className="w-12 h-12 rounded-full border-2 border-amber-400"
+                className="w-12 h-12 rounded-full border-2 border-orange-400"
                 referrerPolicy="no-referrer"
               />
               <p className="text-white text-sm font-medium">{user.displayName}</p>
-              <p className="text-indigo-300 text-xs">{user.email}</p>
-              <p className="text-amber-400 text-xs font-semibold flex items-center gap-1">
+              <p className="text-red-300 text-xs">{user.email}</p>
+              <p className="text-orange-400 text-xs font-semibold flex items-center gap-1">
                 <Shield size={12} />
                 Admin access granted
               </p>
-              <p className="text-indigo-300 text-xs mt-1">Redirecting...</p>
+              <p className="text-red-300 text-xs mt-1">Redirecting...</p>
             </div>
           ) : (
             <>
               <div className="flex items-center gap-2 mb-4">
-                <Shield size={16} className="text-amber-400" />
-                <p className="text-indigo-100 text-sm">
+                <Shield size={16} className="text-orange-400" />
+                <p className="text-red-100 text-sm">
                   Sign in with your Google account to manage images.
                 </p>
               </div>
@@ -68,7 +68,7 @@ export default function LoginPage() {
                 </svg>
                 Sign in with Google
               </button>
-              <p className="text-indigo-400 text-xs text-center mt-4">
+              <p className="text-red-400 text-xs text-center mt-4">
                 Only authorized admin accounts can access this feature.
               </p>
             </>
@@ -76,7 +76,7 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center mt-6">
-          <a href="/" className="text-indigo-300 hover:text-amber-300 text-xs transition-colors">
+          <a href="/" className="text-red-300 hover:text-orange-300 text-xs transition-colors">
             &larr; Back to Bhagavad Gita
           </a>
         </div>

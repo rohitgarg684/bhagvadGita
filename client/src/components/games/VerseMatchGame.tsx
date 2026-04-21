@@ -95,12 +95,12 @@ export default function VerseMatchGame({ chapterNum: _ }: Props) {
     return (
       <div className="text-center py-8 px-4">
         <div className="text-6xl mb-4">{emoji}</div>
-        <h3 className="font-kids font-bold text-2xl text-indigo-900 mb-2">All Matched! 🎉</h3>
-        <p className="text-indigo-700 font-kids text-lg mb-1">{msg}</p>
+        <h3 className="font-kids font-bold text-2xl text-red-900 mb-2">All Matched! 🎉</h3>
+        <p className="text-red-700 font-kids text-lg mb-1">{msg}</p>
         <p className="text-gray-600 font-kids mb-6">You matched all {totalPairs} pairs in <strong>{moves} moves</strong>!</p>
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-left">
-          <p className="text-amber-800 font-kids font-bold text-sm mb-2">🌟 What you learned:</p>
-          <p className="text-amber-700 font-kids text-sm">You matched {totalPairs} Sanskrit shlokas from Chapter 6 with their meanings. Great job learning the Bhagavad Gita!</p>
+        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 text-left">
+          <p className="text-orange-800 font-kids font-bold text-sm mb-2">🌟 What you learned:</p>
+          <p className="text-orange-700 font-kids text-sm">You matched {totalPairs} Sanskrit shlokas from Chapter 6 with their meanings. Great job learning the Bhagavad Gita!</p>
         </div>
         <button
           onClick={resetGame}
@@ -152,8 +152,8 @@ export default function VerseMatchGame({ chapterNum: _ }: Props) {
                     ? isWrong
                       ? "bg-red-100 border-red-400"
                       : card.type === "sanskrit"
-                        ? "bg-indigo-100 border-indigo-400"
-                        : "bg-amber-100 border-amber-400"
+                        ? "bg-red-100 border-orange-400"
+                        : "bg-orange-100 border-orange-400"
                     : "bg-white border-gray-200 hover:border-violet-300 hover:shadow-md active:scale-95"
                 }
               `}
@@ -170,12 +170,12 @@ export default function VerseMatchGame({ chapterNum: _ }: Props) {
                     <span className="absolute top-1 right-1 text-green-500 text-xs">✓</span>
                   )}
                   <div className={`text-xs font-bold mb-1 uppercase tracking-wide ${
-                    card.type === "sanskrit" ? "text-indigo-600" : "text-amber-600"
+                    card.type === "sanskrit" ? "text-red-800" : "text-orange-600"
                   }`}>
                     {card.type === "sanskrit" ? "🕉 Sanskrit" : "💡 Meaning"}
                   </div>
                   <p className={`text-xs leading-relaxed ${
-                    card.type === "sanskrit" ? "font-devanagari text-indigo-900 text-sm" : "font-kids text-gray-800"
+                    card.type === "sanskrit" ? "font-devanagari text-red-900 text-sm" : "font-kids text-gray-800"
                   }`}>
                     {card.content}
                   </p>

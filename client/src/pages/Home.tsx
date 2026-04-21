@@ -15,24 +15,24 @@ const KIDS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663320491203/hKSS9
 const MEDITATION_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663320491203/hKSS9UgtAfoHXBDRJP86JE/gita-meditation-gjMnHVFXnpyH4ezqJkd8j7.webp";
 
 const chapterColorMap: Record<number, string> = {
-  1: "from-blue-800 to-indigo-700",
-  2: "from-indigo-800 to-violet-700",
-  3: "from-orange-800 to-amber-700",
+  1: "from-red-800 to-red-700",
+  2: "from-red-900 to-rose-700",
+  3: "from-orange-800 to-orange-700",
   4: "from-yellow-800 to-orange-700",
   5: "from-green-800 to-teal-700",
   6: "from-teal-800 to-cyan-700",
   7: "from-violet-800 to-purple-700",
-  8: "from-slate-800 to-blue-800",
-  9: "from-amber-800 to-yellow-700",
+  8: "from-slate-800 to-red-800",
+  9: "from-orange-800 to-yellow-700",
   10: "from-rose-800 to-pink-700",
-  11: "from-purple-900 to-indigo-800",
+  11: "from-purple-900 to-red-800",
   12: "from-pink-800 to-rose-700",
   13: "from-emerald-800 to-green-700",
   14: "from-cyan-800 to-teal-700",
   15: "from-lime-800 to-green-700",
   16: "from-red-900 to-orange-800",
   17: "from-orange-900 to-red-800",
-  18: "from-yellow-900 to-amber-800",
+  18: "from-yellow-900 to-orange-800",
 };
 
 export default function Home() {
@@ -50,28 +50,28 @@ export default function Home() {
           asBg
           imgClassName="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-950/90 via-indigo-900/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-red-950/90 via-red-900/70 to-transparent" />
         <div className="relative z-10 px-6 py-16 lg:py-24 max-w-2xl">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-amber-400 text-2xl">🕉</span>
-            <span className="text-amber-300 text-sm font-semibold uppercase tracking-widest">
+            <span className="text-orange-400 text-2xl">🕉</span>
+            <span className="text-orange-300 text-sm font-semibold uppercase tracking-widest">
               Sacred Scripture
             </span>
           </div>
           <h1 className="text-white font-display text-4xl lg:text-6xl font-bold leading-tight mb-4">
             Bhagavad Gita
-            <span className="block text-amber-300 text-2xl lg:text-3xl font-normal mt-1 font-devanagari">
+            <span className="block text-orange-300 text-2xl lg:text-3xl font-normal mt-1 font-devanagari">
               श्रीमद्भगवद्गीता
             </span>
           </h1>
-          <p className="text-indigo-100 text-base lg:text-lg leading-relaxed mb-8 max-w-lg">
+          <p className="text-red-100 text-base lg:text-lg leading-relaxed mb-8 max-w-lg">
             Explore all 18 chapters of the eternal dialogue between Krishna and Arjuna.
             Learn Sanskrit shlokas, their meanings, stories, and timeless wisdom — for yourself and your children.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/chapter/1"
-              className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-indigo-950 font-bold px-6 py-3 rounded-full transition-all shadow-lg hover:shadow-amber-500/30 text-sm"
+              className="flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-red-950 font-bold px-6 py-3 rounded-full transition-all shadow-lg hover:shadow-orange-500/30 text-sm"
             >
               <Play size={16} fill="currentColor" />
               Begin Journey
@@ -88,7 +88,7 @@ export default function Home() {
       </section>
 
       {/* ── Stats Bar ── */}
-      <section className="bg-indigo-950 text-white py-4 px-6">
+      <section className="bg-red-950 text-white py-4 px-6">
         <div className="max-w-5xl mx-auto flex flex-wrap justify-center gap-8">
           {[
             { icon: <BookOpen size={18} />, value: "18", label: "Chapters" },
@@ -97,10 +97,10 @@ export default function Home() {
             { icon: <Users size={18} />, value: "2", label: "Learning Modes" },
           ].map((stat) => (
             <div key={stat.label} className="flex items-center gap-2.5">
-              <span className="text-amber-400">{stat.icon}</span>
+              <span className="text-orange-400">{stat.icon}</span>
               <div>
-                <div className="text-xl font-bold text-amber-300 leading-none">{stat.value}</div>
-                <div className="text-xs text-indigo-300 mt-0.5">{stat.label}</div>
+                <div className="text-xl font-bold text-orange-300 leading-none">{stat.value}</div>
+                <div className="text-xs text-red-300 mt-0.5">{stat.label}</div>
               </div>
             </div>
           ))}
@@ -117,18 +117,18 @@ export default function Home() {
             asBg
             imgClassName="absolute inset-0 w-full h-full object-cover"
           />
-          <div className={`absolute inset-0 ${kidsMode ? "bg-amber-900/70" : "bg-indigo-950/75"}`} />
+          <div className={`absolute inset-0 ${kidsMode ? "bg-orange-900/70" : "bg-red-950/75"}`} />
           <div className="relative z-10 p-6 lg:p-8 flex flex-col lg:flex-row items-start lg:items-center gap-4 justify-between">
             <div>
               <div className="flex items-center gap-2 mb-2">
-                <span className="bg-amber-400 text-indigo-950 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
+                <span className="bg-orange-400 text-red-950 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
                   {kidsMode ? "🌟 Kids Mode Active" : "✨ Featured Content"}
                 </span>
               </div>
               <h2 className="text-white font-display text-2xl lg:text-3xl font-bold mb-2">
                 {kidsMode ? "Learn with Stories & Fun!" : "Chapter 6 — Dhyana Yoga"}
               </h2>
-              <p className="text-indigo-100 text-sm lg:text-base max-w-lg">
+              <p className="text-red-100 text-sm lg:text-base max-w-lg">
                 {kidsMode
                   ? "Every verse comes with a story, a real-life example, and a simple lesson just for kids!"
                   : "All 32 verses with complete word-by-word explanations, Mahabharata stories, real-life examples, and Sanskrit grammar — the most detailed chapter in our collection."}
@@ -136,7 +136,7 @@ export default function Home() {
             </div>
             <Link
               href="/chapter/6"
-              className="flex-shrink-0 flex items-center gap-2 bg-amber-400 hover:bg-amber-300 text-indigo-950 font-bold px-5 py-3 rounded-full transition-all shadow-lg text-sm whitespace-nowrap"
+              className="flex-shrink-0 flex items-center gap-2 bg-orange-400 hover:bg-orange-300 text-red-950 font-bold px-5 py-3 rounded-full transition-all shadow-lg text-sm whitespace-nowrap"
             >
               Explore Chapter 6
               <ChevronRight size={16} />
@@ -152,14 +152,14 @@ export default function Home() {
             All 18 Chapters
           </h2>
           <div className="lotus-divider flex-1">
-            <span className="text-amber-500 text-lg">✿</span>
+            <span className="text-orange-500 text-lg">✿</span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {data.chapters.map((ch) => (
             <Link key={ch.chapter} href={`/chapter/${ch.chapter}`}>
-              <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:border-amber-300 transition-all group cursor-pointer">
+              <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:border-orange-300 transition-all group cursor-pointer">
                 {/* Color header */}
                 <div className={`bg-gradient-to-r ${chapterColorMap[ch.chapter]} p-4 relative overflow-hidden`}>
                   <div className="absolute top-2 right-3 text-white/20 text-5xl font-bold font-display leading-none select-none">
@@ -179,11 +179,11 @@ export default function Home() {
                 {/* Content */}
                 <div className="p-4">
                   <p className="text-muted-foreground text-xs font-devanagari mb-1">{ch.name_hindi}</p>
-                  <p className="text-foreground/80 text-xs font-semibold mb-2 text-amber-700">{ch.subtitle}</p>
+                  <p className="text-foreground/80 text-xs font-semibold mb-2 text-orange-700">{ch.subtitle}</p>
                   <p className="text-foreground/70 text-xs leading-relaxed line-clamp-2">{ch.summary}</p>
                   <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
                     <span className="text-xs text-muted-foreground">{ch.verses_count} verses</span>
-                    <span className="text-xs text-amber-600 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                    <span className="text-xs text-orange-600 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
                       {ch.chapter === 6 ? "Full Journey" : "Explore"}
                       <ChevronRight size={12} />
                     </span>
@@ -196,13 +196,13 @@ export default function Home() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="bg-indigo-950 text-indigo-300 py-8 px-6 text-center">
-        <div className="text-amber-400 text-2xl mb-2">🕉</div>
-        <p className="font-devanagari text-lg text-amber-300 mb-1">
+      <footer className="bg-red-950 text-red-300 py-8 px-6 text-center">
+        <div className="text-orange-400 text-2xl mb-2">🕉</div>
+        <p className="font-devanagari text-lg text-orange-300 mb-1">
           सर्वे भवन्तु सुखिनः
         </p>
         <p className="text-sm italic mb-3">May all beings be happy</p>
-        <p className="text-xs text-indigo-400">
+        <p className="text-xs text-red-400">
           Bhagavad Gita Interactive Learning Journey • All 18 Chapters
         </p>
       </footer>

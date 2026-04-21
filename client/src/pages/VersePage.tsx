@@ -1,7 +1,7 @@
 // Bhagavad Gita — VersePage
 // Tabs: Meaning | Story | Impact | Reflection | Detailed Meaning | Kids Corner | Grammar | More Stories
 // Header: Devanagari shloka + IAST transliteration + one-line meaning always shown at top
-// Design: Light Vedic Learning Platform — warm saffron header, cream content, amber accents
+// Design: Light Vedic Learning Platform — warm saffron header, cream content, orange accents (Gurukula palette)
 import { useState, useEffect } from "react";
 import { Link, useParams } from "wouter";
 import Layout from "@/components/Layout";
@@ -44,14 +44,14 @@ function formatText(text: string) {
     if (!line.trim()) return <br key={i} />;
     if (/^Step \d+/.test(line)) {
       return (
-        <h5 key={i} className="font-semibold text-indigo-800 mt-4 mb-2 text-base border-l-2 border-amber-400 pl-3">
+        <h5 key={i} className="font-semibold text-red-800 mt-4 mb-2 text-base border-l-2 border-orange-400 pl-3">
           {line}
         </h5>
       );
     }
     if (/^\d+\.\s/.test(line) && line.length < 80) {
       return (
-        <h5 key={i} className="font-semibold text-indigo-800 mt-4 mb-2 text-base">
+        <h5 key={i} className="font-semibold text-red-800 mt-4 mb-2 text-base">
           {line}
         </h5>
       );
@@ -135,7 +135,7 @@ export default function VersePage() {
       <Layout>
         <div className="p-8 text-center">
           <p className="text-muted-foreground">Verse not found.</p>
-          <Link href={`/chapter/${chapterNum}`} className="text-amber-600 hover:underline mt-2 inline-block">
+          <Link href={`/chapter/${chapterNum}`} className="text-orange-600 hover:underline mt-2 inline-block">
             ← Back to Chapter {chapterNum}
           </Link>
         </div>
@@ -163,27 +163,27 @@ export default function VersePage() {
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
       {/* Verse Header — warm cream/saffron */}
-      <div className="bg-gradient-to-b from-amber-50 to-orange-50 border-b border-amber-200 px-4 py-6 lg:py-8">
+      <div className="bg-gradient-to-b from-orange-50 to-amber-50 border-b border-orange-200 px-4 py-6 lg:py-8">
         {/* Breadcrumb */}
-        <div className="flex items-center gap-1.5 text-amber-700 text-sm mb-4 flex-wrap">
-          <Link href="/" className="hover:text-amber-900 transition-colors">Home</Link>
+        <div className="flex items-center gap-1.5 text-orange-700 text-sm mb-4 flex-wrap">
+          <Link href="/" className="hover:text-orange-900 transition-colors">Home</Link>
           <ChevronRight size={12} />
-          <Link href={`/chapter/${chapterNum}`} className="hover:text-amber-900 transition-colors">
+          <Link href={`/chapter/${chapterNum}`} className="hover:text-orange-900 transition-colors">
             Chapter {chapterNum}
           </Link>
           <ChevronRight size={12} />
-          <span className="text-amber-900 font-semibold">Verse {verseNum}</span>
+          <span className="text-orange-900 font-semibold">Verse {verseNum}</span>
         </div>
 
         <div className="max-w-5xl">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-amber-600 text-xl">{chapter.icon}</span>
+            <span className="text-orange-600 text-xl">{chapter.icon}</span>
             <div>
-              <p className="text-amber-700 text-sm font-semibold uppercase tracking-widest">
+              <p className="text-orange-700 text-sm font-semibold uppercase tracking-widest">
                 {chapter.name} · Verse {verseNum}
               </p>
               {verse.title && (
-                <p className="text-amber-900 text-lg font-display font-bold mt-0.5">{verse.title}</p>
+                <p className="text-orange-900 text-lg font-display font-bold mt-0.5">{verse.title}</p>
               )}
             </div>
           </div>
@@ -191,10 +191,10 @@ export default function VersePage() {
           {/* Shloka + IAST side-by-side on md+, stacked on mobile */}
           <div className="flex flex-col md:flex-row gap-4 mb-4 items-stretch">
             {/* Devanagari Shloka */}
-            <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-5 lg:p-6 shadow-md flex-1 flex flex-col">
-              <div className="font-devanagari text-amber-100 text-2xl lg:text-3xl flex-1">
+            <div className="bg-gradient-to-br from-red-900 to-red-800 rounded-2xl p-5 lg:p-6 shadow-md flex-1 flex flex-col">
+              <div className="font-devanagari text-orange-100 text-2xl lg:text-3xl flex-1">
                 {verse.sanskrit.split('\n').map((line, i) => (
-                  <p key={i} className={i === 0 ? 'leading-snug mb-1 text-amber-300 text-xl lg:text-2xl font-semibold' : 'leading-loose'}>
+                  <p key={i} className={i === 0 ? 'leading-snug mb-1 text-orange-300 text-xl lg:text-2xl font-semibold' : 'leading-loose'}>
                     {line}
                   </p>
                 ))}
@@ -205,8 +205,8 @@ export default function VersePage() {
                     onClick={() => toggleAudio(verse.audio_url!)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all ${
                       audioPlaying
-                        ? "bg-amber-400 text-indigo-900 shadow-lg scale-105"
-                        : "bg-white/20 text-amber-100 hover:bg-white/30"
+                        ? "bg-orange-400 text-red-900 shadow-lg scale-105"
+                        : "bg-white/20 text-orange-100 hover:bg-white/30"
                     }`}
                   >
                     {audioPlaying ? <Pause size={16} /> : <Play size={16} />}
@@ -219,11 +219,11 @@ export default function VersePage() {
 
             {/* IAST Transliteration */}
             {verse.transliteration && (
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-5 flex-1 flex flex-col justify-center">
-                <p className="text-amber-600 text-xs font-semibold uppercase tracking-widest mb-2">IAST Transliteration</p>
-                <div className="transliteration-text text-amber-900 text-base lg:text-lg italic">
+              <div className="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-5 flex-1 flex flex-col justify-center">
+                <p className="text-orange-600 text-xs font-semibold uppercase tracking-widest mb-2">IAST Transliteration</p>
+                <div className="transliteration-text text-orange-900 text-base lg:text-lg italic">
                   {verse.transliteration.split('\n').map((line, i) => (
-                    <p key={i} className={i === 0 ? 'leading-snug mb-1 text-amber-700 font-semibold not-italic text-sm lg:text-base' : 'leading-relaxed'}>
+                    <p key={i} className={i === 0 ? 'leading-snug mb-1 text-orange-700 font-semibold not-italic text-sm lg:text-base' : 'leading-relaxed'}>
                       {line}
                     </p>
                   ))}
@@ -233,7 +233,7 @@ export default function VersePage() {
           </div>
 
           {/* One-line meaning — always shown in header */}
-          <p className="text-amber-900 text-base lg:text-lg leading-relaxed font-medium">
+          <p className="text-orange-900 text-base lg:text-lg leading-relaxed font-medium">
             "{verse.one_line_meaning}"
           </p>
         </div>
@@ -241,13 +241,13 @@ export default function VersePage() {
         {/* Progress bar */}
         {verses.length > 1 && (
           <div className="mt-4 max-w-5xl">
-              <div className="flex justify-between text-sm text-amber-700 mb-1">
+              <div className="flex justify-between text-sm text-orange-700 mb-1">
               <span>Verse {verseIndex + 1} of {verses.length}</span>
               <span>{Math.round(progressPct)}% complete</span>
             </div>
-            <div className="h-1.5 bg-amber-200 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-orange-200 rounded-full overflow-hidden">
               <div
-                className="h-full bg-amber-500 rounded-full transition-all duration-500"
+                className="h-full bg-orange-500 rounded-full transition-all duration-500"
                 style={{ width: `${progressPct}%` }}
               />
             </div>
@@ -267,12 +267,12 @@ export default function VersePage() {
                 className={`
                   flex flex-col items-center gap-1 px-1 py-3 text-sm font-semibold rounded-lg transition-all
                   ${activeTab === tab.id
-                    ? "bg-amber-50 text-amber-700 border border-amber-300"
+                    ? "bg-orange-50 text-orange-700 border border-orange-300"
                     : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
                   }
                 `}
               >
-                <span className={activeTab === tab.id ? "text-amber-600" : "text-gray-400"}>{tab.icon}</span>
+                <span className={activeTab === tab.id ? "text-orange-600" : "text-gray-400"}>{tab.icon}</span>
                 <span className="leading-tight text-center">{tab.label}</span>
               </button>
             ))}
@@ -286,12 +286,12 @@ export default function VersePage() {
                 className={`
                   flex flex-col items-center gap-1 px-1 py-3 text-sm font-semibold rounded-lg transition-all
                   ${activeTab === tab.id
-                    ? "bg-amber-50 text-amber-700 border border-amber-300"
+                    ? "bg-orange-50 text-orange-700 border border-orange-300"
                     : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
                   }
                 `}
               >
-                <span className={activeTab === tab.id ? "text-amber-600" : "text-gray-400"}>{tab.icon}</span>
+                <span className={activeTab === tab.id ? "text-orange-600" : "text-gray-400"}>{tab.icon}</span>
                 <span className="leading-tight text-center">{tab.label}</span>
               </button>
             ))}
@@ -311,7 +311,7 @@ export default function VersePage() {
             )}
 
             <div className="bg-card border border-border rounded-2xl p-5 lg:p-6">
-              <p className="text-amber-600 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+              <p className="text-orange-600 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
                 <Star size={14} />
                 Core Meaning
               </p>
@@ -321,7 +321,7 @@ export default function VersePage() {
               {verse.concise_journey && (
                 <>
                   <div className="lotus-divider my-4">
-                    <span className="text-amber-400 text-sm">✿</span>
+                    <span className="text-orange-400 text-sm">✿</span>
                   </div>
                   <p className="text-foreground/80 text-lg leading-relaxed">
                     {verse.concise_journey}
@@ -331,24 +331,24 @@ export default function VersePage() {
             </div>
 
             {verse.meaning_detail && (
-              <div className="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 lg:p-6">
-                <p className="text-indigo-700 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
+              <div className="bg-red-50 border border-red-200 rounded-2xl p-5 lg:p-6">
+                <p className="text-red-700 text-sm font-semibold uppercase tracking-widest mb-4 flex items-center gap-2">
                   <Sparkles size={14} />
                   Detailed Explanation
                 </p>
-                <div className="text-indigo-900 text-base leading-relaxed">
+                <div className="text-red-900 text-base leading-relaxed">
                   {formatText(verse.meaning_detail)}
                 </div>
               </div>
             )}
 
             {verse.final_takeaway && (
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 lg:p-6">
-                <p className="text-amber-700 text-sm font-semibold uppercase tracking-widest mb-3 flex items-center gap-2">
+              <div className="bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200 rounded-2xl p-5 lg:p-6">
+                <p className="text-orange-700 text-sm font-semibold uppercase tracking-widest mb-3 flex items-center gap-2">
                   <Heart size={14} />
                   Final Takeaway
                 </p>
-                <div className="text-amber-900 text-base leading-relaxed">
+                <div className="text-orange-900 text-base leading-relaxed">
                   {formatText(verse.final_takeaway)}
                 </div>
               </div>
@@ -396,7 +396,7 @@ export default function VersePage() {
         {/* ── REFLECTION TAB ── */}
         {activeTab === "reflection" && verse.reflection && (
           <div className="verse-section space-y-5">
-            <div className="bg-gradient-to-br from-violet-50 to-indigo-50 border border-violet-200 rounded-2xl p-6 lg:p-8">
+            <div className="bg-gradient-to-br from-violet-50 to-red-50 border border-violet-200 rounded-2xl p-6 lg:p-8">
               <p className="text-violet-700 text-sm font-semibold uppercase tracking-widest mb-5 flex items-center gap-2">
                 <MessageCircle size={14} />
                 Reflection — Questions for Contemplation
@@ -447,22 +447,22 @@ export default function VersePage() {
         {activeTab === "kids" && (
           <div className="verse-section kids-mode space-y-5">
             {/* Sacred Words */}
-            <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-300 rounded-2xl p-5">
+            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-5">
               <p className="text-yellow-700 font-kids font-bold text-base mb-3 flex items-center gap-2">
                 <Baby size={18} />
                 🌟 The Sacred Words
               </p>
-              <p className="font-devanagari text-indigo-900 text-lg leading-loose mb-3">
+              <p className="font-devanagari text-red-900 text-lg leading-loose mb-3">
                 {verse.sanskrit.split('\n')[0]}
               </p>
-              <p className="text-amber-800 font-kids text-lg font-semibold">
+              <p className="text-orange-800 font-kids text-lg font-semibold">
                 "{verse.one_line_meaning}"
               </p>
             </div>
 
             {/* Explanation script */}
             {verse.kids_content?.explanation_script ? (
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-5">
+              <div className="bg-gradient-to-br from-blue-50 to-red-50 border-2 border-blue-200 rounded-2xl p-5">
                 <p className="text-blue-700 font-kids font-bold text-base mb-3 flex items-center gap-2">
                   <MessageCircle size={16} />
                   💡 How to Understand This
@@ -477,7 +477,7 @@ export default function VersePage() {
                 )}
               </div>
             ) : verse.concise_journey ? (
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-5">
+              <div className="bg-gradient-to-br from-blue-50 to-red-50 border-2 border-blue-200 rounded-2xl p-5">
                 <p className="text-blue-700 font-kids font-bold text-base mb-3">💡 What does this mean?</p>
                 <p className="text-blue-900 font-kids text-lg leading-relaxed">{verse.concise_journey}</p>
               </div>
@@ -535,9 +535,9 @@ export default function VersePage() {
             )}
 
             {/* Challenge */}
-            <div className="bg-indigo-900 rounded-2xl p-5 text-center">
-              <p className="text-amber-300 font-kids font-bold text-base mb-2">🎯 Challenge!</p>
-              <p className="text-indigo-100 font-kids text-base">
+            <div className="bg-red-900 rounded-2xl p-5 text-center">
+              <p className="text-orange-300 font-kids font-bold text-base mb-2">🎯 Challenge!</p>
+              <p className="text-red-100 font-kids text-base">
                 Can you explain this verse to a friend in your own words?
                 Try telling the story to someone in your family!
               </p>
@@ -569,7 +569,7 @@ export default function VersePage() {
                         if (!word || !meaning) return null;
                         return (
                           <div key={i} className="flex items-baseline gap-2 py-1.5 border-b border-border last:border-0">
-                            <span className="font-devanagari font-semibold text-indigo-800 min-w-[130px]">{word}</span>
+                            <span className="font-devanagari font-semibold text-red-800 min-w-[130px]">{word}</span>
                             <span className="text-gray-600">= {meaning}</span>
                           </div>
                         );
@@ -598,7 +598,7 @@ export default function VersePage() {
                       <tbody>
                         {verse.rich_grammar.padaparicayah.map((row, i) => (
                           <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-violet-50/50"}>
-                            <td className="font-devanagari font-semibold text-indigo-800 p-2 border border-violet-200">{row.word}</td>
+                            <td className="font-devanagari font-semibold text-red-800 p-2 border border-violet-200">{row.word}</td>
                             <td className="p-2 border border-violet-200 text-gray-600">{row.anta || "—"}</td>
                             <td className="font-devanagari p-2 border border-violet-200 text-gray-600">{row.linga || "—"}</td>
                             <td className="font-devanagari p-2 border border-violet-200 text-gray-600">{row.vibhakti || "—"}</td>
@@ -621,9 +621,9 @@ export default function VersePage() {
                 )}
 
                 {verse.rich_grammar.sandhi && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
-                    <h5 className="font-devanagari font-bold text-amber-800 text-base mb-3">सन्धि (Sandhi — Phonetic Combinations)</h5>
-                    <div className="text-base leading-relaxed text-amber-900">
+                  <div className="bg-orange-50 border border-orange-200 rounded-2xl p-5">
+                    <h5 className="font-devanagari font-bold text-orange-800 text-base mb-3">सन्धि (Sandhi — Phonetic Combinations)</h5>
+                    <div className="text-base leading-relaxed text-orange-900">
                       {verse.rich_grammar.sandhi.split('|').map((item, i) => (
                         <p key={i} className="font-devanagari py-1.5">{item.trim()}</p>
                       ))}
@@ -717,8 +717,8 @@ export default function VersePage() {
         <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
           {prevVerse ? (
             <Link href={`/chapter/${chapterNum}/verse/${prevVerse.verse}`}>
-              <button className="flex items-center gap-2 bg-card border border-border hover:border-amber-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group">
-                <ChevronLeft size={18} className="group-hover:text-amber-500" />
+              <button className="flex items-center gap-2 bg-card border border-border hover:border-orange-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group">
+                <ChevronLeft size={18} className="group-hover:text-orange-500" />
                 <div className="text-left hidden sm:block">
                   <div className="text-sm text-muted-foreground">Previous</div>
                   <div>Verse {prevVerse.verse}</div>
@@ -736,20 +736,20 @@ export default function VersePage() {
           )}
 
           <Link href={`/chapter/${chapterNum}`}>
-            <button className="text-xs text-muted-foreground hover:text-amber-600 transition-colors px-3 py-2">
+            <button className="text-xs text-muted-foreground hover:text-orange-600 transition-colors px-3 py-2">
               {chapter.name}
             </button>
           </Link>
 
           {nextVerse ? (
             <Link href={`/chapter/${chapterNum}/verse/${nextVerse.verse}`}>
-              <button className="flex items-center gap-2 bg-card border border-border hover:border-amber-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group">
+              <button className="flex items-center gap-2 bg-card border border-border hover:border-orange-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group">
                 <div className="text-right hidden sm:block">
                   <div className="text-sm text-muted-foreground">Next</div>
                   <div>Verse {nextVerse.verse}</div>
                 </div>
                 <span className="sm:hidden">Next</span>
-                <ChevronRight size={16} className="group-hover:text-amber-500" />
+                <ChevronRight size={16} className="group-hover:text-orange-500" />
               </button>
             </Link>
           ) : (

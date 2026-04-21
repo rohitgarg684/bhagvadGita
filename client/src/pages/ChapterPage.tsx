@@ -1,5 +1,5 @@
 // Chapter Page — Shows chapter overview and all verses
-// Design: Modern Vedic Learning Platform
+// Design: Modern Vedic Learning Platform — Gurukula color scheme
 import { useState } from "react";
 import { Link, useParams } from "wouter";
 import Layout from "@/components/Layout";
@@ -38,23 +38,23 @@ export default function ChapterPage() {
           asBg
           imgClassName="absolute inset-0 w-full h-full object-cover opacity-20"
         />
-        <div className="relative z-10 bg-gradient-to-b from-indigo-950 to-indigo-900 px-6 py-10 lg:py-14">
+        <div className="relative z-10 bg-gradient-to-b from-red-950 to-red-900 px-6 py-10 lg:py-14">
           {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-indigo-300 text-sm mb-6">
-            <Link href="/" className="hover:text-amber-300 transition-colors">Home</Link>
+          <div className="flex items-center gap-2 text-red-300 text-sm mb-6">
+            <Link href="/" className="hover:text-orange-300 transition-colors">Home</Link>
             <ChevronRight size={14} />
-            <span className="text-amber-300">Chapter {chapterNum}</span>
+            <span className="text-orange-300">Chapter {chapterNum}</span>
           </div>
 
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-3">
               <span className="text-4xl">{chapter.icon}</span>
               <div>
-                <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest">
+                <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest">
                   Chapter {chapterNum} of 18
                 </p>
                 {chapterNum === 6 && (
-                  <span className="inline-flex items-center gap-1 bg-amber-400 text-indigo-950 text-xs font-bold px-2 py-0.5 rounded-full mt-1">
+                  <span className="inline-flex items-center gap-1 bg-orange-400 text-red-950 text-xs font-bold px-2 py-0.5 rounded-full mt-1">
                     <Sparkles size={10} />
                     Full Journey Content
                   </span>
@@ -65,24 +65,24 @@ export default function ChapterPage() {
             <h1 className="text-white font-display text-3xl lg:text-5xl font-bold leading-tight mb-1">
               {chapter.name}
             </h1>
-            <p className="text-amber-300 font-devanagari text-xl lg:text-2xl mb-2">{chapter.name_hindi}</p>
-            <p className="text-indigo-200 text-base italic mb-4">{chapter.subtitle}</p>
-            <p className="text-indigo-100 text-sm lg:text-base leading-relaxed max-w-2xl">{chapter.summary}</p>
+            <p className="text-orange-300 font-devanagari text-xl lg:text-2xl mb-2">{chapter.name_hindi}</p>
+            <p className="text-red-200 text-base italic mb-4">{chapter.subtitle}</p>
+            <p className="text-red-100 text-sm lg:text-base leading-relaxed max-w-2xl">{chapter.summary}</p>
 
             <div className="flex flex-wrap items-center gap-4 mt-6">
               <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
-                <BookOpen size={14} className="text-amber-400" />
+                <BookOpen size={14} className="text-orange-400" />
                 <span className="text-white text-sm">{chapter.verses_count} verses</span>
               </div>
               <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
-                <Star size={14} className="text-amber-400" />
+                <Star size={14} className="text-orange-400" />
                 <span className="text-white text-sm">{chapter.theme}</span>
               </div>
               {chapterNum === 6 && (
                 <>
-                  <div className="flex items-center gap-2 bg-amber-400/20 border border-amber-400/40 rounded-full px-4 py-2">
-                    <Sparkles size={14} className="text-amber-400" />
-                    <span className="text-amber-300 text-sm font-semibold">{verses.length} verses with full explanations</span>
+                  <div className="flex items-center gap-2 bg-orange-400/20 border border-orange-400/40 rounded-full px-4 py-2">
+                    <Sparkles size={14} className="text-orange-400" />
+                    <span className="text-orange-300 text-sm font-semibold">{verses.length} verses with full explanations</span>
                   </div>
                   <Link href={`/chapter/${chapterNum}/games`}>
                     <div className="flex items-center gap-2 bg-pink-400/20 border border-pink-400/40 hover:bg-pink-400/30 rounded-full px-4 py-2 transition-all cursor-pointer">
@@ -136,12 +136,12 @@ export default function ChapterPage() {
         )}
 
         {chapterNum === 6 && (
-          <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl">
-            <p className="text-amber-800 text-sm font-semibold flex items-center gap-2">
+          <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl">
+            <p className="text-orange-800 text-sm font-semibold flex items-center gap-2">
               <Sparkles size={14} />
               This chapter contains the complete Gita Journey content from your uploaded documents.
             </p>
-            <p className="text-amber-700 text-xs mt-1">
+            <p className="text-orange-700 text-xs mt-1">
               Each verse includes: Sanskrit shloka, transliteration, word-by-word meaning, full journey explanation, Mahabharata story, real-life example, final takeaway, and Sanskrit grammar.
             </p>
           </div>
@@ -153,16 +153,16 @@ export default function ChapterPage() {
               key={verse.verse}
               href={`/chapter/${chapterNum}/verse/${verse.verse}`}
             >
-              <div className="group bg-card border border-border hover:border-amber-300 rounded-xl p-4 lg:p-5 transition-all hover:shadow-md cursor-pointer">
+              <div className="group bg-card border border-border hover:border-orange-300 rounded-xl p-4 lg:p-5 transition-all hover:shadow-md cursor-pointer">
                 <div className="flex items-start gap-4">
                   {/* Verse number badge */}
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-indigo-950 text-amber-300 flex items-center justify-center font-bold text-sm group-hover:bg-amber-400 group-hover:text-indigo-950 transition-all">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-950 text-orange-300 flex items-center justify-center font-bold text-sm group-hover:bg-orange-400 group-hover:text-red-950 transition-all">
                     {verse.verse}
                   </div>
 
                   <div className="flex-1 min-w-0">
                     {/* Sanskrit snippet */}
-                    <p className="font-devanagari text-indigo-900 text-sm leading-relaxed mb-1 line-clamp-1">
+                    <p className="font-devanagari text-red-900 text-sm leading-relaxed mb-1 line-clamp-1">
                       {verse.sanskrit.split('\n')[0]}
                     </p>
                     {/* One-line meaning */}
@@ -173,13 +173,13 @@ export default function ChapterPage() {
                     {/* Tags */}
                     <div className="flex flex-wrap gap-2 mt-2">
                       {verse.story && (
-                        <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">📖 Story</span>
+                        <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">📖 Story</span>
                       )}
                       {verse.real_life_example && (
                         <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">🌱 Example</span>
                       )}
                       {verse.grammar_notes && (
-                        <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">📝 Grammar</span>
+                        <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">📝 Grammar</span>
                       )}
                       {verse.full_journey_text && (
                         <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">✨ Full Journey</span>
@@ -187,7 +187,7 @@ export default function ChapterPage() {
                     </div>
                   </div>
 
-                  <ChevronRight size={18} className="flex-shrink-0 text-muted-foreground group-hover:text-amber-500 transition-colors mt-1" />
+                  <ChevronRight size={18} className="flex-shrink-0 text-muted-foreground group-hover:text-orange-500 transition-colors mt-1" />
                 </div>
               </div>
             </Link>
@@ -198,7 +198,7 @@ export default function ChapterPage() {
         <div className="flex items-center justify-between mt-10 pt-6 border-t border-border">
           {prevChapter ? (
             <Link href={`/chapter/${prevChapter}`}>
-              <button className="flex items-center gap-2 text-sm text-indigo-700 hover:text-amber-600 transition-colors font-semibold">
+              <button className="flex items-center gap-2 text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold">
                 <ChevronLeft size={16} />
                 Chapter {prevChapter}
               </button>
@@ -213,7 +213,7 @@ export default function ChapterPage() {
 
           {nextChapter ? (
             <Link href={`/chapter/${nextChapter}`}>
-              <button className="flex items-center gap-2 text-sm text-indigo-700 hover:text-amber-600 transition-colors font-semibold">
+              <button className="flex items-center gap-2 text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold">
                 Chapter {nextChapter}
                 <ChevronRight size={16} />
               </button>

@@ -1,5 +1,5 @@
 // Games Hub Page — Chapter 6 Interactive Learning Games
-// Design: Playful Vedic — Baloo 2 font, bright cards, animated elements
+// Design: Playful Vedic — Baloo 2 font, bright cards, animated elements (Gurukula palette)
 import { useState } from "react";
 import { Link, useParams } from "wouter";
 import Layout from "@/components/Layout";
@@ -32,14 +32,14 @@ const GAMES = [
     title: "Fill in the Blank",
     emoji: "🧩",
     description: "Complete the verse! Choose the right word to fill in the missing part of each shloka.",
-    color: "from-amber-500 to-orange-500",
-    bg: "bg-amber-50",
-    border: "border-amber-200",
+    color: "from-orange-500 to-red-500",
+    bg: "bg-orange-50",
+    border: "border-orange-200",
     badge: "Vocabulary",
-    badgeColor: "bg-amber-100 text-amber-700",
+    badgeColor: "bg-orange-100 text-orange-700",
     icon: <Puzzle size={28} />,
     difficulty: "Medium",
-    diffColor: "text-amber-600",
+    diffColor: "text-orange-600",
   },
   {
     id: "quiz" as GameId,
@@ -53,7 +53,7 @@ const GAMES = [
     badgeColor: "bg-teal-100 text-teal-700",
     icon: <Trophy size={28} />,
     difficulty: "Medium",
-    diffColor: "text-amber-600",
+    diffColor: "text-orange-600",
   },
   {
     id: "scramble" as GameId,
@@ -74,11 +74,11 @@ const GAMES = [
     title: "Speed Round",
     emoji: "⚡",
     description: "True or False — super fast! 10 questions, 10 seconds each. How many can you get right?",
-    color: "from-indigo-500 to-blue-600",
-    bg: "bg-indigo-50",
-    border: "border-indigo-200",
+    color: "from-red-700 to-red-600",
+    bg: "bg-red-50",
+    border: "border-red-200",
     badge: "Speed",
-    badgeColor: "bg-indigo-100 text-indigo-700",
+    badgeColor: "bg-red-100 text-red-700",
     icon: <Zap size={28} />,
     difficulty: "Easy",
     diffColor: "text-green-600",
@@ -96,25 +96,25 @@ export default function GamesPage() {
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
       {/* Header */}
-      <div className="bg-gradient-to-b from-indigo-950 to-indigo-900 px-4 py-8 lg:py-10">
-        <div className="flex items-center gap-2 text-indigo-300 text-xs mb-4">
-          <Link href="/" className="hover:text-amber-300 transition-colors">Home</Link>
+      <div className="bg-gradient-to-b from-red-950 to-red-900 px-4 py-8 lg:py-10">
+        <div className="flex items-center gap-2 text-red-300 text-xs mb-4">
+          <Link href="/" className="hover:text-orange-300 transition-colors">Home</Link>
           <span>/</span>
-          <Link href={`/chapter/${chapterNum}`} className="hover:text-amber-300 transition-colors">
+          <Link href={`/chapter/${chapterNum}`} className="hover:text-orange-300 transition-colors">
             Chapter {chapterNum}
           </Link>
           <span>/</span>
-          <span className="text-amber-300">Games</span>
+          <span className="text-orange-300">Games</span>
         </div>
 
         <div className="max-w-3xl">
           <div className="flex items-center gap-3 mb-3">
             <span className="text-4xl">🎮</span>
             <div>
-              <p className="text-amber-400 text-xs font-semibold uppercase tracking-widest">
+              <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest">
                 Chapter 6 · Dhyana Yoga
               </p>
-              <span className="inline-flex items-center gap-1 bg-amber-400 text-indigo-950 text-xs font-bold px-2 py-0.5 rounded-full mt-1 font-kids">
+              <span className="inline-flex items-center gap-1 bg-orange-400 text-red-950 text-xs font-bold px-2 py-0.5 rounded-full mt-1 font-kids">
                 <Star size={10} fill="currentColor" />
                 5 Fun Games
               </span>
@@ -123,7 +123,7 @@ export default function GamesPage() {
           <h1 className="text-white font-kids text-3xl lg:text-5xl font-bold leading-tight mb-2">
             Learning Games! 🌟
           </h1>
-          <p className="text-indigo-200 text-sm lg:text-base leading-relaxed">
+          <p className="text-red-200 text-sm lg:text-base leading-relaxed">
             Play games to learn the Bhagavad Gita! Each game helps you remember the verses, their meanings, and the wonderful stories from Chapter 6.
           </p>
         </div>
@@ -134,7 +134,7 @@ export default function GamesPage() {
         <div className="max-w-3xl mx-auto px-4 py-6">
           <button
             onClick={() => setActiveGame(null)}
-            className="flex items-center gap-2 text-sm text-indigo-700 hover:text-amber-600 transition-colors font-semibold mb-6 font-kids"
+            className="flex items-center gap-2 text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold mb-6 font-kids"
           >
             <ChevronLeft size={16} />
             Back to Games
@@ -165,7 +165,7 @@ export default function GamesPage() {
         <div className="max-w-3xl mx-auto px-4 py-8">
           <div className="flex items-center gap-3 mb-6">
             <h2 className="font-kids text-2xl font-bold text-foreground">Choose a Game</h2>
-            <div className="flex-1 h-px bg-gradient-to-r from-amber-300 to-transparent" />
+            <div className="flex-1 h-px bg-gradient-to-r from-orange-300 to-transparent" />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -204,7 +204,7 @@ export default function GamesPage() {
           {/* Back to chapter */}
           <div className="mt-8 text-center">
             <Link href={`/chapter/${chapterNum}`}>
-              <button className="flex items-center gap-2 mx-auto text-sm text-indigo-700 hover:text-amber-600 transition-colors font-semibold font-kids">
+              <button className="flex items-center gap-2 mx-auto text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold font-kids">
                 <ChevronLeft size={16} />
                 Back to Chapter {chapterNum} Verses
               </button>

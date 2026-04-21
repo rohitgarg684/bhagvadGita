@@ -1,5 +1,5 @@
 // Layout: Modern Vedic Learning Platform
-// Deep indigo sidebar, warm cream content area, amber accents
+// Deep maroon sidebar, warm cream content area, saffron orange accents
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import gitaData from "@/data/gitaData.json";
@@ -21,7 +21,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
   const { user, isAdmin, signOut } = useAuth();
 
   const chapterGroups = [
-    { label: "Karma Kanda", range: [1, 6], color: "text-amber-700" },
+    { label: "Karma Kanda", range: [1, 6], color: "text-orange-700" },
     { label: "Upasana Kanda", range: [7, 12], color: "text-teal-700" },
     { label: "Jnana Kanda", range: [13, 18], color: "text-rose-700" },
   ];
@@ -34,14 +34,14 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden text-white hover:text-amber-100 transition-colors p-1"
+              className="lg:hidden text-white hover:text-orange-100 transition-colors p-1"
               aria-label="Toggle menu"
             >
               {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
             <Link href="/" className="flex items-center gap-2 group">
               <span className="text-white text-2xl">🕉</span>
-              <span className="font-display text-white font-semibold text-lg lg:text-xl tracking-wide group-hover:text-amber-100 transition-colors">
+              <span className="font-display text-white font-semibold text-lg lg:text-xl tracking-wide group-hover:text-orange-100 transition-colors">
                 Bhagavad Gita
               </span>
             </Link>
@@ -53,7 +53,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
                 onClick={onToggleKids}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-semibold transition-all ${
                   kidsMode
-                    ? "bg-white text-amber-700 font-bold"
+                    ? "bg-white text-orange-700 font-bold"
                     : "bg-white/20 text-white hover:bg-white/30"
                 }`}
               >
@@ -63,7 +63,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
             )}
             <Link
               href="/"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-white hover:text-amber-100 hover:bg-white/20 transition-all"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-white hover:text-orange-100 hover:bg-white/20 transition-all"
             >
               <Home size={15} />
               Home
@@ -71,7 +71,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
             {isAdmin && user && (
               <button
                 onClick={signOut}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-amber-400/20 border border-amber-400/40 text-amber-200 hover:bg-amber-400/30 transition-all"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-orange-400/20 border border-orange-400/40 text-orange-200 hover:bg-orange-400/30 transition-all"
                 title="Sign out admin"
               >
                 <img
@@ -108,8 +108,8 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
         >
           <div className="p-4">
             <div className="flex items-center gap-2 mb-5 px-2">
-              <BookOpen size={17} className="text-amber-600" />
-              <span className="text-amber-700 text-sm font-semibold uppercase tracking-widest">
+              <BookOpen size={17} className="text-orange-600" />
+              <span className="text-orange-700 text-sm font-semibold uppercase tracking-widest">
                 18 Chapters
               </span>
             </div>
@@ -132,8 +132,8 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
                           className={`
                             flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-base transition-all group
                             ${isActive
-                              ? "bg-amber-100 text-amber-900 font-semibold border-l-2 border-amber-500"
-                              : "text-gray-700 hover:bg-amber-50 hover:text-gray-900"
+                              ? "bg-orange-100 text-orange-900 font-semibold border-l-2 border-orange-500"
+                              : "text-gray-700 hover:bg-orange-50 hover:text-gray-900"
                             }
                           `}
                         >

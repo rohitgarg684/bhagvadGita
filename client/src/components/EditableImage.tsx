@@ -212,7 +212,7 @@ function UploadDialog({
           ) : (
             <button
               onClick={() => inputRef.current?.click()}
-              className="w-full border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center gap-2 text-muted-foreground hover:border-amber-400 hover:text-amber-600 transition-colors"
+              className="w-full border-2 border-dashed border-border rounded-lg p-6 flex flex-col items-center gap-2 text-muted-foreground hover:border-orange-400 hover:text-orange-600 transition-colors"
             >
               <ImageIcon size={24} />
               <span className="text-sm font-medium">
@@ -247,7 +247,7 @@ function UploadDialog({
           <button
             onClick={onUpload}
             disabled={!file || uploading}
-            className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 disabled:cursor-not-allowed text-indigo-950 font-semibold px-4 py-2 rounded-lg transition-colors text-sm"
+            className="flex items-center gap-2 bg-orange-500 hover:bg-orange-400 disabled:opacity-50 disabled:cursor-not-allowed text-red-950 font-semibold px-4 py-2 rounded-lg transition-colors text-sm"
           >
             {uploading ? (
               <>

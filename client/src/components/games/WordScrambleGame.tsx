@@ -69,7 +69,7 @@ export default function WordScrambleGame({ chapterNum: _ }: Props) {
     return (
       <div className="text-center py-6 px-4">
         <div className="text-6xl mb-3">{emoji}</div>
-        <h3 className="font-kids font-bold text-2xl text-indigo-900 mb-1">{msg}</h3>
+        <h3 className="font-kids font-bold text-2xl text-red-900 mb-1">{msg}</h3>
         <p className="text-gray-600 font-kids text-lg mb-2">
           Score: <strong className="text-rose-600">{score}</strong> / {maxScore}
         </p>
@@ -111,25 +111,25 @@ export default function WordScrambleGame({ chapterNum: _ }: Props) {
         <div className="bg-rose-100 text-rose-700 font-kids font-bold px-3 py-1 rounded-full text-sm">
           Score: {score}
         </div>
-        <div className="text-indigo-600 font-kids text-sm font-semibold">Verse {current.verseRef}</div>
+        <div className="text-red-800 font-kids text-sm font-semibold">Verse {current.verseRef}</div>
       </div>
 
       {/* Scrambled word display */}
-      <div className="bg-indigo-950 rounded-xl p-5 mb-4 text-center">
-        <p className="text-amber-300 text-xs font-kids font-bold uppercase tracking-wide mb-3">
+      <div className="bg-red-950 rounded-xl p-5 mb-4 text-center">
+        <p className="text-orange-300 text-xs font-kids font-bold uppercase tracking-wide mb-3">
           🔤 Unscramble this Sanskrit word!
         </p>
         <div className="flex flex-wrap justify-center gap-2 mb-3">
           {letters.map((letter, i) => (
             <span
               key={i}
-              className="w-9 h-9 bg-amber-400 text-indigo-950 font-kids font-bold text-base rounded-lg flex items-center justify-center shadow-md"
+              className="w-9 h-9 bg-orange-400 text-red-950 font-kids font-bold text-base rounded-lg flex items-center justify-center shadow-md"
             >
               {letter}
             </span>
           ))}
         </div>
-        <p className="text-indigo-300 text-xs font-kids italic">"{current.meaning}"</p>
+        <p className="text-orange-200 text-xs font-kids italic">"{current.meaning}"</p>
       </div>
 
       {/* Hint */}
@@ -183,7 +183,7 @@ export default function WordScrambleGame({ chapterNum: _ }: Props) {
             Meaning: {current.meaning} (Verse {current.verseRef})
           </p>
           {attempts === 1 && (
-            <p className="text-amber-600 font-kids text-xs mt-1 font-bold">⭐ +2 bonus for first try!</p>
+            <p className="text-orange-600 font-kids text-xs mt-1 font-bold">⭐ +2 bonus for first try!</p>
           )}
         </div>
       )}

@@ -54,7 +54,7 @@ export default function VerseQuizGame({ chapterNum: _ }: Props) {
     return (
       <div className="text-center py-6 px-4">
         <div className="text-6xl mb-3">{emoji}</div>
-        <h3 className="font-kids font-bold text-2xl text-indigo-900 mb-1">{msg}</h3>
+        <h3 className="font-kids font-bold text-2xl text-red-900 mb-1">{msg}</h3>
         <p className="text-gray-600 font-kids text-lg mb-4">
           You got <strong className="text-teal-600">{score}</strong> out of <strong>{total}</strong> correct!
         </p>
@@ -104,14 +104,14 @@ export default function VerseQuizGame({ chapterNum: _ }: Props) {
         <div className="bg-teal-100 text-teal-700 font-kids font-bold px-3 py-1 rounded-full text-sm">
           Score: {score}
         </div>
-        <div className="text-amber-600 font-kids text-sm font-semibold">
+        <div className="text-orange-600 font-kids text-sm font-semibold">
           {q.emoji} Verse {q.verseRef}
         </div>
       </div>
 
       {/* Question */}
-      <div className="bg-indigo-950 rounded-xl p-4 mb-4">
-        <p className="text-amber-300 text-xs font-kids font-bold uppercase tracking-wide mb-2">Question {currentQ + 1}</p>
+      <div className="bg-red-950 rounded-xl p-4 mb-4">
+        <p className="text-orange-300 text-xs font-kids font-bold uppercase tracking-wide mb-2">Question {currentQ + 1}</p>
         <p className="text-white font-kids text-base leading-relaxed">{q.question}</p>
       </div>
 

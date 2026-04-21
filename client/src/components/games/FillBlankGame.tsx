@@ -58,17 +58,17 @@ export default function FillBlankGame({ chapterNum: _ }: Props) {
     return (
       <div className="text-center py-6 px-4">
         <div className="text-6xl mb-3">{emoji}</div>
-        <h3 className="font-kids font-bold text-2xl text-indigo-900 mb-1">{msg}</h3>
+        <h3 className="font-kids font-bold text-2xl text-red-900 mb-1">{msg}</h3>
         <p className="text-gray-600 font-kids text-lg mb-6">
-          You got <strong className="text-amber-600">{score}</strong> out of <strong>{total}</strong> correct!
+          You got <strong className="text-orange-600">{score}</strong> out of <strong>{total}</strong> correct!
         </p>
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 text-left">
-          <p className="text-amber-800 font-kids font-bold text-sm mb-1">📝 Sanskrit Tip!</p>
-          <p className="text-amber-700 font-kids text-sm">Reading Sanskrit transliteration helps you pronounce the shlokas correctly. Keep practicing!</p>
+        <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6 text-left">
+          <p className="text-orange-800 font-kids font-bold text-sm mb-1">📝 Sanskrit Tip!</p>
+          <p className="text-orange-700 font-kids text-sm">Reading Sanskrit transliteration helps you pronounce the shlokas correctly. Keep practicing!</p>
         </div>
         <button
           onClick={resetGame}
-          className="flex items-center gap-2 mx-auto bg-amber-500 hover:bg-amber-400 text-white font-kids font-bold px-6 py-3 rounded-full transition-all shadow-md"
+          className="flex items-center gap-2 mx-auto bg-orange-500 hover:bg-orange-400 text-white font-kids font-bold px-6 py-3 rounded-full transition-all shadow-md"
         >
           <RotateCcw size={16} />
           Try Again
@@ -86,7 +86,7 @@ export default function FillBlankGame({ chapterNum: _ }: Props) {
       <div className="flex items-center gap-3 mb-4">
         <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
           <div
-            className="h-full bg-amber-500 rounded-full transition-all duration-500"
+            className="h-full bg-orange-500 rounded-full transition-all duration-500"
             style={{ width: `${(currentQ / total) * 100}%` }}
           />
         </div>
@@ -94,26 +94,26 @@ export default function FillBlankGame({ chapterNum: _ }: Props) {
       </div>
 
       <div className="flex justify-between items-center mb-4">
-        <div className="bg-amber-100 text-amber-700 font-kids font-bold px-3 py-1 rounded-full text-sm">
+        <div className="bg-orange-100 text-orange-700 font-kids font-bold px-3 py-1 rounded-full text-sm">
           Score: {score}
         </div>
-        <div className="text-indigo-600 font-kids text-sm font-semibold">Verse {q.verseRef}</div>
+        <div className="text-red-800 font-kids text-sm font-semibold">Verse {q.verseRef}</div>
       </div>
 
       {/* Verse with blank */}
-      <div className="bg-indigo-950 rounded-xl p-4 mb-4">
-        <p className="text-amber-300 text-xs font-kids font-bold uppercase tracking-wide mb-3">
+      <div className="bg-red-950 rounded-xl p-4 mb-4">
+        <p className="text-orange-300 text-xs font-kids font-bold uppercase tracking-wide mb-3">
           🧩 Fill in the blank!
         </p>
         <p className="text-white/80 font-kids text-sm leading-relaxed italic mb-3">
           {q.beforeBlank}{" "}
-          <span className="inline-block bg-amber-400 text-indigo-950 font-bold px-3 py-0.5 rounded-lg mx-1 min-w-[80px] text-center">
+          <span className="inline-block bg-orange-400 text-red-950 font-bold px-3 py-0.5 rounded-lg mx-1 min-w-[80px] text-center">
             {answered ? q.blank : "______"}
           </span>
           {" "}{q.afterBlank}
         </p>
         <div className="border-t border-white/10 pt-3 mt-2">
-          <p className="text-indigo-300 text-xs font-kids italic">"{q.meaning}"</p>
+          <p className="text-orange-200 text-xs font-kids italic">"{q.meaning}"</p>
         </div>
       </div>
 
@@ -122,7 +122,7 @@ export default function FillBlankGame({ chapterNum: _ }: Props) {
         {opts.map((opt, displayIdx) => {
           const isCorrect = displayIdx === correctDisplayIdx;
           const isSelected = displayIdx === selected;
-          let style = "bg-white border-gray-200 text-gray-800 hover:border-amber-300 hover:bg-amber-50";
+          let style = "bg-white border-gray-200 text-gray-800 hover:border-orange-300 hover:bg-orange-50";
           if (answered) {
             if (isCorrect) style = "bg-green-100 border-green-500 text-green-800";
             else if (isSelected) style = "bg-red-100 border-red-400 text-red-800";
@@ -159,7 +159,7 @@ export default function FillBlankGame({ chapterNum: _ }: Props) {
       {answered && (
         <button
           onClick={handleNext}
-          className="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-kids font-bold py-3 rounded-xl transition-all shadow-md"
+          className="w-full flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-400 text-white font-kids font-bold py-3 rounded-xl transition-all shadow-md"
         >
           {currentQ + 1 >= total ? "See Results 🏆" : "Next Verse"}
           <ChevronRight size={16} />

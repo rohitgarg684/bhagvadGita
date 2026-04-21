@@ -88,13 +88,13 @@ export default function SpeedRoundGame({ chapterNum: _ }: Props) {
     return (
       <div className="text-center py-8 px-4">
         <div className="text-6xl mb-4">⚡</div>
-        <h3 className="font-kids font-bold text-2xl text-indigo-900 mb-2">Speed Round!</h3>
+        <h3 className="font-kids font-bold text-2xl text-red-900 mb-2">Speed Round!</h3>
         <p className="text-gray-600 font-kids text-base mb-6 max-w-sm mx-auto">
           {total} True/False questions. You have <strong>{TIME_PER_Q} seconds</strong> per question. Answer as fast as you can!
         </p>
-        <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-6 text-left max-w-sm mx-auto">
-          <p className="text-indigo-800 font-kids font-bold text-sm mb-2">📋 Rules:</p>
-          <ul className="text-indigo-700 font-kids text-sm space-y-1">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-left max-w-sm mx-auto">
+          <p className="text-red-800 font-kids font-bold text-sm mb-2">📋 Rules:</p>
+          <ul className="text-red-700 font-kids text-sm space-y-1">
             <li>✅ Tap TRUE if the statement is correct</li>
             <li>❌ Tap FALSE if the statement is wrong</li>
             <li>⏰ {TIME_PER_Q} seconds per question</li>
@@ -103,7 +103,7 @@ export default function SpeedRoundGame({ chapterNum: _ }: Props) {
         </div>
         <button
           onClick={() => setGameStarted(true)}
-          className="flex items-center gap-2 mx-auto bg-indigo-600 hover:bg-indigo-500 text-white font-kids font-bold px-8 py-4 rounded-full transition-all shadow-lg text-lg"
+          className="flex items-center gap-2 mx-auto bg-red-800 hover:bg-red-700 text-white font-kids font-bold px-8 py-4 rounded-full transition-all shadow-lg text-lg"
         >
           <Zap size={20} />
           Start!
@@ -118,9 +118,9 @@ export default function SpeedRoundGame({ chapterNum: _ }: Props) {
     return (
       <div className="text-center py-6 px-4">
         <div className="text-6xl mb-3">{emoji}</div>
-        <h3 className="font-kids font-bold text-2xl text-indigo-900 mb-1">{msg}</h3>
+        <h3 className="font-kids font-bold text-2xl text-red-900 mb-1">{msg}</h3>
         <p className="text-gray-600 font-kids text-lg mb-4">
-          <strong className="text-indigo-600">{score}</strong> / {total} correct!
+          <strong className="text-red-800">{score}</strong> / {total} correct!
         </p>
 
         {/* Result dots */}
@@ -137,14 +137,14 @@ export default function SpeedRoundGame({ chapterNum: _ }: Props) {
           ))}
         </div>
 
-        <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 mb-6 text-left">
-          <p className="text-indigo-800 font-kids font-bold text-sm mb-1">⚡ Speed Tip!</p>
-          <p className="text-indigo-700 font-kids text-sm">Read the verses carefully and you'll answer faster next time. The more you read, the quicker you'll know!</p>
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6 text-left">
+          <p className="text-red-800 font-kids font-bold text-sm mb-1">⚡ Speed Tip!</p>
+          <p className="text-red-700 font-kids text-sm">Read the verses carefully and you'll answer faster next time. The more you read, the quicker you'll know!</p>
         </div>
 
         <button
           onClick={resetGame}
-          className="flex items-center gap-2 mx-auto bg-indigo-600 hover:bg-indigo-500 text-white font-kids font-bold px-6 py-3 rounded-full transition-all shadow-md"
+          className="flex items-center gap-2 mx-auto bg-red-800 hover:bg-red-700 text-white font-kids font-bold px-6 py-3 rounded-full transition-all shadow-md"
         >
           <RotateCcw size={16} />
           Play Again
@@ -154,14 +154,14 @@ export default function SpeedRoundGame({ chapterNum: _ }: Props) {
   }
 
   const timerPct = (timeLeft / TIME_PER_Q) * 100;
-  const timerColor = timeLeft > 6 ? "bg-green-500" : timeLeft > 3 ? "bg-amber-500" : "bg-red-500";
+  const timerColor = timeLeft > 6 ? "bg-green-500" : timeLeft > 3 ? "bg-orange-500" : "bg-red-500";
   const isAnswered = answered !== null;
 
   return (
     <div className="p-2">
       {/* Top bar */}
       <div className="flex items-center justify-between mb-3">
-        <div className="bg-indigo-100 text-indigo-700 font-kids font-bold px-3 py-1 rounded-full text-sm">
+        <div className="bg-red-100 text-red-700 font-kids font-bold px-3 py-1 rounded-full text-sm">
           Score: {score}
         </div>
         <div className="flex items-center gap-2">
@@ -181,13 +181,13 @@ export default function SpeedRoundGame({ chapterNum: _ }: Props) {
       </div>
 
       {/* Question */}
-      <div className="bg-indigo-950 rounded-xl p-5 mb-5">
+      <div className="bg-red-950 rounded-xl p-5 mb-5">
         <div className="flex items-center gap-2 mb-3">
-          <Zap size={14} className="text-amber-400" />
-          <span className="text-amber-400 text-xs font-kids font-bold uppercase tracking-wide">
+          <Zap size={14} className="text-orange-400" />
+          <span className="text-orange-400 text-xs font-kids font-bold uppercase tracking-wide">
             True or False?
           </span>
-          <span className="text-indigo-400 text-xs font-kids ml-auto">Verse {q.verseRef}</span>
+          <span className="text-orange-300 text-xs font-kids ml-auto">Verse {q.verseRef}</span>
         </div>
         <p className="text-white font-kids text-base leading-relaxed">{q.question}</p>
       </div>
