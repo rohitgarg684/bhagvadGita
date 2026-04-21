@@ -117,10 +117,14 @@ export default function VersePage() {
 
   const initAudio = useCallback((url: string) => {
     if (audioRef.current) return audioRef.current;
-    const a = new Audio(url);
+    const a = new Audio();
+    a.crossOrigin = "anonymous";
+    a.preload = "metadata";
     a.addEventListener("loadedmetadata", () => setAudioDuration(a.duration));
     a.addEventListener("timeupdate", () => setAudioCurrentTime(a.currentTime));
     a.addEventListener("ended", () => { setAudioPlaying(false); setAudioCurrentTime(0); });
+    a.addEventListener("error", () => { setAudioPlaying(false); });
+    a.src = url;
     audioRef.current = a;
     return a;
   }, []);
@@ -131,7 +135,7 @@ export default function VersePage() {
       a.pause();
       setAudioPlaying(false);
     } else {
-      a.play();
+      a.play().catch(() => setAudioPlaying(false));
       setAudioPlaying(true);
     }
   }
