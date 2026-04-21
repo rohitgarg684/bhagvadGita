@@ -19,9 +19,9 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
   const [location] = useLocation();
 
   const chapterGroups = [
-    { label: "Karma Kanda", range: [1, 6], color: "text-amber-400" },
-    { label: "Upasana Kanda", range: [7, 12], color: "text-teal-400" },
-    { label: "Jnana Kanda", range: [13, 18], color: "text-rose-400" },
+    { label: "Karma Kanda", range: [1, 6], color: "text-amber-700" },
+    { label: "Upasana Kanda", range: [7, 12], color: "text-teal-700" },
+    { label: "Jnana Kanda", range: [13, 18], color: "text-rose-700" },
   ];
 
   return (
@@ -32,14 +32,14 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden text-amber-300 hover:text-amber-100 transition-colors p-1"
+              className="lg:hidden text-white hover:text-amber-100 transition-colors p-1"
               aria-label="Toggle menu"
             >
               {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="text-amber-400 text-xl">🕉</span>
-              <span className="font-display text-white font-semibold text-base lg:text-lg tracking-wide group-hover:text-amber-200 transition-colors">
+              <span className="text-white text-xl">🕉</span>
+              <span className="font-display text-white font-semibold text-base lg:text-lg tracking-wide group-hover:text-amber-100 transition-colors">
                 Bhagavad Gita
               </span>
             </Link>
@@ -51,8 +51,8 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
                 onClick={onToggleKids}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                   kidsMode
-                    ? "bg-amber-400 text-indigo-900"
-                    : "bg-white/10 text-amber-200 hover:bg-white/20"
+                    ? "bg-white text-amber-700 font-bold"
+                    : "bg-white/20 text-white hover:bg-white/30"
                 }`}
               >
                 <Star size={12} />
@@ -61,7 +61,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
             )}
             <Link
               href="/"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-amber-200 hover:text-white hover:bg-white/10 transition-all"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-white hover:text-amber-100 hover:bg-white/20 transition-all"
             >
               <Home size={13} />
               Home
@@ -91,8 +91,8 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
         >
           <div className="p-4">
             <div className="flex items-center gap-2 mb-5 px-2">
-              <BookOpen size={15} className="text-amber-400" />
-              <span className="text-amber-300 text-xs font-semibold uppercase tracking-widest">
+              <BookOpen size={15} className="text-amber-600" />
+              <span className="text-amber-700 text-xs font-semibold uppercase tracking-widest">
                 18 Chapters
               </span>
             </div>
@@ -115,8 +115,8 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
                           className={`
                             flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-all group
                             ${isActive
-                              ? "bg-sidebar-primary text-sidebar-primary-foreground font-semibold"
-                              : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                              ? "bg-amber-100 text-amber-900 font-semibold border-l-2 border-amber-500"
+                              : "text-gray-700 hover:bg-amber-50 hover:text-gray-900"
                             }
                           `}
                         >
