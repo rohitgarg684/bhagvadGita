@@ -1,6 +1,4 @@
 import { useState, useRef, useCallback } from "react";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { Pencil, Upload, Loader2, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -13,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import { useImageUrl } from "@/hooks/useImages";
-import { storage, db } from "@/lib/firebase";
+import { auth } from "@/lib/firebase";
 import { cn } from "@/lib/utils";
 
 interface EditableImageProps {
@@ -60,21 +58,26 @@ export default function EditableImage({
   );
 
   const handleUpload = useCallback(async () => {
-    if (!file || !user?.email || !storage || !db) return;
+    if (!file || !user?.email || !auth) return;
     setUploading(true);
     try {
-      const ext = file.name.split(".").pop() || "webp";
-      const storagePath = `images/${imageKey}/${Date.now()}.${ext}`;
-      const storageRef = ref(storage, storagePath);
-      await uploadBytes(storageRef, file);
-      const downloadUrl = await getDownloadURL(storageRef);
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) throw new Error("Not authenticated");
 
-      await setDoc(doc(db, "gita_images", imageKey), {
-        url: downloadUrl,
-        caption: caption || null,
-        updatedAt: serverTimestamp(),
-        updatedBy: user.email,
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "Content-Type": file.type,
+          Authorization: `Bearer ${token}`,
+          "x-image-key": imageKey,
+        },
+        body: file,
       });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({ error: "Upload failed" }));
+        throw new Error(data.error || `Upload failed (${res.status})`);
+      }
 
       toast.success("Image updated successfully");
       setDialogOpen(false);
@@ -87,7 +90,7 @@ export default function EditableImage({
     } finally {
       setUploading(false);
     }
-  }, [file, user, imageKey, caption]);
+  }, [file, user, imageKey]);
 
   const resetDialog = useCallback(() => {
     setFile(null);

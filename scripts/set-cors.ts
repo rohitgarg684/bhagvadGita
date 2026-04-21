@@ -21,12 +21,15 @@ async function setCors() {
   await bucket.setCorsConfiguration([
     {
       origin: ["*"],
-      method: ["GET", "HEAD"],
+      method: ["GET", "HEAD", "PUT", "POST", "OPTIONS", "DELETE"],
       responseHeader: [
         "Content-Type",
         "Content-Length",
         "Content-Range",
         "Accept-Ranges",
+        "Authorization",
+        "X-Goog-Resumable",
+        "X-Firebase-Storage-Version",
       ],
       maxAgeSeconds: 86400,
     },
