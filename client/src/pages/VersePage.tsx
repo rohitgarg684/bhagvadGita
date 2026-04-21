@@ -191,9 +191,13 @@ export default function VersePage() {
           <div className="flex flex-col md:flex-row gap-4 mb-4 items-stretch">
             {/* Devanagari Shloka */}
             <div className="bg-gradient-to-br from-indigo-900 to-indigo-800 rounded-2xl p-5 lg:p-6 shadow-md flex-1 flex flex-col">
-              <p className="font-devanagari text-amber-100 text-2xl lg:text-3xl leading-loose flex-1">
-                {verse.sanskrit}
-              </p>
+              <div className="font-devanagari text-amber-100 text-2xl lg:text-3xl flex-1">
+                {verse.sanskrit.split('\n').map((line, i) => (
+                  <p key={i} className={i === 0 ? 'leading-snug mb-1 text-amber-300 text-xl lg:text-2xl font-semibold' : 'leading-loose'}>
+                    {line}
+                  </p>
+                ))}
+              </div>
               {verse.audio_url && (
                 <div className="mt-4 pt-3 border-t border-white/20">
                   <button
@@ -216,9 +220,13 @@ export default function VersePage() {
             {verse.transliteration && (
               <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-5 flex-1 flex flex-col justify-center">
                 <p className="text-amber-600 text-xs font-semibold uppercase tracking-widest mb-2">IAST Transliteration</p>
-                <p className="transliteration-text text-amber-900 text-base lg:text-lg leading-relaxed italic">
-                  {verse.transliteration}
-                </p>
+                <div className="transliteration-text text-amber-900 text-base lg:text-lg italic">
+                  {verse.transliteration.split('\n').map((line, i) => (
+                    <p key={i} className={i === 0 ? 'leading-snug mb-1 text-amber-700 font-semibold not-italic text-sm lg:text-base' : 'leading-relaxed'}>
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </div>
             )}
           </div>
