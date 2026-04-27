@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { toast } from "sonner";
 import { db } from "@/lib/firebase";
 import { useAuth } from "./AuthContext";
 
@@ -84,7 +85,10 @@ export function ChapterVisibilityProvider({ children }: { children: ReactNode })
         await setDoc(doc(db, FIRESTORE_COLLECTION, FIRESTORE_DOC), {
           visible: ALL_CHAPTERS.filter((c) => next.has(c)),
         });
-      } catch {
+        toast.success(`Chapter ${chapter} ${next.has(chapter) ? "visible" : "hidden"}`);
+      } catch (err) {
+        console.error("Failed to save visibility:", err);
+        toast.error("Failed to save — check Firestore permissions");
         setVisibleChapters(visibleChapters);
       }
     },
