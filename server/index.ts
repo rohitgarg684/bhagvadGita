@@ -47,6 +47,42 @@ async function startServer() {
 
   initFirebaseAdmin();
 
+  app.get("/api/chapter-visibility", async (_req, res) => {
+    try {
+      const snap = await getFirestore().collection("gita_config").doc("chapter_visibility").get();
+      if (snap.exists) {
+        res.json(snap.data());
+      } else {
+        res.json({ visible: [12] });
+      }
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to read";
+      res.status(500).json({ error: message });
+    }
+  });
+
+  app.put("/api/chapter-visibility", express.json(), async (req, res) => {
+    const email = await verifyAdmin(req.headers.authorization);
+    if (!email) {
+      res.status(403).json({ error: "Not authorized" });
+      return;
+    }
+
+    const { visible } = req.body;
+    if (!Array.isArray(visible) || !visible.every((v: unknown) => typeof v === "number")) {
+      res.status(400).json({ error: "visible must be an array of numbers" });
+      return;
+    }
+
+    try {
+      await getFirestore().collection("gita_config").doc("chapter_visibility").set({ visible });
+      res.json({ visible });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to save";
+      res.status(500).json({ error: message });
+    }
+  });
+
   app.post("/api/upload", express.raw({ type: "image/*", limit: "10mb" }), async (req, res) => {
     const email = await verifyAdmin(req.headers.authorization);
     if (!email) {

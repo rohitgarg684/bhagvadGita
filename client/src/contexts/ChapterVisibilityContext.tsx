@@ -6,9 +6,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import { toast } from "sonner";
-import { db } from "@/lib/firebase";
 import { useAuth } from "./AuthContext";
 
 interface ChapterVisibilityValue {
@@ -18,8 +16,6 @@ interface ChapterVisibilityValue {
   toggleChapter: (chapter: number) => Promise<void>;
 }
 
-const FIRESTORE_DOC = "chapter_visibility";
-const FIRESTORE_COLLECTION = "gita_config";
 const ALL_CHAPTERS = Array.from({ length: 18 }, (_, i) => i + 1);
 const DEFAULT_VISIBLE = new Set([12]);
 
@@ -34,27 +30,31 @@ export function useChapterVisibility() {
   return useContext(ChapterVisibilityContext);
 }
 
+async function getAuthToken(user: { getIdToken: () => Promise<string> } | null) {
+  if (!user) return null;
+  try {
+    return await user.getIdToken();
+  } catch {
+    return null;
+  }
+}
+
 export function ChapterVisibilityProvider({ children }: { children: ReactNode }) {
   const [visibleChapters, setVisibleChapters] = useState<Set<number>>(DEFAULT_VISIBLE);
   const [loading, setLoading] = useState(true);
-  const { isAdmin } = useAuth();
+  const { isAdmin, user } = useAuth();
 
   useEffect(() => {
-    if (!db) {
-      setLoading(false);
-      return;
-    }
-
     (async () => {
       try {
-        const snap = await getDoc(doc(db, FIRESTORE_COLLECTION, FIRESTORE_DOC));
-        if (snap.exists()) {
-          const data = snap.data();
+        const resp = await fetch("/api/chapter-visibility");
+        if (resp.ok) {
+          const data = await resp.json();
           const chapters: number[] = data.visible ?? [];
           setVisibleChapters(new Set(chapters));
         }
       } catch {
-        // Firestore unavailable — keep defaults
+        // API unavailable — keep defaults
       } finally {
         setLoading(false);
       }
@@ -71,7 +71,7 @@ export function ChapterVisibilityProvider({ children }: { children: ReactNode })
 
   const toggleChapter = useCallback(
     async (chapter: number) => {
-      if (!db || !isAdmin) return;
+      if (!isAdmin || !user) return;
 
       const next = new Set(visibleChapters);
       if (next.has(chapter)) {
@@ -82,17 +82,33 @@ export function ChapterVisibilityProvider({ children }: { children: ReactNode })
       setVisibleChapters(next);
 
       try {
-        await setDoc(doc(db, FIRESTORE_COLLECTION, FIRESTORE_DOC), {
-          visible: ALL_CHAPTERS.filter((c) => next.has(c)),
+        const token = await getAuthToken(user);
+        if (!token) throw new Error("Not authenticated");
+
+        const resp = await fetch("/api/chapter-visibility", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            visible: ALL_CHAPTERS.filter((c) => next.has(c)),
+          }),
         });
+
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({ error: "Unknown error" }));
+          throw new Error(err.error || `HTTP ${resp.status}`);
+        }
+
         toast.success(`Chapter ${chapter} ${next.has(chapter) ? "visible" : "hidden"}`);
       } catch (err) {
         console.error("Failed to save visibility:", err);
-        toast.error("Failed to save — check Firestore permissions");
+        toast.error("Failed to save — check server logs");
         setVisibleChapters(visibleChapters);
       }
     },
-    [visibleChapters, isAdmin],
+    [visibleChapters, isAdmin, user],
   );
 
   return (
