@@ -3,8 +3,9 @@
 // Header: Devanagari shloka + IAST transliteration + one-line meaning always shown at top
 // Design: Light Vedic Learning Platform — warm saffron header, cream content, orange accents (Gurukula palette)
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Link, useParams } from "wouter";
+import { Link, useParams, Redirect } from "wouter";
 import Layout from "@/components/Layout";
+import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
@@ -153,7 +154,9 @@ export default function VersePage() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   }
 
+  const { isChapterVisible } = useChapterVisibility();
   const chapter = data.chapters.find((c) => c.chapter === chapterNum);
+  if (!isChapterVisible(chapterNum)) return <Redirect to="/" />;
   const verses: Verse[] = chapterNum === 6
     ? data.chapter6_full
     : chapter?.key_verses || [];

@@ -6,6 +6,7 @@ import Layout from "@/components/Layout";
 import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData } from "@/types/gita";
+import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import { BookOpen, Star, Users, Sparkles, ChevronRight, Play } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
@@ -37,6 +38,8 @@ const chapterColorMap: Record<number, string> = {
 
 export default function Home() {
   const [kidsMode, setKidsMode] = useState(false);
+  const { isChapterVisible } = useChapterVisibility();
+  const visibleChapters = data.chapters.filter((ch) => isChapterVisible(ch.chapter));
   const totalVerses = data.chapters.reduce((sum, ch) => sum + ch.verses_count, 0);
 
   return (
@@ -157,7 +160,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {data.chapters.map((ch) => (
+          {visibleChapters.map((ch) => (
             <Link key={ch.chapter} href={`/chapter/${ch.chapter}`}>
               <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:border-orange-300 transition-all group cursor-pointer">
                 {/* Color header */}

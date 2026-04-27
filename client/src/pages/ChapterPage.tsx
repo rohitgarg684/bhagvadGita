@@ -1,11 +1,12 @@
 // Chapter Page — Shows chapter overview and all verses
 // Design: Modern Vedic Learning Platform — Gurukula color scheme
 import { useState } from "react";
-import { Link, useParams } from "wouter";
+import { Link, useParams, Redirect } from "wouter";
 import Layout from "@/components/Layout";
 import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
+import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import { ChevronLeft, ChevronRight, BookOpen, Star, Sparkles, Gamepad2 } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
@@ -16,8 +17,10 @@ export default function ChapterPage() {
   const chapterNum = parseInt(params.chapterNum || "1");
   const [kidsMode, setKidsMode] = useState(false);
 
+  const { isChapterVisible } = useChapterVisibility();
   const chapter = data.chapters.find((c) => c.chapter === chapterNum);
   if (!chapter) return <div className="p-8 text-center">Chapter not found</div>;
+  if (!isChapterVisible(chapterNum)) return <Redirect to="/" />;
 
   // For chapter 6, use the full verse list from ZIP; otherwise use key_verses
   const verses: Verse[] = chapterNum === 6

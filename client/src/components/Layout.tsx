@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData } from "@/types/gita";
-import { BookOpen, Home, Menu, X, Star, ChevronRight, LogOut } from "lucide-react";
+import { BookOpen, Home, Menu, X, Star, ChevronRight, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 
 const data = gitaData as unknown as GitaData;
 
@@ -19,6 +20,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [location] = useLocation();
   const { user, isAdmin, signOut } = useAuth();
+  const { isChapterVisible } = useChapterVisibility();
 
   const chapterGroups = [
     { label: "Karma Kanda", range: [1, 6], color: "text-orange-700" },
@@ -69,19 +71,28 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
               Home
             </Link>
             {isAdmin && user && (
-              <button
-                onClick={signOut}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-orange-400/20 border border-orange-400/40 text-orange-200 hover:bg-orange-400/30 transition-all"
-                title="Sign out admin"
-              >
-                <img
-                  src={user.photoURL || ""}
-                  alt=""
-                  className="w-5 h-5 rounded-full"
-                  referrerPolicy="no-referrer"
-                />
-                <LogOut size={12} />
-              </button>
+              <>
+                <Link
+                  href="/settings"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all"
+                  title="Settings"
+                >
+                  <Settings size={12} />
+                </Link>
+                <button
+                  onClick={signOut}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-orange-400/20 border border-orange-400/40 text-orange-200 hover:bg-orange-400/30 transition-all"
+                  title="Sign out admin"
+                >
+                  <img
+                    src={user.photoURL || ""}
+                    alt=""
+                    className="w-5 h-5 rounded-full"
+                    referrerPolicy="no-referrer"
+                  />
+                  <LogOut size={12} />
+                </button>
+              </>
             )}
           </div>
         </div>
@@ -121,7 +132,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
                 </p>
                 <div className="space-y-0.5">
                   {data.chapters
-                    .filter((ch) => ch.chapter >= group.range[0] && ch.chapter <= group.range[1])
+                    .filter((ch) => ch.chapter >= group.range[0] && ch.chapter <= group.range[1] && isChapterVisible(ch.chapter))
                     .map((ch) => {
                       const isActive = location === `/chapter/${ch.chapter}` || location.startsWith(`/chapter/${ch.chapter}/`);
                       return (
