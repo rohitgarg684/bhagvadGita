@@ -45,19 +45,19 @@ function formatText(text: string) {
     if (!line.trim()) return <br key={i} />;
     if (/^Step \d+/.test(line)) {
       return (
-        <h5 key={i} className="font-semibold text-red-800 mt-4 mb-2 text-base border-l-2 border-orange-400 pl-3">
+        <h5 key={i} className="font-semibold text-red-800 mt-4 mb-2 text-lg border-l-2 border-orange-400 pl-3">
           {line}
         </h5>
       );
     }
     if (/^\d+\.\s/.test(line) && line.length < 80) {
       return (
-        <h5 key={i} className="font-semibold text-red-800 mt-4 mb-2 text-base">
+        <h5 key={i} className="font-semibold text-red-800 mt-4 mb-2 text-lg">
           {line}
         </h5>
       );
     }
-    return <p key={i} className="my-2 text-base leading-relaxed">{line}</p>;
+    return <p key={i} className="my-2 text-lg leading-relaxed">{line}</p>;
   });
 }
 

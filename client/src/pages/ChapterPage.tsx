@@ -1,16 +1,52 @@
-// Chapter Page — Shows chapter overview and all verses
-// Design: Modern Vedic Learning Platform — Gurukula color scheme
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Link, useParams, Redirect } from "wouter";
 import Layout from "@/components/Layout";
 import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
-import { ChevronLeft, ChevronRight, BookOpen, Star, Sparkles, Gamepad2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Star, Sparkles, Gamepad2, Play, Pause } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
 const CHAPTER_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663320491203/hKSS9UgtAfoHXBDRJP86JE/gita-chapter-bg-BBW9CLzLwYMkBEiZBvVdpc.webp";
+
+function VerseAudioButton({ audioUrl }: { audioUrl: string }) {
+  const [playing, setPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const toggle = useCallback(() => {
+    if (!audioRef.current) {
+      const a = new Audio();
+      a.crossOrigin = "anonymous";
+      a.src = audioUrl;
+      a.addEventListener("ended", () => setPlaying(false));
+      a.addEventListener("error", () => setPlaying(false));
+      audioRef.current = a;
+    }
+    const a = audioRef.current;
+    if (playing) {
+      a.pause();
+      setPlaying(false);
+    } else {
+      a.play().catch(() => setPlaying(false));
+      setPlaying(true);
+    }
+  }, [audioUrl, playing]);
+
+  return (
+    <button
+      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(); }}
+      className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+        playing
+          ? "bg-orange-500 text-white shadow-md"
+          : "bg-orange-100 text-orange-600 hover:bg-orange-200"
+      }`}
+      title={playing ? "Pause" : "Play shloka"}
+    >
+      {playing ? <Pause size={14} /> : <Play size={14} className="ml-0.5" />}
+    </button>
+  );
+}
 
 export default function ChapterPage() {
   const params = useParams<{ chapterNum: string }>();
@@ -22,7 +58,6 @@ export default function ChapterPage() {
   if (!chapter) return <div className="p-8 text-center">Chapter not found</div>;
   if (!isChapterVisible(chapterNum)) return <Redirect to="/" />;
 
-  // For chapter 6, use the full verse list from ZIP; otherwise use key_verses
   const verses: Verse[] = chapterNum === 6
     ? data.chapter6_full
     : chapter.key_verses;
@@ -42,7 +77,6 @@ export default function ChapterPage() {
           imgClassName="absolute inset-0 w-full h-full object-cover opacity-20"
         />
         <div className="relative z-10 bg-gradient-to-b from-red-950 to-red-900 px-6 py-10 lg:py-14">
-          {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-red-300 text-sm mb-6">
             <Link href="/" className="hover:text-orange-300 transition-colors">Home</Link>
             <ChevronRight size={14} />
@@ -100,8 +134,8 @@ export default function ChapterPage() {
         </div>
       </div>
 
-      {/* Verse List */}
-      <div className="px-4 py-8 max-w-4xl mx-auto">
+      {/* Verse Grid */}
+      <div className="px-4 py-8 w-full">
         {chapterNum !== 6 && verses.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
             <BookOpen size={40} className="mx-auto mb-3 opacity-30" />
@@ -110,19 +144,10 @@ export default function ChapterPage() {
           </div>
         )}
 
-        {chapterNum !== 6 && verses.length > 0 && (
-          <div className="mb-4">
-            <p className="text-sm text-muted-foreground italic">
-              Showing {verses.length} key verse{verses.length !== 1 ? "s" : ""} from this chapter.
-              {chapterNum !== 6 && " Upload additional chapter documents to unlock full verse-by-verse content."}
-            </p>
-          </div>
-        )}
-
         {chapterNum === 6 && (
-          <div className="mb-4">
+          <div className="mb-6">
             <Link href={`/chapter/${chapterNum}/games`}>
-              <div className="bg-gradient-to-r from-pink-500 to-violet-600 rounded-2xl p-5 flex items-center justify-between shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer">
+              <div className="bg-gradient-to-r from-pink-500 to-violet-600 rounded-2xl p-5 flex items-center justify-between shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer max-w-2xl mx-auto">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-2xl">🎮</span>
@@ -138,67 +163,64 @@ export default function ChapterPage() {
           </div>
         )}
 
-        {chapterNum === 6 && (
-          <div className="mb-6 p-4 bg-orange-50 border border-orange-200 rounded-xl">
-            <p className="text-orange-800 text-sm font-semibold flex items-center gap-2">
-              <Sparkles size={14} />
-              This chapter contains the complete Gita Journey content from your uploaded documents.
-            </p>
-            <p className="text-orange-700 text-xs mt-1">
-              Each verse includes: Sanskrit shloka, transliteration, word-by-word meaning, full journey explanation, Mahabharata story, real-life example, final takeaway, and Sanskrit grammar.
-            </p>
-          </div>
-        )}
-
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           {verses.map((verse) => (
             <Link
               key={verse.verse}
               href={`/chapter/${chapterNum}/verse/${verse.verse}`}
             >
-              <div className="group bg-card border border-border hover:border-orange-300 rounded-xl p-4 lg:p-5 transition-all hover:shadow-md cursor-pointer">
-                <div className="flex items-start gap-4">
-                  {/* Verse number badge */}
-                  <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-950 text-orange-300 flex items-center justify-center font-bold text-sm group-hover:bg-orange-400 group-hover:text-red-950 transition-all">
-                    {verse.verse}
+              <div className="group bg-card border border-border hover:border-orange-300 rounded-xl p-5 transition-all hover:shadow-md cursor-pointer h-full flex flex-col">
+                {/* Header: verse number + audio */}
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="flex-shrink-0 w-9 h-9 rounded-full bg-red-950 text-orange-300 flex items-center justify-center font-bold text-sm group-hover:bg-orange-400 group-hover:text-red-950 transition-all">
+                      {verse.verse}
+                    </div>
+                    {verse.title && (
+                      <span className="text-sm font-semibold text-orange-800 line-clamp-1">{verse.title}</span>
+                    )}
                   </div>
+                  {verse.audio_url && <VerseAudioButton audioUrl={verse.audio_url} />}
+                </div>
 
-                  <div className="flex-1 min-w-0">
-                    {/* Sanskrit snippet */}
-                    <p className="font-devanagari text-red-900 text-sm leading-relaxed mb-1 line-clamp-1">
-                      {verse.sanskrit.split('\n')[0]}
-                    </p>
-                    {/* One-line meaning */}
-                    <p className="text-foreground/80 text-sm leading-relaxed line-clamp-2">
-                      {verse.one_line_meaning}
-                    </p>
+                {/* Sanskrit (Devanagari) */}
+                <p className="font-devanagari text-red-900 text-sm leading-relaxed mb-1.5">
+                  {verse.sanskrit.replace(/\n/g, ' ')}
+                </p>
 
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {verse.story && (
-                        <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">📖 Story</span>
-                      )}
-                      {verse.real_life_example && (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">🌱 Example</span>
-                      )}
-                      {verse.grammar_notes && (
-                        <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">📝 Grammar</span>
-                      )}
-                      {verse.full_journey_text && (
-                        <span className="text-xs bg-teal-100 text-teal-700 px-2 py-0.5 rounded-full">✨ Full Journey</span>
-                      )}
+                {/* IAST transliteration */}
+                {verse.transliteration && (
+                  <p className="text-orange-700 text-xs italic leading-relaxed mb-2">
+                    {verse.transliteration.replace(/\n/g, ' ')}
+                  </p>
+                )}
+
+                {/* One-line meaning */}
+                <p className="text-foreground/80 text-sm leading-relaxed mb-3 flex-1">
+                  {verse.one_line_meaning}
+                </p>
+
+                {/* Reflection questions */}
+                {verse.reflection && (
+                  <div className="border-t border-border pt-3 mt-auto">
+                    <p className="text-xs font-semibold text-violet-600 mb-1.5">Reflection</p>
+                    <div className="space-y-1">
+                      {verse.reflection.split('\n').filter(l => l.trim()).slice(0, 2).map((q, i) => (
+                        <p key={i} className="text-xs text-muted-foreground leading-relaxed flex gap-1.5">
+                          <span className="text-violet-400 flex-shrink-0">◈</span>
+                          <span className="line-clamp-2">{q}</span>
+                        </p>
+                      ))}
                     </div>
                   </div>
-
-                  <ChevronRight size={18} className="flex-shrink-0 text-muted-foreground group-hover:text-orange-500 transition-colors mt-1" />
-                </div>
+                )}
               </div>
             </Link>
           ))}
         </div>
 
         {/* Chapter Navigation */}
-        <div className="flex items-center justify-between mt-10 pt-6 border-t border-border">
+        <div className="flex items-center justify-between mt-10 pt-6 border-t border-border max-w-4xl mx-auto">
           {prevChapter ? (
             <Link href={`/chapter/${prevChapter}`}>
               <button className="flex items-center gap-2 text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold">

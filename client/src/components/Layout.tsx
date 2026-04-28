@@ -42,7 +42,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
               {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="bg-white text-red-900 font-display font-bold text-lg w-8 h-8 rounded-full flex items-center justify-center shadow-md">G</span>
+              <img src="/gurukula-g-logo.png" alt="Gurukula" className="w-8 h-8 rounded-full shadow-md" />
               <span className="font-display text-white font-semibold text-lg lg:text-xl tracking-wide group-hover:text-orange-100 transition-colors">
                 Bhagavad Gita Gurukula.com
               </span>

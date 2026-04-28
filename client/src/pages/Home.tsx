@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
-import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
@@ -10,7 +9,7 @@ import { ChevronRight } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
 
-const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663320491203/hKSS9UgtAfoHXBDRJP86JE/gita-hero-eQeFLTXL77RRABmFWGtL56.webp";
+const HERO_IMG = "/gita-hero-home.png";
 
 const chapterIAST: Record<number, string> = {
   1: "arjunaviṣādayogaḥ",
@@ -83,20 +82,18 @@ export default function Home() {
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
       {/* ── Hero Section — Widescreen Gita Image ── */}
-      <section className="relative overflow-hidden min-h-[320px] lg:min-h-[420px]">
-        <EditableImage
-          imageKey="home_hero"
-          fallbackUrl={HERO_IMG}
+      <section className="relative overflow-hidden">
+        <img
+          src={HERO_IMG}
           alt="Bhagavad Gita — Krishna and Arjuna"
-          asBg
-          imgClassName="absolute inset-0 w-full h-full object-cover object-center"
+          className="w-full h-auto block"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-red-950/80 via-red-950/30 to-transparent" />
-        <div className="relative z-10 flex flex-col items-center justify-end h-full min-h-[320px] lg:min-h-[420px] px-6 pb-10 text-center">
-          <h1 className="text-white font-display text-4xl lg:text-5xl font-bold leading-tight mb-3">
+        <div className="absolute inset-0 bg-gradient-to-t from-red-950/80 via-transparent to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 px-6 pb-8 lg:pb-12 text-center">
+          <h1 className="text-white font-display text-4xl lg:text-5xl font-bold leading-tight mb-3 drop-shadow-lg">
             श्रीमद्भगवद्गीता
           </h1>
-          <p className="text-orange-100 text-base lg:text-lg leading-relaxed max-w-2xl">
+          <p className="text-orange-100 text-base lg:text-lg leading-relaxed max-w-2xl mx-auto drop-shadow-md">
             Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.
           </p>
         </div>
