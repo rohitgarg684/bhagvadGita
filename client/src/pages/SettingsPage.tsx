@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData } from "@/types/gita";
-import { Settings, ChevronRight, Eye, EyeOff, ShieldAlert } from "lucide-react";
+import { Settings, ChevronRight, Eye, EyeOff, ShieldAlert, ImageIcon } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
 
@@ -57,6 +57,18 @@ export default function SettingsPage() {
             Chapter Visibility
           </h1>
         </div>
+
+        <Link
+          href="/settings/images"
+          className="flex items-center gap-3 p-4 mb-6 bg-orange-50 border border-orange-200 rounded-xl hover:bg-orange-100 transition-colors group"
+        >
+          <ImageIcon size={20} className="text-orange-600" />
+          <div className="flex-1">
+            <p className="font-semibold text-sm text-foreground">Image Manager</p>
+            <p className="text-xs text-muted-foreground">Review and replace images for verses across all chapters</p>
+          </div>
+          <ChevronRight size={16} className="text-orange-400 group-hover:translate-x-0.5 transition-transform" />
+        </Link>
 
         <p className="text-muted-foreground text-sm mb-6">
           Toggle which chapters are visible to all users. Hidden chapters will not appear
