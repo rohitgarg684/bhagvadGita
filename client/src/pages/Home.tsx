@@ -1,5 +1,4 @@
 // Home Page — Modern Vedic Learning Platform
-// Hero with Kurukshetra image, chapter grid, stats section
 import { useState } from "react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
@@ -7,13 +6,53 @@ import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
-import { BookOpen, Star, Users, Sparkles, ChevronRight, Play } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
 
 const HERO_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663320491203/hKSS9UgtAfoHXBDRJP86JE/gita-hero-eQeFLTXL77RRABmFWGtL56.webp";
-const KIDS_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663320491203/hKSS9UgtAfoHXBDRJP86JE/gita-kids-banner-hJwbSzskp4bcULSbrhyiDy.webp";
-const MEDITATION_IMG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663320491203/hKSS9UgtAfoHXBDRJP86JE/gita-meditation-gjMnHVFXnpyH4ezqJkd8j7.webp";
+
+const chapterIAST: Record<number, string> = {
+  1: "arjunaviṣādayogaḥ",
+  2: "sāṅkhyayogaḥ",
+  3: "karmayogaḥ",
+  4: "jñānakarmasaṃnyāsayogaḥ",
+  5: "karmasaṃnyāsayogaḥ",
+  6: "dhyānayogaḥ",
+  7: "jñānavijñānayogaḥ",
+  8: "akṣarabrahmayogaḥ",
+  9: "rājavidyārājaguhyayogaḥ",
+  10: "vibhūtiyogaḥ",
+  11: "viśvarūpadarśanayogaḥ",
+  12: "bhaktiyogaḥ",
+  13: "kṣetrakṣetrajñavibhāgayogaḥ",
+  14: "guṇatrayavibhāgayogaḥ",
+  15: "puruṣottamayogaḥ",
+  16: "daivāsurasampadvibhāgayogaḥ",
+  17: "śraddhātrayavibhāgayogaḥ",
+  18: "mokṣasaṃnyāsayogaḥ",
+};
+
+const chapterDevanagari: Record<number, string> = {
+  1: "अर्जुनविषादयोगः",
+  2: "साङ्ख्ययोगः",
+  3: "कर्मयोगः",
+  4: "ज्ञानकर्मसंन्यासयोगः",
+  5: "कर्मसंन्यासयोगः",
+  6: "ध्यानयोगः",
+  7: "ज्ञानविज्ञानयोगः",
+  8: "अक्षरब्रह्मयोगः",
+  9: "राजविद्याराजगुह्ययोगः",
+  10: "विभूतियोगः",
+  11: "विश्वरूपदर्शनयोगः",
+  12: "भक्तियोगः",
+  13: "क्षेत्रक्षेत्रज्ञविभागयोगः",
+  14: "गुणत्रयविभागयोगः",
+  15: "पुरुषोत्तमयोगः",
+  16: "दैवासुरसम्पद्विभागयोगः",
+  17: "श्रद्धात्रयविभागयोगः",
+  18: "मोक्षसंन्यासयोगः",
+};
 
 const chapterColorMap: Record<number, string> = {
   1: "from-red-800 to-red-700",
@@ -40,130 +79,35 @@ export default function Home() {
   const [kidsMode, setKidsMode] = useState(false);
   const { isChapterVisible } = useChapterVisibility();
   const visibleChapters = data.chapters.filter((ch) => isChapterVisible(ch.chapter));
-  const totalVerses = data.chapters.reduce((sum, ch) => sum + ch.verses_count, 0);
 
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
-      {/* ── Hero Section ── */}
-      <section className="relative overflow-hidden min-h-[420px] lg:min-h-[520px] group">
+      {/* ── Hero Section — Widescreen Gita Image ── */}
+      <section className="relative overflow-hidden min-h-[320px] lg:min-h-[420px]">
         <EditableImage
           imageKey="home_hero"
           fallbackUrl={HERO_IMG}
-          alt="Krishna and Arjuna on the battlefield of Kurukshetra"
+          alt="Bhagavad Gita — Krishna and Arjuna"
           asBg
           imgClassName="absolute inset-0 w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-red-950/90 via-red-900/70 to-transparent" />
-        <div className="relative z-10 px-6 py-16 lg:py-24 max-w-2xl">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-orange-400 text-2xl">🕉</span>
-            <span className="text-orange-300 text-sm font-semibold uppercase tracking-widest">
-              Sacred Scripture
-            </span>
-          </div>
-          <h1 className="text-white font-display text-4xl lg:text-6xl font-bold leading-tight mb-4">
-            Bhagavad Gita
-            <span className="block text-orange-300 text-2xl lg:text-3xl font-normal mt-1 font-devanagari">
-              श्रीमद्भगवद्गीता
-            </span>
+        <div className="absolute inset-0 bg-gradient-to-t from-red-950/80 via-red-950/30 to-transparent" />
+        <div className="relative z-10 flex flex-col items-center justify-end h-full min-h-[320px] lg:min-h-[420px] px-6 pb-10 text-center">
+          <h1 className="text-white font-display text-4xl lg:text-5xl font-bold leading-tight mb-3">
+            श्रीमद्भगवद्गीता
           </h1>
-          <p className="text-red-100 text-base lg:text-lg leading-relaxed mb-8 max-w-lg">
-            Explore all 18 chapters of the eternal dialogue between Krishna and Arjuna.
-            Learn Sanskrit shlokas, their meanings, stories, and timeless wisdom — for yourself and your children.
+          <p className="text-orange-100 text-base lg:text-lg leading-relaxed max-w-2xl">
+            Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.
           </p>
-          <div className="flex flex-wrap gap-3">
-            <Link
-              href="/chapter/1"
-              className="flex items-center gap-2 bg-orange-500 hover:bg-orange-400 text-red-950 font-bold px-6 py-3 rounded-full transition-all shadow-lg hover:shadow-orange-500/30 text-sm"
-            >
-              <Play size={16} fill="currentColor" />
-              Begin Journey
-            </Link>
-            <Link
-              href="/chapter/6"
-              className="flex items-center gap-2 bg-white/15 hover:bg-white/25 text-white border border-white/30 px-6 py-3 rounded-full transition-all text-sm"
-            >
-              <Sparkles size={16} />
-              Chapter 6 — Full Content
-            </Link>
-          </div>
         </div>
       </section>
 
-      {/* ── Stats Bar ── */}
-      <section className="bg-red-950 text-white py-4 px-6">
-        <div className="max-w-5xl mx-auto flex flex-wrap justify-center gap-8">
-          {[
-            { icon: <BookOpen size={18} />, value: "18", label: "Chapters" },
-            { icon: <Star size={18} />, value: totalVerses.toString(), label: "Total Verses" },
-            { icon: <Sparkles size={18} />, value: "32", label: "Ch.6 Full Journey Verses" },
-            { icon: <Users size={18} />, value: "2", label: "Learning Modes" },
-          ].map((stat) => (
-            <div key={stat.label} className="flex items-center gap-2.5">
-              <span className="text-orange-400">{stat.icon}</span>
-              <div>
-                <div className="text-xl font-bold text-orange-300 leading-none">{stat.value}</div>
-                <div className="text-xs text-red-300 mt-0.5">{stat.label}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Chapter 6 Feature Banner ── */}
-      <section className="px-4 py-8 lg:py-10 max-w-5xl mx-auto">
-        <div className="relative rounded-2xl overflow-hidden shadow-xl group">
-          <EditableImage
-            imageKey={kidsMode ? "home_kids" : "home_meditation"}
-            fallbackUrl={kidsMode ? KIDS_IMG : MEDITATION_IMG}
-            alt={kidsMode ? "Kids mode banner" : "Meditation"}
-            asBg
-            imgClassName="absolute inset-0 w-full h-full object-cover"
-          />
-          <div className={`absolute inset-0 ${kidsMode ? "bg-orange-900/70" : "bg-red-950/75"}`} />
-          <div className="relative z-10 p-6 lg:p-8 flex flex-col lg:flex-row items-start lg:items-center gap-4 justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="bg-orange-400 text-red-950 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wide">
-                  {kidsMode ? "🌟 Kids Mode Active" : "✨ Featured Content"}
-                </span>
-              </div>
-              <h2 className="text-white font-display text-2xl lg:text-3xl font-bold mb-2">
-                {kidsMode ? "Learn with Stories & Fun!" : "Chapter 6 — Dhyana Yoga"}
-              </h2>
-              <p className="text-red-100 text-sm lg:text-base max-w-lg">
-                {kidsMode
-                  ? "Every verse comes with a story, a real-life example, and a simple lesson just for kids!"
-                  : "All 32 verses with complete word-by-word explanations, Mahabharata stories, real-life examples, and Sanskrit grammar — the most detailed chapter in our collection."}
-              </p>
-            </div>
-            <Link
-              href="/chapter/6"
-              className="flex-shrink-0 flex items-center gap-2 bg-orange-400 hover:bg-orange-300 text-red-950 font-bold px-5 py-3 rounded-full transition-all shadow-lg text-sm whitespace-nowrap"
-            >
-              Explore Chapter 6
-              <ChevronRight size={16} />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Chapter Grid ── */}
-      <section className="px-4 pb-12 max-w-5xl mx-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <h2 className="font-display text-2xl lg:text-3xl font-bold text-foreground">
-            All 18 Chapters
-          </h2>
-          <div className="lotus-divider flex-1">
-            <span className="text-orange-500 text-lg">✿</span>
-          </div>
-        </div>
-
+      {/* ── Chapter Cards ── */}
+      <section className="px-4 py-8 lg:py-12 max-w-5xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {visibleChapters.map((ch) => (
             <Link key={ch.chapter} href={`/chapter/${ch.chapter}`}>
-              <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:border-orange-300 transition-all group cursor-pointer">
-                {/* Color header */}
+              <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:border-orange-300 hover:shadow-md transition-all group cursor-pointer">
                 <div className={`bg-gradient-to-r ${chapterColorMap[ch.chapter]} p-4 relative overflow-hidden`}>
                   <div className="absolute top-2 right-3 text-white/20 text-5xl font-bold font-display leading-none select-none">
                     {ch.chapter}
@@ -179,15 +123,19 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="p-4">
-                  <p className="text-muted-foreground text-xs font-devanagari mb-1">{ch.name_hindi}</p>
-                  <p className="text-foreground/80 text-xs font-semibold mb-2 text-orange-700">{ch.subtitle}</p>
+                  <p className="font-devanagari text-red-800 text-sm mb-0.5">
+                    {chapterDevanagari[ch.chapter] || ch.name_hindi}
+                  </p>
+                  <p className="text-orange-700 text-xs italic mb-2">
+                    {chapterIAST[ch.chapter] || ""}
+                  </p>
+                  <p className="text-foreground/80 text-xs font-semibold mb-1 text-orange-700">{ch.subtitle}</p>
                   <p className="text-foreground/70 text-xs leading-relaxed line-clamp-2">{ch.summary}</p>
                   <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
                     <span className="text-xs text-muted-foreground">{ch.verses_count} verses</span>
                     <span className="text-xs text-orange-600 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                      {ch.chapter === 6 ? "Full Journey" : "Explore"}
+                      Explore
                       <ChevronRight size={12} />
                     </span>
                   </div>
@@ -200,13 +148,12 @@ export default function Home() {
 
       {/* ── Footer ── */}
       <footer className="bg-red-950 text-red-300 py-8 px-6 text-center">
-        <div className="text-orange-400 text-2xl mb-2">🕉</div>
         <p className="font-devanagari text-lg text-orange-300 mb-1">
           सर्वे भवन्तु सुखिनः
         </p>
         <p className="text-sm italic mb-3">May all beings be happy</p>
         <p className="text-xs text-red-400">
-          Bhagavad Gita Interactive Learning Journey • All 18 Chapters
+          Bhagavad Gita Gurukula.com
         </p>
       </footer>
     </Layout>

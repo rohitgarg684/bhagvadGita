@@ -42,9 +42,9 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
               {sidebarOpen ? <X size={22} /> : <Menu size={22} />}
             </button>
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="text-white text-2xl">🕉</span>
+              <span className="bg-white text-red-900 font-display font-bold text-lg w-8 h-8 rounded-full flex items-center justify-center shadow-md">G</span>
               <span className="font-display text-white font-semibold text-lg lg:text-xl tracking-wide group-hover:text-orange-100 transition-colors">
-                Bhagavad Gita
+                Bhagavad Gita Gurukula.com
               </span>
             </Link>
           </div>
