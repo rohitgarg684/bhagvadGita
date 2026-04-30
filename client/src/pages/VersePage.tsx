@@ -3,6 +3,7 @@ import { Link, useParams, useLocation, Redirect } from "wouter";
 import Layout from "@/components/Layout";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import EditableImage from "@/components/EditableImage";
+import { useImageUrl } from "@/hooks/useImages";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
 import {
@@ -11,29 +12,9 @@ import {
   MessageCircle, Library, FlameKindling,
   Volume2, VolumeX, Pause, Play, RotateCcw, RotateCw, X
 } from "lucide-react";
+import { chapterIAST } from "@/lib/chapterMeta";
 
 const data = gitaData as unknown as GitaData;
-
-const chapterIAST: Record<number, string> = {
-  1: "arjunaviṣādayogaḥ",
-  2: "sāṅkhyayogaḥ",
-  3: "karmayogaḥ",
-  4: "jñānakarmasaṃnyāsayogaḥ",
-  5: "karmasaṃnyāsayogaḥ",
-  6: "dhyānayogaḥ",
-  7: "jñānavijñānayogaḥ",
-  8: "akṣarabrahmayogaḥ",
-  9: "rājavidyārājaguhyayogaḥ",
-  10: "vibhūtiyogaḥ",
-  11: "viśvarūpadarśanayogaḥ",
-  12: "bhaktiyogaḥ",
-  13: "kṣetrakṣetrajñavibhāgayogaḥ",
-  14: "guṇatrayavibhāgayogaḥ",
-  15: "puruṣottamayogaḥ",
-  16: "daivāsurasaṃpadvibhāgayogaḥ",
-  17: "śraddhātrayavibhāgayogaḥ",
-  18: "mokṣasaṃnyāsayogaḥ",
-};
 
 type Tab =
   | "meaning"
@@ -97,6 +78,7 @@ function ImageModal({ src, alt, onClose }: { src: string; alt: string; onClose: 
 
 function VerseImage({ imageKey, url, caption }: { imageKey: string; url: string; caption?: string }) {
   const [modalOpen, setModalOpen] = useState(false);
+  const resolvedUrl = useImageUrl(imageKey, url);
   const handleClick = (e: React.MouseEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest('button')) return;
@@ -114,7 +96,7 @@ function VerseImage({ imageKey, url, caption }: { imageKey: string; url: string;
           imgClassName="w-full object-cover max-h-72"
         />
       </div>
-      {modalOpen && <ImageModal src={url} alt={caption || "Verse illustration"} onClose={() => setModalOpen(false)} />}
+      {modalOpen && <ImageModal src={resolvedUrl} alt={caption || "Verse illustration"} onClose={() => setModalOpen(false)} />}
     </>
   );
 }
@@ -295,9 +277,14 @@ export default function VersePage() {
                 className="w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-orange-200"
               />
             )}
-            <p className="text-orange-700 text-sm font-semibold tracking-wide">
-              {iastName} chapter {chapterNum} shloka {verseNum}
-            </p>
+            <div>
+              <p className="text-orange-700 text-sm font-semibold tracking-wide">
+                {iastName} chapter {chapterNum} shloka {verseNum}
+              </p>
+              {verse.title && (
+                <p className="text-orange-900 text-lg font-display font-bold mt-0.5">{verse.title}</p>
+              )}
+            </div>
           </div>
 
           {/* Prev / Dropdowns / Next Shloka navigation */}

@@ -6,50 +6,9 @@ import type { GitaData, Verse } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import { useImageUrl } from "@/hooks/useImages";
 import { ChevronLeft, ChevronRight, BookOpen, Sparkles, Gamepad2, Play, Pause } from "lucide-react";
+import { chapterIAST, chapterDevanagari } from "@/lib/chapterMeta";
 
 const data = gitaData as unknown as GitaData;
-
-const chapterIAST: Record<number, string> = {
-  1: "arjunaviṣādayogaḥ",
-  2: "sāṅkhyayogaḥ",
-  3: "karmayogaḥ",
-  4: "jñānakarmasaṃnyāsayogaḥ",
-  5: "karmasaṃnyāsayogaḥ",
-  6: "dhyānayogaḥ",
-  7: "jñānavijñānayogaḥ",
-  8: "akṣarabrahmayogaḥ",
-  9: "rājavidyārājaguhyayogaḥ",
-  10: "vibhūtiyogaḥ",
-  11: "viśvarūpadarśanayogaḥ",
-  12: "bhaktiyogaḥ",
-  13: "kṣetrakṣetrajñavibhāgayogaḥ",
-  14: "guṇatrayavibhāgayogaḥ",
-  15: "puruṣottamayogaḥ",
-  16: "daivāsurasaṃpadvibhāgayogaḥ",
-  17: "śraddhātrayavibhāgayogaḥ",
-  18: "mokṣasaṃnyāsayogaḥ",
-};
-
-const chapterDevanagari: Record<number, string> = {
-  1: "अर्जुनविषादयोगः",
-  2: "साङ्ख्ययोगः",
-  3: "कर्मयोगः",
-  4: "ज्ञानकर्मसंन्यासयोगः",
-  5: "कर्मसंन्यासयोगः",
-  6: "ध्यानयोगः",
-  7: "ज्ञानविज्ञानयोगः",
-  8: "अक्षरब्रह्मयोगः",
-  9: "राजविद्याराजगुह्ययोगः",
-  10: "विभूतियोगः",
-  11: "विश्वरूपदर्शनयोगः",
-  12: "भक्तियोगः",
-  13: "क्षेत्रक्षेत्रज्ञविभागयोगः",
-  14: "गुणत्रयविभागयोगः",
-  15: "पुरुषोत्तमयोगः",
-  16: "दैवासुरसम्पद्विभागयोगः",
-  17: "श्रद्धात्रयविभागयोगः",
-  18: "मोक्षसंन्यासयोगः",
-};
 
 function MeaningThumbnail({ chapterNum, verseNum, verse }: { chapterNum: number; verseNum: number; verse: Verse }) {
   const fallback = verse.images?.meaning?.url || "";

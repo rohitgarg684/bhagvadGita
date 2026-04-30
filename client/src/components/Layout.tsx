@@ -111,7 +111,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
         {/* Sidebar */}
         <aside
           className={`
-            fixed lg:sticky ${stickyHeader ? 'top-16 h-[calc(100vh-4rem)]' : 'top-0 h-screen'} left-0 z-40
+            fixed top-16 h-[calc(100vh-4rem)] lg:sticky ${stickyHeader ? 'lg:top-16 lg:h-[calc(100vh-4rem)]' : 'lg:top-0 lg:h-screen'} left-0 z-40
             w-72 bg-sidebar overflow-y-auto
             transform transition-transform duration-300 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
