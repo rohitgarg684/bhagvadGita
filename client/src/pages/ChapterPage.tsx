@@ -118,14 +118,15 @@ export default function ChapterPage() {
 
   const { isChapterVisible } = useChapterVisibility();
   const chapter = data.chapters.find((c) => c.chapter === chapterNum);
-  if (!chapter) return <div className="p-8 text-center">Chapter not found</div>;
-  if (!isChapterVisible(chapterNum)) return <Redirect to="/" />;
 
-  const verses: Verse[] = chapterNum === 6
-    ? data.chapter6_full
-    : chapter.key_verses;
+  const verses: Verse[] = chapter
+    ? (chapterNum === 6 ? data.chapter6_full : chapter.key_verses)
+    : [];
 
   const synopsis = useMemo(() => buildSynopsis(verses), [verses]);
+
+  if (!chapter) return <div className="p-8 text-center">Chapter not found</div>;
+  if (!isChapterVisible(chapterNum)) return <Redirect to="/" />;
 
   const prevChapter = chapterNum > 1 ? chapterNum - 1 : null;
   const nextChapter = chapterNum < 18 ? chapterNum + 1 : null;

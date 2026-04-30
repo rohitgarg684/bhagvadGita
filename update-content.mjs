@@ -5,7 +5,7 @@ const DATA_PATH = './client/src/data/gitaData.json';
 
 function parseDoc(text) {
   const result = {};
-  const lines = text.split('\n');
+  const lines = text.replace(/\r/g, '').split('\n');
 
   function findSection(startPattern, endPatterns) {
     let start = -1;
@@ -156,13 +156,38 @@ function parseDoc(text) {
   const samasaRaw = findSection(/^9F\.\s*Samāsa/, [/^9G\./]);
   if (samasaRaw) rg.samasa = samasaRaw.split('\n').filter(l => l.trim()).map(l => l.trim()).join(' | ');
   
-  const otherRaw = findSection(/^9G\.\s*Other/, [/^10\.\s*More Stories/]);
+  const otherRaw = findSection(/^9G\.\s*Other/, [/^10\.\s*More Stories/, /Section 10:\s*More Stories/]);
   if (otherRaw) rg.other = otherRaw.split('\n').filter(l => l.trim()).map(l => l.trim()).join(' | ');
   
   result.rich_grammar = rg;
 
-  // 10. More Stories
-  result.more_stories = findSection(/^10\.\s*More Stories/, [/^If you want/]);
+  // 10. More Stories — handle variant headers like "12.12 Section 10: More Stories"
+  let moreStories = findSection(/^10\.\s*More Stories|Section 10:\s*More Stories/, [/^If you want/]);
+  if (moreStories) {
+    // Strip image prompt blocks that appear at the end
+    moreStories = moreStories.replace(/\nImage Prompts[\s\S]*$/, '');
+    // Strip stray Image/Prompt/Section metadata lines
+    moreStories = moreStories.split('\n')
+      .filter(l => !l.trim().match(/^Image \d+$/) && !l.trim().startsWith('Prompt:') && !l.trim().startsWith('Section:'))
+      .join('\n').trim();
+  }
+  result.more_stories = moreStories;
+
+  // Strip image prompt metadata from all text fields
+  function cleanImagePrompts(text) {
+    if (!text) return text;
+    return text.replace(/\nImage Prompts[\s\S]*$/, '')
+      .split('\n')
+      .filter(l => !l.trim().match(/^Image \d+$/) && !l.trim().startsWith('Prompt:') && !l.trim().startsWith('Section:'))
+      .join('\n').trim();
+  }
+  for (const key of ['meaning_detail', 'story', 'real_life_example', 'detailed_meaning']) {
+    if (result[key]) result[key] = cleanImagePrompts(result[key]);
+  }
+  if (result.kids_content) {
+    result.kids_content.explanation_script = cleanImagePrompts(result.kids_content.explanation_script);
+    result.kids_content.story = cleanImagePrompts(result.kids_content.story);
+  }
 
   // concise_journey from first 2-3 sentences of meaning_detail
   if (result.meaning_detail) {
