@@ -14,9 +14,10 @@ interface LayoutProps {
   children: React.ReactNode;
   kidsMode?: boolean;
   onToggleKids?: () => void;
+  stickyHeader?: boolean;
 }
 
-export default function Layout({ children, kidsMode = false, onToggleKids }: LayoutProps) {
+export default function Layout({ children, kidsMode = false, onToggleKids, stickyHeader = true }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [location] = useLocation();
   const { user, isAdmin, signOut } = useAuth();
@@ -31,7 +32,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
   return (
     <div className={`min-h-screen flex flex-col ${kidsMode ? "kids-mode" : ""}`}>
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-50 bg-vedic-hero border-b border-white/10 shadow-lg">
+      <header className={`${stickyHeader ? 'sticky top-0' : ''} z-50 bg-vedic-hero border-b border-white/10 shadow-lg`}>
         <div className="flex items-center justify-between px-4 h-16">
           <div className="flex items-center gap-3">
             <button
@@ -110,7 +111,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids }: Lay
         {/* Sidebar */}
         <aside
           className={`
-            fixed lg:sticky top-16 left-0 z-40 h-[calc(100vh-4rem)]
+            fixed lg:sticky ${stickyHeader ? 'top-16 h-[calc(100vh-4rem)]' : 'top-0 h-screen'} left-0 z-40
             w-72 bg-sidebar overflow-y-auto
             transform transition-transform duration-300 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}

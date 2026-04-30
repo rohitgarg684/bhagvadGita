@@ -1,7 +1,3 @@
-// Bhagavad Gita — VersePage
-// Tabs: Meaning | Story | Impact | Reflection | Detailed Meaning | Kids Corner | Grammar | More Stories
-// Header: Devanagari shloka + IAST transliteration + one-line meaning always shown at top
-// Design: Light Vedic Learning Platform — warm saffron header, cream content, orange accents (Gurukula palette)
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useParams, useLocation, Redirect } from "wouter";
 import Layout from "@/components/Layout";
@@ -10,13 +6,34 @@ import EditableImage from "@/components/EditableImage";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
 import {
-  ChevronLeft, ChevronRight, BookOpen, Star, Sparkles,
-  BookMarked, Lightbulb, Baby, GraduationCap, Heart,
-  MessageCircle, Library, FlameKindling, Leaf,
-  Volume2, VolumeX, Pause, Play, RotateCcw, RotateCw
+  ChevronLeft, ChevronRight, Star, Sparkles,
+  BookMarked, Lightbulb, Baby, GraduationCap,
+  MessageCircle, Library, FlameKindling,
+  Volume2, VolumeX, Pause, Play, RotateCcw, RotateCw, X
 } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
+
+const chapterIAST: Record<number, string> = {
+  1: "arjunaviṣādayogaḥ",
+  2: "sāṅkhyayogaḥ",
+  3: "karmayogaḥ",
+  4: "jñānakarmasaṃnyāsayogaḥ",
+  5: "karmasaṃnyāsayogaḥ",
+  6: "dhyānayogaḥ",
+  7: "jñānavijñānayogaḥ",
+  8: "akṣarabrahmayogaḥ",
+  9: "rājavidyārājaguhyayogaḥ",
+  10: "vibhūtiyogaḥ",
+  11: "viśvarūpadarśanayogaḥ",
+  12: "bhaktiyogaḥ",
+  13: "kṣetrakṣetrajñavibhāgayogaḥ",
+  14: "guṇatrayavibhāgayogaḥ",
+  15: "puruṣottamayogaḥ",
+  16: "daivāsurasaṃpadvibhāgayogaḥ",
+  17: "śraddhātrayavibhāgayogaḥ",
+  18: "mokṣasaṃnyāsayogaḥ",
+};
 
 type Tab =
   | "meaning"
@@ -29,14 +46,14 @@ type Tab =
   | "more_stories";
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: "meaning",     label: "Meaning",          icon: <Star size={18} /> },
-  { id: "story",       label: "Story",            icon: <BookMarked size={18} /> },
-  { id: "impact",      label: "Impact on Life",   icon: <Lightbulb size={18} /> },
-  { id: "reflection",  label: "Reflection",       icon: <MessageCircle size={18} /> },
-  { id: "detailed",    label: "Detailed Meaning", icon: <Sparkles size={18} /> },
-  { id: "kids",        label: "Kids Corner",      icon: <Baby size={18} /> },
-  { id: "grammar",     label: "Grammar",          icon: <GraduationCap size={18} /> },
-  { id: "more_stories",label: "More Stories",     icon: <Library size={18} /> },
+  { id: "meaning",     label: "Meaning",          icon: <Star size={16} /> },
+  { id: "story",       label: "Story",            icon: <BookMarked size={16} /> },
+  { id: "impact",      label: "Impact on Life",   icon: <Lightbulb size={16} /> },
+  { id: "reflection",  label: "Reflection",       icon: <MessageCircle size={16} /> },
+  { id: "detailed",    label: "Detailed Meaning", icon: <Sparkles size={16} /> },
+  { id: "kids",        label: "Kids Corner",      icon: <Baby size={16} /> },
+  { id: "grammar",     label: "Grammar",          icon: <GraduationCap size={16} /> },
+  { id: "more_stories",label: "More Stories",     icon: <Library size={16} /> },
 ];
 
 function formatText(text: string) {
@@ -61,20 +78,47 @@ function formatText(text: string) {
   });
 }
 
-function VerseImage({ imageKey, url, caption }: { imageKey: string; url: string; caption?: string }) {
+function ImageModal({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [onClose]);
+
   return (
-    <EditableImage
-      imageKey={imageKey}
-      fallbackUrl={url}
-      alt={caption || "Verse illustration"}
-      caption={caption}
-      className="my-4 rounded-2xl overflow-hidden border border-border shadow-md"
-      imgClassName="w-full object-cover max-h-72"
-    />
+    <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4" onClick={onClose}>
+      <button className="absolute top-4 right-4 text-white/80 hover:text-white z-10" onClick={onClose}>
+        <X size={28} />
+      </button>
+      <img src={src} alt={alt} className="max-w-full max-h-full object-contain rounded-lg" onClick={(e) => e.stopPropagation()} />
+    </div>
   );
 }
 
-// Parse more_stories text into structured array: { title, body }[]
+function VerseImage({ imageKey, url, caption }: { imageKey: string; url: string; caption?: string }) {
+  const [modalOpen, setModalOpen] = useState(false);
+  const handleClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('button')) return;
+    setModalOpen(true);
+  };
+  return (
+    <>
+      <div className="cursor-pointer" onClick={handleClick}>
+        <EditableImage
+          imageKey={imageKey}
+          fallbackUrl={url}
+          alt={caption || "Verse illustration"}
+          caption={caption}
+          className="my-4 rounded-2xl overflow-hidden border border-border shadow-md"
+          imgClassName="w-full object-cover max-h-72"
+        />
+      </div>
+      {modalOpen && <ImageModal src={url} alt={caption || "Verse illustration"} onClose={() => setModalOpen(false)} />}
+    </>
+  );
+}
+
 function parseMoreStories(text: string): { title: string; body: string }[] {
   const stories: { title: string; body: string }[] = [];
   const lines = text.split('\n');
@@ -211,8 +255,9 @@ export default function VersePage() {
 
   const prevVerse = verseIndex > 0 ? verses[verseIndex - 1] : null;
   const nextVerse = verseIndex < verses.length - 1 ? verses[verseIndex + 1] : null;
+  const iastName = chapterIAST[chapterNum] || chapter.name;
+  const meaningImageUrl = verse.images?.meaning?.url || null;
 
-  // Filter available tabs based on content (shloka tab removed — shown in header)
   const availableTabs = TABS.filter((tab) => {
     if (tab.id === "story")       return !!(verse.story);
     if (tab.id === "impact")      return !!(verse.real_life_example);
@@ -223,39 +268,40 @@ export default function VersePage() {
     return true;
   });
 
-  const progressPct = verses.length > 0 ? ((verseIndex + 1) / verses.length) * 100 : 0;
   const moreStoriesParsed = verse.more_stories ? parseMoreStories(verse.more_stories) : [];
 
   return (
-    <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
-      {/* Verse Header — warm cream/saffron */}
-      <div className="bg-gradient-to-b from-orange-50 to-amber-50 border-b border-orange-200 px-4 py-6 lg:py-8">
-        {/* Breadcrumb */}
-        <div className="max-w-5xl mx-auto flex items-center gap-1.5 text-orange-700 text-sm mb-4 flex-wrap">
+    <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)} stickyHeader={false}>
+      {/* Verse Header — compact (#26) */}
+      <div className="bg-gradient-to-b from-orange-50 to-amber-50 border-b border-orange-200 px-4 py-4 lg:py-6">
+        {/* Breadcrumb — "Shloka" instead of "Verse" (#26.2) */}
+        <div className="flex items-center gap-1.5 text-orange-700 text-sm mb-3 flex-wrap">
           <Link href="/" className="hover:text-orange-900 transition-colors">Home</Link>
           <ChevronRight size={12} />
           <Link href={`/chapter/${chapterNum}`} className="hover:text-orange-900 transition-colors">
             Chapter {chapterNum}
           </Link>
           <ChevronRight size={12} />
-          <span className="text-orange-900 font-semibold">Verse {verseNum}</span>
+          <span className="text-orange-900 font-semibold">Shloka {verseNum}</span>
         </div>
 
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-orange-600 text-xl">{chapter.icon}</span>
-            <div>
-              <p className="text-orange-700 text-sm font-semibold uppercase tracking-widest">
-                {chapter.name} · Verse {verseNum}
-              </p>
-              {verse.title && (
-                <p className="text-orange-900 text-lg font-display font-bold mt-0.5">{verse.title}</p>
-              )}
-            </div>
+        <div>
+          {/* Title: "iastName chapter X shloka Y" with meaning image icon (#26.3, #26.7) */}
+          <div className="flex items-center gap-3 mb-3">
+            {meaningImageUrl && (
+              <img
+                src={meaningImageUrl}
+                alt=""
+                className="w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-orange-200"
+              />
+            )}
+            <p className="text-orange-700 text-sm font-semibold tracking-wide">
+              {iastName} chapter {chapterNum} shloka {verseNum}
+            </p>
           </div>
 
-          {/* Prev / Dropdowns / Next Shloka navigation at top */}
-          <div className="flex items-center justify-between gap-2 mb-4">
+          {/* Prev / Dropdowns / Next Shloka navigation */}
+          <div className="flex items-center justify-between gap-2 mb-3">
             {prevVerse ? (
               <Link href={`/chapter/${chapterNum}/verse/${prevVerse.verse}`}>
                 <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-orange-700 bg-orange-100 hover:bg-orange-200 border border-orange-300 transition-all">
@@ -305,10 +351,10 @@ export default function VersePage() {
           </div>
 
           {/* Shloka + IAST side-by-side on md+, stacked on mobile */}
-          <div className="flex flex-col md:flex-row gap-4 items-stretch">
-            {/* Devanagari Shloka */}
-            <div className="bg-gradient-to-br from-red-900 to-red-800 rounded-2xl p-5 lg:p-6 shadow-md w-full md:flex-1 flex flex-col">
-              <div className="font-devanagari text-orange-100 text-2xl lg:text-3xl flex-1">
+          <div className="flex flex-col md:flex-row gap-3 items-stretch">
+            {/* Devanagari Shloka — reduced padding (#26.4), smaller mobile font (#26.1) */}
+            <div className="bg-gradient-to-br from-red-900 to-red-800 rounded-2xl p-3 lg:p-5 shadow-md w-full md:flex-1 flex flex-col">
+              <div className="font-devanagari text-orange-100 text-xl lg:text-3xl flex-1">
                 {verse.sanskrit.split('\n').map((line, i) => (
                   <p key={i} className="leading-loose">
                     {line}
@@ -316,31 +362,31 @@ export default function VersePage() {
                 ))}
               </div>
               {verse.audio_url && (
-                <div className="mt-4 bg-orange-100 rounded-xl p-3.5">
-                  <div className="flex items-center gap-2">
+                <div className="mt-3 bg-orange-100 rounded-xl p-2.5">
+                  <div className="flex items-center gap-1.5">
                     <button
                       onClick={() => skipAudio(-5)}
-                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
+                      className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
                       title="Rewind 5s"
                     >
-                      <RotateCcw size={15} />
+                      <RotateCcw size={14} />
                     </button>
                     <button
                       onClick={() => toggleAudio(verse.audio_url!)}
-                      className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-all ${
+                      className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                         audioPlaying
                           ? "bg-orange-600 text-white shadow-lg"
                           : "bg-orange-500 text-white hover:bg-orange-600"
                       }`}
                     >
-                      {audioPlaying ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
+                      {audioPlaying ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
                     </button>
                     <button
                       onClick={() => skipAudio(5)}
-                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
+                      className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
                       title="Forward 5s"
                     >
-                      <RotateCw size={15} />
+                      <RotateCw size={14} />
                     </button>
                     <div className="flex-1 min-w-0">
                       <input
@@ -351,10 +397,10 @@ export default function VersePage() {
                         value={audioCurrentTime}
                         onChange={(e) => seekAudio(parseFloat(e.target.value))}
                         className="w-full h-1.5 rounded-full appearance-none cursor-pointer bg-orange-200
-                          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5
+                          [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3 [&::-webkit-slider-thumb]:h-3
                           [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-orange-600 [&::-webkit-slider-thumb]:shadow-md
                           [&::-webkit-slider-thumb]:hover:bg-orange-500 [&::-webkit-slider-thumb]:transition-colors
-                          [&::-moz-range-thumb]:w-3.5 [&::-moz-range-thumb]:h-3.5 [&::-moz-range-thumb]:rounded-full
+                          [&::-moz-range-thumb]:w-3 [&::-moz-range-thumb]:h-3 [&::-moz-range-thumb]:rounded-full
                           [&::-moz-range-thumb]:bg-orange-600 [&::-moz-range-thumb]:border-0"
                         style={{
                           background: audioDuration
@@ -362,33 +408,33 @@ export default function VersePage() {
                             : "rgb(254 215 170)",
                         }}
                       />
-                      <div className="flex justify-between text-xs text-orange-600 mt-1 px-0.5">
+                      <div className="flex justify-between text-xs text-orange-600 mt-0.5 px-0.5">
                         <span>{formatTime(audioCurrentTime)}</span>
                         <span>{audioDuration ? formatTime(audioDuration) : "—:——"}</span>
                       </div>
                     </div>
                     <button
                       onClick={toggleMute}
-                      className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
+                      className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
                       title={audioMuted ? "Unmute" : "Mute"}
                     >
-                      {audioMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+                      {audioMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
                     </button>
                     <div className="relative">
                       <button
                         onClick={() => setShowSpeedMenu(!showSpeedMenu)}
-                        className="flex-shrink-0 px-2 py-1 rounded-md text-xs font-bold text-orange-700 bg-orange-200 hover:bg-orange-300 transition-all"
+                        className="flex-shrink-0 px-1.5 py-0.5 rounded-md text-xs font-bold text-orange-700 bg-orange-200 hover:bg-orange-300 transition-all"
                         title="Playback speed"
                       >
                         {playbackSpeed}x
                       </button>
                       {showSpeedMenu && (
-                        <div className="absolute bottom-full right-0 mb-2 bg-white border border-orange-200 rounded-lg shadow-lg py-1 z-50 min-w-[80px]">
+                        <div className="absolute bottom-full right-0 mb-2 bg-white border border-orange-200 rounded-lg shadow-lg py-1 z-50 min-w-[70px]">
                           {SPEED_OPTIONS.map((speed) => (
                             <button
                               key={speed}
                               onClick={() => changeSpeed(speed)}
-                              className={`w-full text-left px-3 py-1.5 text-sm transition-colors ${
+                              className={`w-full text-left px-3 py-1 text-sm transition-colors ${
                                 playbackSpeed === speed
                                   ? "bg-orange-100 text-orange-800 font-bold"
                                   : "text-gray-700 hover:bg-orange-50"
@@ -407,7 +453,7 @@ export default function VersePage() {
 
             {/* IAST + English meaning */}
             {verse.transliteration && (
-              <div className="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-5 w-full md:flex-1 flex flex-col">
+              <div className="bg-orange-50 border border-orange-200 rounded-2xl px-4 py-4 w-full md:flex-1 flex flex-col">
                 <div className="transliteration-text text-orange-900 text-lg lg:text-xl italic flex-1">
                   {verse.transliteration.split('\n').map((line, i) => (
                     <p key={i} className="leading-relaxed">
@@ -415,7 +461,7 @@ export default function VersePage() {
                     </p>
                   ))}
                 </div>
-                <div className="mt-4 pt-3 border-t border-orange-200">
+                <div className="mt-3 pt-2 border-t border-orange-200">
                   <p className="text-orange-900 text-base lg:text-lg leading-relaxed font-medium">
                     "{verse.one_line_meaning}"
                   </p>
@@ -424,42 +470,24 @@ export default function VersePage() {
             )}
           </div>
 
-          {/* Fallback: show meaning below if no transliteration box */}
           {!verse.transliteration && (
-            <p className="mt-4 text-orange-900 text-base lg:text-lg leading-relaxed font-medium">
+            <p className="mt-3 text-orange-900 text-base lg:text-lg leading-relaxed font-medium">
               "{verse.one_line_meaning}"
             </p>
           )}
         </div>
-
-        {/* Progress bar */}
-        {verses.length > 1 && (
-          <div className="mt-4 max-w-5xl mx-auto">
-              <div className="flex justify-between text-sm text-orange-700 mb-1">
-              <span>Verse {verseIndex + 1} of {verses.length}</span>
-              <span>{Math.round(progressPct)}% complete</span>
-            </div>
-            <div className="h-1.5 bg-orange-200 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-orange-500 rounded-full transition-all duration-500"
-                style={{ width: `${progressPct}%` }}
-              />
-            </div>
-          </div>
-        )}
       </div>
 
-      {/* Tab Navigation — two-line grid, evenly spaced */}
-      <div className="sticky top-14 z-30 bg-white border-b border-border shadow-sm">
-        <div className="max-w-5xl mx-auto px-2 py-1">
+      {/* Tab Navigation — sticky at top (#26.10), compact padding (#26.8) */}
+      <div className="sticky top-0 z-30 bg-white border-b border-border shadow-sm">
+        <div className="px-2 py-0.5">
           <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${Math.ceil(availableTabs.length / 2)}, 1fr)` }}>
-            {/* First row */}
             {availableTabs.slice(0, Math.ceil(availableTabs.length / 2)).map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  flex flex-col items-center gap-1 px-1 py-3 text-sm font-semibold rounded-lg transition-all
+                  flex flex-col items-center gap-0.5 px-1 py-2 text-xs font-semibold rounded-lg transition-all
                   ${activeTab === tab.id
                     ? "bg-orange-50 text-orange-700 border border-orange-300"
                     : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
@@ -472,13 +500,12 @@ export default function VersePage() {
             ))}
           </div>
           <div className="grid gap-0.5 mt-0.5" style={{ gridTemplateColumns: `repeat(${availableTabs.length - Math.ceil(availableTabs.length / 2)}, 1fr)` }}>
-            {/* Second row */}
             {availableTabs.slice(Math.ceil(availableTabs.length / 2)).map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`
-                  flex flex-col items-center gap-1 px-1 py-3 text-sm font-semibold rounded-lg transition-all
+                  flex flex-col items-center gap-0.5 px-1 py-2 text-xs font-semibold rounded-lg transition-all
                   ${activeTab === tab.id
                     ? "bg-orange-50 text-orange-700 border border-orange-300"
                     : "text-muted-foreground hover:text-foreground hover:bg-gray-50"
@@ -493,11 +520,10 @@ export default function VersePage() {
         </div>
       </div>
 
-      {/* Tab Content */}
-      <div className="max-w-5xl mx-auto px-4 py-6 lg:py-8">
+      {/* Tab Content — full width (#27) */}
+      <div className="px-4 py-5 lg:py-8">
 
-
-        {/* ── MEANING TAB ── */}
+        {/* MEANING TAB */}
         {activeTab === "meaning" && (
           <div className="verse-section space-y-5">
             {verse.images?.meaning && (
@@ -514,10 +540,9 @@ export default function VersePage() {
           </div>
         )}
 
-        {/* ── STORY TAB ── */}
+        {/* STORY TAB */}
         {activeTab === "story" && verse.story && (
           <div className="verse-section space-y-5">
-            {/* Single image above story; if two images, first above and second below */}
             {verse.images?.story && verse.images.story.length >= 1 && (
               <VerseImage imageKey={`ch${chapterNum}_v${verseNum}_story_0`} url={verse.images.story[0].url} caption={verse.images.story[0].caption} />
             )}
@@ -532,7 +557,7 @@ export default function VersePage() {
           </div>
         )}
 
-        {/* ── IMPACT ON LIFE TAB ── */}
+        {/* IMPACT ON LIFE TAB */}
         {activeTab === "impact" && verse.real_life_example && (
           <div className="verse-section space-y-5">
             {verse.images?.modern_life && (
@@ -550,10 +575,10 @@ export default function VersePage() {
           </div>
         )}
 
-        {/* ── REFLECTION TAB ── */}
+        {/* REFLECTION TAB */}
         {activeTab === "reflection" && verse.reflection && (
           <div className="verse-section space-y-5">
-            <div className="bg-gradient-to-br from-violet-50 to-red-50 border border-violet-200 rounded-2xl p-6 lg:p-8">
+            <div className="bg-gradient-to-br from-violet-50 to-red-50 border border-violet-200 rounded-2xl p-5 lg:p-6">
               <p className="text-violet-700 text-sm font-semibold uppercase tracking-widest mb-5 flex items-center gap-2">
                 <MessageCircle size={14} />
                 Reflection — Questions for Contemplation
@@ -570,7 +595,7 @@ export default function VersePage() {
           </div>
         )}
 
-        {/* ── DETAILED MEANING TAB ── */}
+        {/* DETAILED MEANING TAB */}
         {activeTab === "detailed" && (
           <div className="verse-section space-y-5">
             {verse.images?.detailed_meaning && (
@@ -600,10 +625,9 @@ export default function VersePage() {
           </div>
         )}
 
-        {/* ── KIDS CORNER TAB ── */}
+        {/* KIDS CORNER TAB */}
         {activeTab === "kids" && (
           <div className="verse-section kids-mode space-y-5">
-            {/* Sacred Words */}
             <div className="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-yellow-300 rounded-2xl p-5">
               <p className="text-yellow-700 font-kids font-bold text-base mb-3 flex items-center gap-2">
                 <Baby size={18} />
@@ -617,7 +641,6 @@ export default function VersePage() {
               </p>
             </div>
 
-            {/* Explanation script */}
             {verse.kids_content?.explanation_script ? (
               <div className="bg-gradient-to-br from-blue-50 to-red-50 border-2 border-blue-200 rounded-2xl p-5">
                 <p className="text-blue-700 font-kids font-bold text-base mb-3 flex items-center gap-2">
@@ -640,7 +663,6 @@ export default function VersePage() {
               </div>
             ) : null}
 
-            {/* Kids story */}
             {verse.kids_content?.story ? (
               <div className="bg-gradient-to-br from-orange-50 to-yellow-50 border-2 border-orange-200 rounded-2xl p-5">
                 <p className="text-orange-700 font-kids font-bold text-base mb-3">📖 A Story to Remember</p>
@@ -664,7 +686,6 @@ export default function VersePage() {
               </div>
             ) : null}
 
-            {/* Kids reflection */}
             {(verse.kids_content?.reflection || verse.reflection) && (
               <div className="bg-gradient-to-br from-purple-50 to-violet-50 border-2 border-purple-200 rounded-2xl p-5">
                 <p className="text-purple-700 font-kids font-bold text-base mb-3">🤔 Think About It!</p>
@@ -679,7 +700,6 @@ export default function VersePage() {
               </div>
             )}
 
-            {/* Takeaway for kids */}
             {verse.final_takeaway && (
               <div className="bg-gradient-to-br from-pink-50 to-rose-50 border-2 border-pink-200 rounded-2xl p-5">
                 <p className="text-pink-700 font-kids font-bold text-base mb-3">⭐ Remember This!</p>
@@ -691,7 +711,6 @@ export default function VersePage() {
               </div>
             )}
 
-            {/* Challenge */}
             <div className="bg-red-900 rounded-2xl p-5 text-center">
               <p className="text-orange-300 font-kids font-bold text-base mb-2">🎯 Challenge!</p>
               <p className="text-red-100 font-kids text-base">
@@ -702,7 +721,7 @@ export default function VersePage() {
           </div>
         )}
 
-        {/* ── GRAMMAR TAB ── */}
+        {/* GRAMMAR TAB */}
         {activeTab === "grammar" && (
           <div className="verse-section space-y-5">
             {verse.rich_grammar ? (
@@ -735,7 +754,6 @@ export default function VersePage() {
                   </div>
                 )}
 
-                {/* Padaparicayah table */}
                 {verse.rich_grammar.padaparicayah && verse.rich_grammar.padaparicayah.length > 0 && (
                   <div className="bg-violet-50 border border-violet-200 rounded-2xl p-5 overflow-x-auto">
                     <h5 className="font-devanagari font-bold text-violet-800 text-base mb-4">पदपरिचयः (Padaparicayaḥ — Word Analysis Table)</h5>
@@ -830,7 +848,7 @@ export default function VersePage() {
           </div>
         )}
 
-        {/* ── MORE STORIES TAB ── Title → Image → Story body */}
+        {/* MORE STORIES TAB */}
         {activeTab === "more_stories" && verse.more_stories && (
           <div className="verse-section space-y-6">
             <p className="text-rose-700 text-sm font-semibold uppercase tracking-widest flex items-center gap-2">
@@ -840,7 +858,6 @@ export default function VersePage() {
 
             {moreStoriesParsed.map((story, i) => (
               <div key={i} className="bg-gradient-to-br from-rose-50 to-pink-50 border border-rose-200 rounded-2xl overflow-hidden">
-                {/* Story Title */}
                 <div className="px-5 pt-5 pb-3">
                   <h4 className="font-display font-bold text-rose-800 text-xl flex items-center gap-2">
                     <FlameKindling size={15} className="text-rose-500 flex-shrink-0" />
@@ -848,7 +865,6 @@ export default function VersePage() {
                   </h4>
                 </div>
 
-                {/* Story Image (if available) */}
                 {verse.images?.more_stories?.[i] && (
                   <div className="px-5">
                     <VerseImage
@@ -859,7 +875,6 @@ export default function VersePage() {
                   </div>
                 )}
 
-                {/* Story Body */}
                 <div className="px-5 pb-5">
                   <div className="text-rose-900 text-lg leading-relaxed">
                     {formatText(story.body)}
@@ -870,7 +885,7 @@ export default function VersePage() {
           </div>
         )}
 
-        {/* ── Verse Navigation ── */}
+        {/* Verse Navigation */}
         <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
           {prevVerse ? (
             <Link href={`/chapter/${chapterNum}/verse/${prevVerse.verse}`}>
@@ -878,7 +893,7 @@ export default function VersePage() {
                 <ChevronLeft size={18} className="group-hover:text-orange-500" />
                 <div className="text-left hidden sm:block">
                   <div className="text-sm text-muted-foreground">Previous</div>
-                  <div>Verse {prevVerse.verse}</div>
+                  <div>Shloka {prevVerse.verse}</div>
                 </div>
                 <span className="sm:hidden">Prev</span>
               </button>
@@ -903,7 +918,7 @@ export default function VersePage() {
               <button className="flex items-center gap-2 bg-card border border-border hover:border-orange-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group">
                 <div className="text-right hidden sm:block">
                   <div className="text-sm text-muted-foreground">Next</div>
-                  <div>Verse {nextVerse.verse}</div>
+                  <div>Shloka {nextVerse.verse}</div>
                 </div>
                 <span className="sm:hidden">Next</span>
                 <ChevronRight size={16} className="group-hover:text-orange-500" />

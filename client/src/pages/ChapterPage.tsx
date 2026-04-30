@@ -5,7 +5,7 @@ import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import { useImageUrl } from "@/hooks/useImages";
-import { ChevronLeft, ChevronRight, BookOpen, Star, Sparkles, Gamepad2, Play, Pause } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Sparkles, Gamepad2, Play, Pause } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
 
@@ -59,7 +59,7 @@ function MeaningThumbnail({ chapterNum, verseNum, verse }: { chapterNum: number;
     <img
       src={url}
       alt=""
-      className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-orange-200"
+      className="w-16 h-16 rounded-lg object-cover flex-shrink-0 border border-orange-200"
       loading="lazy"
     />
   );
@@ -115,6 +115,7 @@ export default function ChapterPage() {
   const params = useParams<{ chapterNum: string }>();
   const chapterNum = parseInt(params.chapterNum || "1");
   const [kidsMode, setKidsMode] = useState(false);
+  const [synopsisExpanded, setSynopsisExpanded] = useState(false);
 
   const { isChapterVisible } = useChapterVisibility();
   const chapter = data.chapters.find((c) => c.chapter === chapterNum);
@@ -133,81 +134,94 @@ export default function ChapterPage() {
 
   const devanagariName = chapterDevanagari[chapterNum] || chapter.name_hindi;
   const iastName = chapterIAST[chapterNum] || "";
+  const headerImage = verses[0]?.images?.meaning?.url || null;
 
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
-      {/* Chapter Header */}
-      <div className="relative overflow-hidden group">
+      {/* Chapter Header (#24) */}
+      <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-red-950/60 to-red-900/90 z-[1]" />
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-40"
-          style={{
-            backgroundImage: verses[0]?.images?.meaning?.url
-              ? `url(${verses[0].images.meaning.url})`
-              : undefined,
-          }}
-        />
-        <div className="relative z-10 px-6 py-10 lg:py-14">
-          <div className="flex items-center gap-2 text-red-300 text-sm mb-6">
+        {headerImage && (
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-30"
+            style={{ backgroundImage: `url(${headerImage})` }}
+          />
+        )}
+        <div className="relative z-10 px-4 lg:px-6 py-8 lg:py-12">
+          <div className="flex items-center gap-2 text-red-300 text-sm mb-5">
             <Link href="/" className="hover:text-orange-300 transition-colors">Home</Link>
             <ChevronRight size={14} />
             <span className="text-orange-300">Chapter {chapterNum}</span>
           </div>
 
-          <div className="w-full">
-            <div className="flex items-center gap-3 mb-3">
-              <div>
-                <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest">
-                  Chapter {chapterNum} of 18
-                </p>
+          <div className="flex gap-5 items-start w-full">
+            {/* Chapter image icon on left (#24) */}
+            {headerImage && (
+              <img
+                src={headerImage}
+                alt=""
+                className="w-20 h-20 lg:w-28 lg:h-28 rounded-xl object-cover flex-shrink-0 border-2 border-white/20 shadow-lg hidden sm:block"
+              />
+            )}
+
+            <div className="flex-1 min-w-0">
+              <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest mb-2">
+                Chapter {chapterNum} of 18
                 {chapterNum === 6 && (
-                  <span className="inline-flex items-center gap-1 bg-orange-400 text-red-950 text-xs font-bold px-2 py-0.5 rounded-full mt-1">
+                  <span className="inline-flex items-center gap-1 bg-orange-400 text-red-950 text-xs font-bold px-2 py-0.5 rounded-full ml-3">
                     <Sparkles size={10} />
                     Full Journey Content
                   </span>
                 )}
-              </div>
-            </div>
+              </p>
 
-            <h1 className="text-white font-display text-3xl lg:text-5xl font-bold leading-tight mb-1">
-              {chapter.name}
-            </h1>
-            <p className="text-orange-300 font-devanagari text-xl lg:text-2xl mb-1">{devanagariName}</p>
-            <p className="text-orange-200 text-base italic mb-4">{iastName}</p>
+              {/* IAST as main title (#24) */}
+              <h1 className="text-white font-display text-3xl lg:text-5xl font-bold leading-tight mb-1">
+                {iastName || chapter.name}
+              </h1>
+              <p className="text-orange-300 font-devanagari text-xl lg:text-2xl mb-3">{devanagariName}</p>
 
-            {synopsis && (
-              <p className="text-red-100 text-sm lg:text-base leading-relaxed w-full">{synopsis}</p>
-            )}
-
-            <div className="flex flex-wrap items-center gap-4 mt-6">
-              <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
-                <BookOpen size={14} className="text-orange-400" />
-                <span className="text-white text-sm">{chapter.verses_count} verses</span>
-              </div>
-              <div className="flex items-center gap-2 bg-white/10 rounded-full px-4 py-2">
-                <Star size={14} className="text-orange-400" />
-                <span className="text-white text-sm">{chapter.theme}</span>
-              </div>
-              {chapterNum === 6 && (
-                <>
-                  <div className="flex items-center gap-2 bg-orange-400/20 border border-orange-400/40 rounded-full px-4 py-2">
-                    <Sparkles size={14} className="text-orange-400" />
-                    <span className="text-orange-300 text-sm font-semibold">{verses.length} verses with full explanations</span>
-                  </div>
-                  <Link href={`/chapter/${chapterNum}/games`}>
-                    <div className="flex items-center gap-2 bg-pink-400/20 border border-pink-400/40 hover:bg-pink-400/30 rounded-full px-4 py-2 transition-all cursor-pointer">
-                      <Gamepad2 size={14} className="text-pink-300" />
-                      <span className="text-pink-200 text-sm font-semibold">5 Interactive Games</span>
-                    </div>
-                  </Link>
-                </>
+              {/* Synopsis — truncated on mobile (#25) */}
+              {synopsis && (
+                <div>
+                  <p className={`text-red-100 text-sm lg:text-base leading-relaxed w-full ${!synopsisExpanded ? 'line-clamp-3 md:line-clamp-none' : ''}`}>
+                    {synopsis}
+                  </p>
+                  <button
+                    onClick={() => setSynopsisExpanded(!synopsisExpanded)}
+                    className="text-orange-300 text-xs font-semibold mt-1 hover:underline md:hidden"
+                  >
+                    {synopsisExpanded ? 'less' : 'more'}
+                  </button>
+                </div>
               )}
+
+              <div className="flex flex-wrap items-center gap-3 mt-5">
+                <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5">
+                  <BookOpen size={13} className="text-orange-400" />
+                  <span className="text-white text-sm">{chapter.verses_count} verses</span>
+                </div>
+                {chapterNum === 6 && (
+                  <>
+                    <div className="flex items-center gap-2 bg-orange-400/20 border border-orange-400/40 rounded-full px-3 py-1.5">
+                      <Sparkles size={13} className="text-orange-400" />
+                      <span className="text-orange-300 text-sm font-semibold">{verses.length} full explanations</span>
+                    </div>
+                    <Link href={`/chapter/${chapterNum}/games`}>
+                      <div className="flex items-center gap-2 bg-pink-400/20 border border-pink-400/40 hover:bg-pink-400/30 rounded-full px-3 py-1.5 transition-all cursor-pointer">
+                        <Gamepad2 size={13} className="text-pink-300" />
+                        <span className="text-pink-200 text-sm font-semibold">5 Interactive Games</span>
+                      </div>
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Verse Grid */}
+      {/* Verse Grid — full width (#27) */}
       <div className="px-4 py-8 w-full">
         {chapterNum !== 6 && verses.length === 0 && (
           <div className="text-center py-12 text-muted-foreground">
@@ -220,7 +234,7 @@ export default function ChapterPage() {
         {chapterNum === 6 && (
           <div className="mb-6">
             <Link href={`/chapter/${chapterNum}/games`}>
-              <div className="bg-gradient-to-r from-pink-500 to-violet-600 rounded-2xl p-5 flex items-center justify-between shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer max-w-2xl mx-auto">
+              <div className="bg-gradient-to-r from-pink-500 to-violet-600 rounded-2xl p-5 flex items-center justify-between shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-2xl">🎮</span>
@@ -242,13 +256,14 @@ export default function ChapterPage() {
               key={verse.verse}
               href={`/chapter/${chapterNum}/verse/${verse.verse}`}
             >
-              <div className="group bg-card border border-border hover:border-orange-300 rounded-xl p-5 transition-all hover:shadow-md cursor-pointer h-full flex flex-col">
+              <div className="group bg-card border border-border hover:border-orange-300 rounded-xl p-5 transition-all hover:shadow-lg cursor-pointer h-full flex flex-col relative">
                 {/* Header: verse number + image + audio */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
                     <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-950 text-orange-300 flex items-center justify-center font-bold text-sm group-hover:bg-orange-400 group-hover:text-red-950 transition-all">
                       {chapterNum}.{verse.verse}
                     </div>
+                    {/* Larger image thumbnail (#28/#33) */}
                     <MeaningThumbnail chapterNum={chapterNum} verseNum={verse.verse} verse={verse} />
                     {verse.title && (
                       <span className="text-sm font-semibold text-orange-800 line-clamp-1">{verse.title}</span>
@@ -257,16 +272,16 @@ export default function ChapterPage() {
                   {verse.audio_url && <VerseAudioButton audioUrl={verse.audio_url} />}
                 </div>
 
-                {/* Sanskrit (Devanagari) — multi-line */}
-                <div className="font-devanagari text-red-900 text-base leading-relaxed mb-1.5">
+                {/* Sanskrit (Devanagari) — multi-line, slightly larger (#23) */}
+                <div className="font-devanagari text-red-900 text-lg leading-relaxed mb-1.5">
                   {verse.sanskrit.split('\n').map((line, i) => (
                     <p key={i}>{line}</p>
                   ))}
                 </div>
 
-                {/* IAST transliteration — multi-line */}
+                {/* IAST transliteration — multi-line (#23) */}
                 {verse.transliteration && (
-                  <div className="text-orange-700 text-sm italic leading-relaxed mb-2">
+                  <div className="text-orange-700 text-base italic leading-relaxed mb-2">
                     {verse.transliteration.split('\n').map((line, i) => (
                       <p key={i}>{line}</p>
                     ))}
@@ -292,13 +307,19 @@ export default function ChapterPage() {
                     </div>
                   </div>
                 )}
+
+                {/* Touchable indicator (#32) */}
+                <div className="absolute bottom-2 right-3 flex items-center gap-1 text-orange-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                  <span>View details</span>
+                  <ChevronRight size={12} />
+                </div>
               </div>
             </Link>
           ))}
         </div>
 
         {/* Chapter Navigation */}
-        <div className="flex items-center justify-between mt-10 pt-6 border-t border-border max-w-4xl mx-auto">
+        <div className="flex items-center justify-between mt-10 pt-6 border-t border-border">
           {prevChapter ? (
             <Link href={`/chapter/${prevChapter}`}>
               <button className="flex items-center gap-2 text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold">

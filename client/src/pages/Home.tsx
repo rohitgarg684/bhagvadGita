@@ -81,6 +81,35 @@ function getChapterImage(ch: { chapter: number; key_verses: Verse[] }): string |
   return null;
 }
 
+function buildSynopsis(verses: Verse[]): string {
+  if (verses.length === 0) return "";
+  const meanings = verses.map((v) => v.one_line_meaning).filter(Boolean);
+  if (meanings.length <= 4) return meanings.join(" ");
+  const step = Math.floor(meanings.length / 4);
+  return [meanings[0], meanings[step], meanings[step * 2], meanings[meanings.length - 1]].join(" ");
+}
+
+function ChapterSynopsis({ ch }: { ch: { chapter: number; key_verses: Verse[] } }) {
+  const [expanded, setExpanded] = useState(false);
+  const verses: Verse[] = ch.chapter === 6 ? data.chapter6_full : ch.key_verses;
+  const synopsis = buildSynopsis(verses);
+  if (!synopsis) return <p className="text-foreground/70 text-sm leading-relaxed line-clamp-2 flex-1">{(ch as any).summary}</p>;
+
+  return (
+    <div className="flex-1">
+      <p className={`text-foreground/70 text-sm leading-relaxed ${!expanded ? 'line-clamp-2' : ''}`}>
+        {synopsis}
+      </p>
+      <button
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setExpanded(!expanded); }}
+        className="text-orange-600 text-xs font-semibold mt-1 hover:underline"
+      >
+        {expanded ? 'less' : 'more'}
+      </button>
+    </div>
+  );
+}
+
 export default function Home() {
   const [kidsMode, setKidsMode] = useState(false);
   const { isChapterVisible } = useChapterVisibility();
@@ -88,60 +117,62 @@ export default function Home() {
 
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
-      {/* Hero Banner */}
+      {/* Hero Banner — constrained height (#29) */}
       <section className="relative overflow-hidden">
         <img
           src={HERO_IMG}
           alt="Bhagavad Gita — Krishna and Arjuna"
-          className="w-full h-auto block"
+          className="w-full h-auto block max-h-[260px] object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-red-950/80 via-transparent to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 px-6 pb-6 lg:pb-10 text-center">
-          <h1 className="text-white font-display text-3xl lg:text-5xl font-bold leading-tight mb-2 drop-shadow-lg">
+        <div className="absolute inset-x-0 bottom-0 px-6 pb-6 lg:pb-8 text-center">
+          <h1 className="text-white font-display text-4xl lg:text-6xl font-bold leading-tight mb-1 drop-shadow-lg">
             श्रीमद्भगवद्गीता
           </h1>
-          <p className="text-orange-100 text-sm lg:text-base leading-relaxed max-w-2xl mx-auto drop-shadow-md">
+          <p className="text-orange-200 text-base lg:text-lg italic drop-shadow-md mb-2">
+            śrīmadbhagavadgītā
+          </p>
+          <p className="text-orange-100 text-base lg:text-lg leading-relaxed max-w-3xl mx-auto drop-shadow-md">
             Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.
           </p>
         </div>
       </section>
 
-      {/* Chapter Cards */}
-      <section className="px-4 py-8 lg:py-12 max-w-5xl mx-auto">
+      {/* Chapter Cards — full width (#27) */}
+      <section className="px-4 py-8 lg:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {visibleChapters.map((ch) => {
             const img = getChapterImage(ch as any);
             return (
               <Link key={ch.chapter} href={`/chapter/${ch.chapter}`}>
                 <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:border-orange-300 hover:shadow-md transition-all group cursor-pointer h-full flex flex-col">
-                  <div className={`bg-gradient-to-r ${chapterColorMap[ch.chapter]} p-4 relative overflow-hidden`}>
-                    <div className="absolute top-2 right-3 text-white/20 text-5xl font-bold font-display leading-none select-none">
-                      {ch.chapter}
-                    </div>
+                  {/* Colored header with square image icon (#17/#30) */}
+                  <div className={`bg-gradient-to-r ${chapterColorMap[ch.chapter]} relative overflow-hidden flex`}>
                     {img && (
                       <img
                         src={img}
                         alt=""
-                        className="absolute inset-0 w-full h-full object-cover opacity-20"
+                        className="w-28 h-auto object-cover flex-shrink-0"
                         loading="lazy"
                       />
                     )}
-                    <div className="relative z-10">
-                      <span className="text-white/70 text-xs">Chapter {ch.chapter}</span>
-                      <p className="font-devanagari text-white text-lg leading-tight mt-1">
+                    <div className="p-4 relative z-10 flex-1 min-w-0">
+                      <span className="text-white/60 text-xs">Chapter {ch.chapter}</span>
+                      <p className="font-devanagari text-white text-xl leading-tight mt-1">
                         {chapterDevanagari[ch.chapter] || ch.name_hindi}
                       </p>
-                      <p className="text-orange-200 text-xs italic">
+                      <h3 className="text-white font-display font-bold text-lg leading-tight mt-0.5 truncate">
                         {chapterIAST[ch.chapter] || ""}
-                      </p>
-                      <h3 className="text-white/90 font-display font-semibold text-sm leading-tight mt-1">
-                        {ch.name}
                       </h3>
+                      <p className="text-white/80 text-sm mt-0.5">
+                        {ch.name}
+                      </p>
                     </div>
                   </div>
 
+                  {/* Body: synopsis + meta */}
                   <div className="p-4 flex-1 flex flex-col">
-                    <p className="text-foreground/70 text-xs leading-relaxed line-clamp-2 flex-1">{ch.summary}</p>
+                    <ChapterSynopsis ch={ch as any} />
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
                       <span className="text-xs text-muted-foreground">{ch.verses_count} verses</span>
                       <span className="text-xs text-orange-600 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
