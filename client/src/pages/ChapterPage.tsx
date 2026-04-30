@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useMemo } from "react";
 import { Link, useParams, Redirect } from "wouter";
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
@@ -95,8 +96,32 @@ export default function ChapterPage() {
   const iastName = chapterIAST[chapterNum] || "";
   const headerImage = verses[0]?.images?.meaning?.url || null;
 
+  const chapterTitle = `Chapter ${chapterNum} — ${iastName || chapter.name} (${devanagariName})`;
+  const chapterDescription = chapter.summary ||
+    `${chapter.subtitle} — Explore ${chapter.verses_count} verses of Chapter ${chapterNum} (${chapter.name}) of the Bhagavad Gita with Sanskrit, transliteration, meanings, stories, and kid-friendly explanations.`;
+
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
+      <SEO
+        title={chapterTitle}
+        description={chapterDescription}
+        path={`/chapter/${chapterNum}`}
+        image={headerImage || undefined}
+        type="article"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          name: chapterTitle,
+          headline: `Bhagavad Gita Chapter ${chapterNum} — ${chapter.name}`,
+          description: chapterDescription,
+          url: `https://gita.gurukula.com/chapter/${chapterNum}`,
+          isPartOf: {
+            "@type": "WebSite",
+            name: "Bhagavad Gita - Gurukula.com",
+            url: "https://gita.gurukula.com",
+          },
+        }}
+      />
       {/* Chapter Header (#24) */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-red-950/60 to-red-900/90 z-[1]" />

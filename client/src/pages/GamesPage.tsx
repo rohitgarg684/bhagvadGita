@@ -1,8 +1,7 @@
-// Games Hub Page — Chapter 6 Interactive Learning Games
-// Design: Playful Vedic — Baloo 2 font, bright cards, animated elements (Gurukula palette)
 import { useState } from "react";
 import { Link, useParams } from "wouter";
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import { ChevronLeft, Trophy, Zap, Puzzle, Shuffle, Target, Star } from "lucide-react";
 import VerseMatchGame from "@/components/games/VerseMatchGame";
 import FillBlankGame from "@/components/games/FillBlankGame";
@@ -95,6 +94,11 @@ export default function GamesPage() {
 
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
+      <SEO
+        title={`Chapter ${chapterNum} — Interactive Learning Games`}
+        description="5 fun interactive games to learn the Bhagavad Gita: Verse Match, Quiz, Fill-in-the-Blank, Word Scramble, and Speed Round."
+        path={`/chapter/${chapterNum}/games`}
+      />
       {/* Header */}
       <div className="bg-gradient-to-b from-red-950 to-red-900 px-4 py-8 lg:py-10">
         <div className="flex items-center gap-2 text-red-300 text-xs mb-4">

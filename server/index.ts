@@ -1,4 +1,5 @@
 import express from "express";
+import fs from "fs";
 import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -6,6 +7,13 @@ import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getStorage } from "firebase-admin/storage";
 import { getFirestore } from "firebase-admin/firestore";
 import { getAuth } from "firebase-admin/auth";
+import {
+  loadGitaData,
+  getMetaForUrl,
+  injectMetaTags,
+  generateSitemap,
+  generateRobotsTxt,
+} from "./seo.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -129,6 +137,31 @@ async function startServer() {
       ? path.resolve(__dirname, "public")
       : path.resolve(__dirname, "..", "dist", "public");
 
+  const gitaData = loadGitaData(
+    path.resolve(__dirname, "..", "client", "src", "data", "gitaData.json"),
+    path.resolve(__dirname, "gitaData.json"),
+    path.resolve(__dirname, "data", "gitaData.json"),
+  );
+
+  let htmlTemplate = "";
+  try {
+    htmlTemplate = fs.readFileSync(path.join(staticPath, "index.html"), "utf-8");
+  } catch {
+    // Template loaded lazily on first request if not available at startup
+  }
+
+  app.get("/sitemap.xml", (_req, res) => {
+    res.setHeader("Content-Type", "application/xml; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.send(generateSitemap(gitaData));
+  });
+
+  app.get("/robots.txt", (_req, res) => {
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.setHeader("Cache-Control", "public, max-age=86400");
+    res.send(generateRobotsTxt());
+  });
+
   app.use(
     "/assets",
     express.static(path.join(staticPath, "assets"), {
@@ -139,9 +172,19 @@ async function startServer() {
 
   app.use(express.static(staticPath, { maxAge: 0 }));
 
-  app.get("*", (_req, res) => {
+  app.get("*", (req, res) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-    res.sendFile(path.join(staticPath, "index.html"));
+    if (!htmlTemplate) {
+      try {
+        htmlTemplate = fs.readFileSync(path.join(staticPath, "index.html"), "utf-8");
+      } catch {
+        res.sendFile(path.join(staticPath, "index.html"));
+        return;
+      }
+    }
+    const meta = getMetaForUrl(req.path, gitaData);
+    const html = injectMetaTags(htmlTemplate, meta);
+    res.send(html);
   });
 
   const port = process.env.PORT || 3000;

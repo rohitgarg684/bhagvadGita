@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useParams, useLocation, Redirect } from "wouter";
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import EditableImage from "@/components/EditableImage";
 import { useImageUrl } from "@/hooks/useImages";
@@ -252,8 +253,33 @@ export default function VersePage() {
 
   const moreStoriesParsed = verse.more_stories ? parseMoreStories(verse.more_stories) : [];
 
+  const verseTitle = `${iastName} ${chapterNum}.${verseNum}${verse.title ? ` — ${verse.title}` : ""}`;
+  const verseDescription = verse.one_line_meaning ||
+    verse.concise_journey ||
+    `Bhagavad Gita Chapter ${chapterNum} Verse ${verseNum} — Sanskrit shloka with transliteration, meaning, stories, and grammar analysis.`;
+
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)} stickyHeader={false}>
+      <SEO
+        title={verseTitle}
+        description={verseDescription}
+        path={`/chapter/${chapterNum}/verse/${verseNum}`}
+        image={meaningImageUrl || undefined}
+        type="article"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Article",
+          name: verseTitle,
+          headline: `Bhagavad Gita ${chapterNum}.${verseNum}${verse.title ? ` — ${verse.title}` : ""}`,
+          description: verseDescription,
+          url: `https://gita.gurukula.com/chapter/${chapterNum}/verse/${verseNum}`,
+          isPartOf: {
+            "@type": "WebSite",
+            name: "Bhagavad Gita - Gurukula.com",
+            url: "https://gita.gurukula.com",
+          },
+        }}
+      />
       {/* Verse Header — compact (#26) */}
       <div className="bg-gradient-to-b from-orange-50 to-amber-50 border-b border-orange-200 px-4 py-4 lg:py-6">
         {/* Breadcrumb — "Shloka" instead of "Verse" (#26.2) */}

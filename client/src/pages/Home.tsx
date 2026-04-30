@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
+import SEO from "@/components/SEO";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
@@ -76,6 +77,23 @@ export default function Home() {
 
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
+      <SEO
+        path="/"
+        description="Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults."
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Bhagavad Gita - Gurukula.com",
+          url: "https://gita.gurukula.com",
+          description:
+            "Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.",
+          publisher: {
+            "@type": "Organization",
+            name: "Gurukula.com",
+            url: "https://gurukula.com",
+          },
+        }}
+      />
       {/* Hero Banner — constrained height (#29) */}
       <section className="relative overflow-hidden">
         <img

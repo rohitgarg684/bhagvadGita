@@ -1,0 +1,303 @@
+import fs from "fs";
+import path from "path";
+
+const BASE_URL = "https://gita.gurukula.com";
+const SITE_NAME = "Bhagavad Gita - Gurukula.com";
+const DEFAULT_IMAGE = `${BASE_URL}/gita-banner.png`;
+const DEFAULT_DESCRIPTION =
+  "Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.";
+
+const chapterIAST: Record<number, string> = {
+  1: "arjunaviṣādayogaḥ",
+  2: "sāṅkhyayogaḥ",
+  3: "karmayogaḥ",
+  4: "jñānakarmasaṃnyāsayogaḥ",
+  5: "karmasaṃnyāsayogaḥ",
+  6: "dhyānayogaḥ",
+  7: "jñānavijñānayogaḥ",
+  8: "akṣarabrahmayogaḥ",
+  9: "rājavidyārājaguhyayogaḥ",
+  10: "vibhūtiyogaḥ",
+  11: "viśvarūpadarśanayogaḥ",
+  12: "bhaktiyogaḥ",
+  13: "kṣetrakṣetrajñavibhāgayogaḥ",
+  14: "guṇatrayavibhāgayogaḥ",
+  15: "puruṣottamayogaḥ",
+  16: "daivāsurasaṃpadvibhāgayogaḥ",
+  17: "śraddhātrayavibhāgayogaḥ",
+  18: "mokṣasaṃnyāsayogaḥ",
+};
+
+const chapterDevanagari: Record<number, string> = {
+  1: "अर्जुनविषादयोगः",
+  2: "साङ्ख्ययोगः",
+  3: "कर्मयोगः",
+  4: "ज्ञानकर्मसंन्यासयोगः",
+  5: "कर्मसंन्यासयोगः",
+  6: "ध्यानयोगः",
+  7: "ज्ञानविज्ञानयोगः",
+  8: "अक्षरब्रह्मयोगः",
+  9: "राजविद्याराजगुह्ययोगः",
+  10: "विभूतियोगः",
+  11: "विश्वरूपदर्शनयोगः",
+  12: "भक्तियोगः",
+  13: "क्षेत्रक्षेत्रज्ञविभागयोगः",
+  14: "गुणत्रयविभागयोगः",
+  15: "पुरुषोत्तमयोगः",
+  16: "दैवासुरसम्पद्विभागयोगः",
+  17: "श्रद्धात्रयविभागयोगः",
+  18: "मोक्षसंन्यासयोगः",
+};
+
+interface MetaTags {
+  title: string;
+  description: string;
+  url: string;
+  image: string;
+  type: string;
+}
+
+interface GitaChapter {
+  chapter: number;
+  name: string;
+  name_hindi: string;
+  subtitle: string;
+  verses_count: number;
+  summary: string;
+  key_verses: GitaVerse[];
+}
+
+interface GitaVerse {
+  verse: number;
+  chapter?: number;
+  title?: string;
+  one_line_meaning?: string;
+  concise_journey?: string;
+  images?: { meaning?: { url?: string } };
+}
+
+interface GitaData {
+  chapters: GitaChapter[];
+  chapter6_full: GitaVerse[];
+}
+
+let cachedData: GitaData | null = null;
+
+export function loadGitaData(...candidatePaths: string[]): GitaData {
+  if (cachedData) return cachedData;
+  for (const p of candidatePaths) {
+    try {
+      if (!fs.existsSync(p)) continue;
+      const raw = fs.readFileSync(p, "utf-8");
+      cachedData = JSON.parse(raw) as GitaData;
+      return cachedData;
+    } catch {
+      continue;
+    }
+  }
+  cachedData = { chapters: [], chapter6_full: [] };
+  return cachedData;
+}
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+export function getMetaForUrl(urlPath: string, data: GitaData): MetaTags {
+  const chapterMatch = urlPath.match(/^\/chapter\/(\d+)$/);
+  const verseMatch = urlPath.match(/^\/chapter\/(\d+)\/verse\/(\d+)$/);
+  const gamesMatch = urlPath.match(/^\/chapter\/(\d+)\/games$/);
+
+  if (verseMatch) {
+    const chNum = parseInt(verseMatch[1]);
+    const vNum = parseInt(verseMatch[2]);
+    const chapter = data.chapters.find((c) => c.chapter === chNum);
+    const verses = chNum === 6 ? data.chapter6_full : chapter?.key_verses || [];
+    const verse = verses.find((v) => v.verse === vNum);
+    const iastName = chapterIAST[chNum] || chapter?.name || "";
+    const verseTitle = `${iastName} ${chNum}.${vNum}${verse?.title ? ` — ${verse.title}` : ""}`;
+
+    return {
+      title: `${verseTitle} | ${SITE_NAME}`,
+      description:
+        verse?.one_line_meaning ||
+        verse?.concise_journey ||
+        `Bhagavad Gita Chapter ${chNum} Verse ${vNum} — Sanskrit shloka with transliteration, meaning, stories, and grammar analysis.`,
+      url: `${BASE_URL}/chapter/${chNum}/verse/${vNum}`,
+      image: verse?.images?.meaning?.url || DEFAULT_IMAGE,
+      type: "article",
+    };
+  }
+
+  if (gamesMatch) {
+    const chNum = parseInt(gamesMatch[1]);
+    return {
+      title: `Chapter ${chNum} — Interactive Learning Games | ${SITE_NAME}`,
+      description:
+        "5 fun interactive games to learn the Bhagavad Gita: Verse Match, Quiz, Fill-in-the-Blank, Word Scramble, and Speed Round.",
+      url: `${BASE_URL}/chapter/${chNum}/games`,
+      image: DEFAULT_IMAGE,
+      type: "website",
+    };
+  }
+
+  if (chapterMatch) {
+    const chNum = parseInt(chapterMatch[1]);
+    const chapter = data.chapters.find((c) => c.chapter === chNum);
+    const iastName = chapterIAST[chNum] || chapter?.name || "";
+    const devName = chapterDevanagari[chNum] || chapter?.name_hindi || "";
+    const chapterTitle = `Chapter ${chNum} — ${iastName} (${devName})`;
+
+    return {
+      title: `${chapterTitle} | ${SITE_NAME}`,
+      description:
+        chapter?.summary ||
+        `${chapter?.subtitle || ""} — Explore ${chapter?.verses_count || ""} verses of Chapter ${chNum} of the Bhagavad Gita.`,
+      url: `${BASE_URL}/chapter/${chNum}`,
+      image: getChapterImage(chNum, data) || DEFAULT_IMAGE,
+      type: "article",
+    };
+  }
+
+  // Home page or fallback
+  return {
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    url: BASE_URL,
+    image: DEFAULT_IMAGE,
+    type: "website",
+  };
+}
+
+function getChapterImage(chNum: number, data: GitaData): string | null {
+  const chapter = data.chapters.find((c) => c.chapter === chNum);
+  const verses = chNum === 6 ? data.chapter6_full : chapter?.key_verses || [];
+  for (const v of verses) {
+    if (v.images?.meaning?.url) return v.images.meaning.url;
+  }
+  return null;
+}
+
+export function injectMetaTags(html: string, meta: MetaTags): string {
+  const safeTitle = escapeHtml(meta.title);
+  const safeDesc = escapeHtml(meta.description);
+  const safeUrl = escapeHtml(meta.url);
+  const safeImage = escapeHtml(meta.image);
+
+  let result = html;
+
+  result = result.replace(
+    /<title>[^<]*<\/title>/,
+    `<title>${safeTitle}</title>`
+  );
+
+  result = result.replace(
+    /<meta name="description" content="[^"]*"/,
+    `<meta name="description" content="${safeDesc}"`
+  );
+
+  result = result.replace(
+    /<link rel="canonical" href="[^"]*"/,
+    `<link rel="canonical" href="${safeUrl}"`
+  );
+
+  // OG tags
+  result = result.replace(
+    /<meta property="og:title" content="[^"]*"/,
+    `<meta property="og:title" content="${safeTitle}"`
+  );
+  result = result.replace(
+    /<meta property="og:description" content="[^"]*"/,
+    `<meta property="og:description" content="${safeDesc}"`
+  );
+  result = result.replace(
+    /<meta property="og:url" content="[^"]*"/,
+    `<meta property="og:url" content="${safeUrl}"`
+  );
+  result = result.replace(
+    /<meta property="og:image" content="[^"]*"/,
+    `<meta property="og:image" content="${safeImage}"`
+  );
+  result = result.replace(
+    /<meta property="og:type" content="[^"]*"/,
+    `<meta property="og:type" content="${escapeHtml(meta.type)}"`
+  );
+
+  // Twitter tags
+  result = result.replace(
+    /<meta name="twitter:title" content="[^"]*"/,
+    `<meta name="twitter:title" content="${safeTitle}"`
+  );
+  result = result.replace(
+    /<meta name="twitter:description" content="[^"]*"/,
+    `<meta name="twitter:description" content="${safeDesc}"`
+  );
+  result = result.replace(
+    /<meta name="twitter:image" content="[^"]*"/,
+    `<meta name="twitter:image" content="${safeImage}"`
+  );
+
+  return result;
+}
+
+export function generateSitemap(data: GitaData): string {
+  const today = new Date().toISOString().split("T")[0];
+
+  const urls: { loc: string; priority: string; changefreq: string }[] = [];
+
+  urls.push({ loc: BASE_URL, priority: "1.0", changefreq: "weekly" });
+
+  for (const chapter of data.chapters) {
+    urls.push({
+      loc: `${BASE_URL}/chapter/${chapter.chapter}`,
+      priority: "0.8",
+      changefreq: "weekly",
+    });
+
+    const verses =
+      chapter.chapter === 6 ? data.chapter6_full : chapter.key_verses;
+    for (const verse of verses) {
+      urls.push({
+        loc: `${BASE_URL}/chapter/${chapter.chapter}/verse/${verse.verse}`,
+        priority: "0.6",
+        changefreq: "monthly",
+      });
+    }
+
+    if (chapter.chapter === 6) {
+      urls.push({
+        loc: `${BASE_URL}/chapter/6/games`,
+        priority: "0.5",
+        changefreq: "monthly",
+      });
+    }
+  }
+
+  const urlEntries = urls
+    .map(
+      (u) => `  <url>
+    <loc>${escapeHtml(u.loc)}</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`
+    )
+    .join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlEntries}
+</urlset>`;
+}
+
+export function generateRobotsTxt(): string {
+  return `User-agent: *
+Allow: /
+
+Sitemap: ${BASE_URL}/sitemap.xml
+`;
+}
