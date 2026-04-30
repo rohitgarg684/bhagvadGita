@@ -1,15 +1,14 @@
-// Home Page — Modern Vedic Learning Platform
 import { useState } from "react";
 import { Link } from "wouter";
 import Layout from "@/components/Layout";
 import gitaData from "@/data/gitaData.json";
-import type { GitaData } from "@/types/gita";
+import type { GitaData, Verse } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import { ChevronRight } from "lucide-react";
 
 const data = gitaData as unknown as GitaData;
 
-const HERO_IMG = "/gita-hero-home.png";
+const HERO_IMG = "/gita-banner.png";
 
 const chapterIAST: Record<number, string> = {
   1: "arjunaviṣādayogaḥ",
@@ -27,7 +26,7 @@ const chapterIAST: Record<number, string> = {
   13: "kṣetrakṣetrajñavibhāgayogaḥ",
   14: "guṇatrayavibhāgayogaḥ",
   15: "puruṣottamayogaḥ",
-  16: "daivāsurasampadvibhāgayogaḥ",
+  16: "daivāsurasaṃpadvibhāgayogaḥ",
   17: "śraddhātrayavibhāgayogaḥ",
   18: "mokṣasaṃnyāsayogaḥ",
 };
@@ -74,6 +73,14 @@ const chapterColorMap: Record<number, string> = {
   18: "from-yellow-900 to-orange-800",
 };
 
+function getChapterImage(ch: { chapter: number; key_verses: Verse[] }): string | null {
+  const verses: Verse[] = ch.chapter === 6 ? data.chapter6_full : ch.key_verses;
+  for (const v of verses) {
+    if (v.images?.meaning?.url) return v.images.meaning.url;
+  }
+  return null;
+}
+
 export default function Home() {
   const [kidsMode, setKidsMode] = useState(false);
   const { isChapterVisible } = useChapterVisibility();
@@ -81,7 +88,7 @@ export default function Home() {
 
   return (
     <Layout kidsMode={kidsMode} onToggleKids={() => setKidsMode(!kidsMode)}>
-      {/* ── Hero Section — Widescreen Gita Image ── */}
+      {/* Hero Banner */}
       <section className="relative overflow-hidden">
         <img
           src={HERO_IMG}
@@ -89,61 +96,68 @@ export default function Home() {
           className="w-full h-auto block"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-red-950/80 via-transparent to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 px-6 pb-8 lg:pb-12 text-center">
-          <h1 className="text-white font-display text-4xl lg:text-5xl font-bold leading-tight mb-3 drop-shadow-lg">
+        <div className="absolute inset-x-0 bottom-0 px-6 pb-6 lg:pb-10 text-center">
+          <h1 className="text-white font-display text-3xl lg:text-5xl font-bold leading-tight mb-2 drop-shadow-lg">
             श्रीमद्भगवद्गीता
           </h1>
-          <p className="text-orange-100 text-base lg:text-lg leading-relaxed max-w-2xl mx-auto drop-shadow-md">
+          <p className="text-orange-100 text-sm lg:text-base leading-relaxed max-w-2xl mx-auto drop-shadow-md">
             Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.
           </p>
         </div>
       </section>
 
-      {/* ── Chapter Cards ── */}
+      {/* Chapter Cards */}
       <section className="px-4 py-8 lg:py-12 max-w-5xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {visibleChapters.map((ch) => (
-            <Link key={ch.chapter} href={`/chapter/${ch.chapter}`}>
-              <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:border-orange-300 hover:shadow-md transition-all group cursor-pointer">
-                <div className={`bg-gradient-to-r ${chapterColorMap[ch.chapter]} p-4 relative overflow-hidden`}>
-                  <div className="absolute top-2 right-3 text-white/20 text-5xl font-bold font-display leading-none select-none">
-                    {ch.chapter}
-                  </div>
-                  <div className="relative z-10">
-                    <span className="text-2xl">{ch.icon}</span>
-                    <div className="mt-1">
+          {visibleChapters.map((ch) => {
+            const img = getChapterImage(ch as any);
+            return (
+              <Link key={ch.chapter} href={`/chapter/${ch.chapter}`}>
+                <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:border-orange-300 hover:shadow-md transition-all group cursor-pointer h-full flex flex-col">
+                  <div className={`bg-gradient-to-r ${chapterColorMap[ch.chapter]} p-4 relative overflow-hidden`}>
+                    <div className="absolute top-2 right-3 text-white/20 text-5xl font-bold font-display leading-none select-none">
+                      {ch.chapter}
+                    </div>
+                    {img && (
+                      <img
+                        src={img}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover opacity-20"
+                        loading="lazy"
+                      />
+                    )}
+                    <div className="relative z-10">
                       <span className="text-white/70 text-xs">Chapter {ch.chapter}</span>
-                      <h3 className="text-white font-display font-semibold text-base leading-tight">
+                      <p className="font-devanagari text-white text-lg leading-tight mt-1">
+                        {chapterDevanagari[ch.chapter] || ch.name_hindi}
+                      </p>
+                      <p className="text-orange-200 text-xs italic">
+                        {chapterIAST[ch.chapter] || ""}
+                      </p>
+                      <h3 className="text-white/90 font-display font-semibold text-sm leading-tight mt-1">
                         {ch.name}
                       </h3>
                     </div>
                   </div>
-                </div>
 
-                <div className="p-4">
-                  <p className="font-devanagari text-red-800 text-sm mb-0.5">
-                    {chapterDevanagari[ch.chapter] || ch.name_hindi}
-                  </p>
-                  <p className="text-orange-700 text-xs italic mb-2">
-                    {chapterIAST[ch.chapter] || ""}
-                  </p>
-                  <p className="text-foreground/80 text-xs font-semibold mb-1 text-orange-700">{ch.subtitle}</p>
-                  <p className="text-foreground/70 text-xs leading-relaxed line-clamp-2">{ch.summary}</p>
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-                    <span className="text-xs text-muted-foreground">{ch.verses_count} verses</span>
-                    <span className="text-xs text-orange-600 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
-                      Explore
-                      <ChevronRight size={12} />
-                    </span>
+                  <div className="p-4 flex-1 flex flex-col">
+                    <p className="text-foreground/70 text-xs leading-relaxed line-clamp-2 flex-1">{ch.summary}</p>
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+                      <span className="text-xs text-muted-foreground">{ch.verses_count} verses</span>
+                      <span className="text-xs text-orange-600 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Explore
+                        <ChevronRight size={12} />
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       </section>
 
-      {/* ── Footer ── */}
+      {/* Footer */}
       <footer className="bg-red-950 text-red-300 py-8 px-6 text-center">
         <p className="font-devanagari text-lg text-orange-300 mb-1">
           सर्वे भवन्तु सुखिनः

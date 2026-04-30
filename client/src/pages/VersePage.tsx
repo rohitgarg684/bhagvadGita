@@ -305,9 +305,9 @@ export default function VersePage() {
           </div>
 
           {/* Shloka + IAST side-by-side on md+, stacked on mobile */}
-          <div className="flex flex-col md:flex-row gap-4 items-start">
+          <div className="flex flex-col md:flex-row gap-4 items-stretch">
             {/* Devanagari Shloka */}
-            <div className="bg-gradient-to-br from-red-900 to-red-800 rounded-2xl p-5 lg:p-6 shadow-md flex-1 flex flex-col">
+            <div className="bg-gradient-to-br from-red-900 to-red-800 rounded-2xl p-5 lg:p-6 shadow-md w-full md:flex-1 flex flex-col">
               <div className="font-devanagari text-orange-100 text-2xl lg:text-3xl flex-1">
                 {verse.sanskrit.split('\n').map((line, i) => (
                   <p key={i} className="leading-loose">
@@ -407,7 +407,7 @@ export default function VersePage() {
 
             {/* IAST + English meaning */}
             {verse.transliteration && (
-              <div className="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-5 flex-1 flex flex-col">
+              <div className="bg-orange-50 border border-orange-200 rounded-2xl px-5 py-5 w-full md:flex-1 flex flex-col">
                 <div className="transliteration-text text-orange-900 text-lg lg:text-xl italic flex-1">
                   {verse.transliteration.split('\n').map((line, i) => (
                     <p key={i} className="leading-relaxed">
@@ -543,7 +543,7 @@ export default function VersePage() {
                 <Lightbulb size={14} />
                 Impact on Current Life
               </p>
-              <div className="text-green-900 text-base leading-relaxed">
+              <div className="text-green-900 text-lg leading-relaxed">
                 {formatText(verse.real_life_example)}
               </div>
             </div>
@@ -582,7 +582,7 @@ export default function VersePage() {
                   <Sparkles size={14} />
                   Detailed Gita Journey — Step by Step
                 </p>
-                <div className="text-foreground/80 text-base leading-relaxed">
+                <div className="text-foreground/80 text-lg leading-relaxed">
                   {formatText(verse.detailed_meaning)}
                 </div>
               </div>
@@ -592,7 +592,7 @@ export default function VersePage() {
                   <Sparkles size={14} />
                   Full Gita Journey — Word by Word
                 </p>
-                <div className="text-foreground/80 text-base leading-relaxed space-y-1">
+                <div className="text-foreground/80 text-lg leading-relaxed space-y-1">
                   {formatText(verse.full_journey_text)}
                 </div>
               </div>
@@ -861,7 +861,7 @@ export default function VersePage() {
 
                 {/* Story Body */}
                 <div className="px-5 pb-5">
-                  <div className="text-rose-900 text-base leading-relaxed">
+                  <div className="text-rose-900 text-lg leading-relaxed">
                     {formatText(story.body)}
                   </div>
                 </div>
