@@ -164,8 +164,8 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
           </div>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 min-w-0 overflow-y-auto">
+        {/* Main Content — overflow-y-auto enables sticky children (#47) */}
+        <main className="flex-1 min-w-0 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
           {children}
         </main>
       </div>

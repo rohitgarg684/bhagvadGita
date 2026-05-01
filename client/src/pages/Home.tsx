@@ -94,22 +94,22 @@ export default function Home() {
           },
         }}
       />
-      {/* Hero Banner — constrained height (#29) */}
+      {/* Hero Banner — constrained height (#29, #41) */}
       <section className="relative overflow-hidden">
         <img
           src={HERO_IMG}
           alt="Bhagavad Gita — Krishna and Arjuna"
-          className="w-full h-auto block max-h-[260px] object-cover"
+          className="w-full h-auto block max-h-[260px] object-cover opacity-60"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-red-950/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-red-950/90 via-red-950/50 to-red-950/30" />
         <div className="absolute inset-x-0 bottom-0 px-6 pb-6 lg:pb-8 text-center">
-          <h1 className="text-white font-display text-4xl lg:text-6xl font-bold leading-tight mb-1 drop-shadow-lg">
+          <h1 className="text-white font-display text-4xl lg:text-6xl font-bold leading-tight mb-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             श्रीमद्भगवद्गीता
           </h1>
-          <p className="text-orange-200 text-base lg:text-lg italic drop-shadow-md mb-2">
+          <p className="text-orange-100 text-lg lg:text-xl italic drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] mb-2 font-semibold">
             śrīmadbhagavadgītā
           </p>
-          <p className="text-orange-100 text-base lg:text-lg leading-relaxed max-w-3xl mx-auto drop-shadow-md">
+          <p className="text-white text-base lg:text-lg leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] font-medium">
             Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.
           </p>
         </div>
@@ -122,8 +122,8 @@ export default function Home() {
             const img = getChapterImage(ch as any);
             return (
               <Link key={ch.chapter} href={`/chapter/${ch.chapter}`}>
-                <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:border-orange-300 hover:shadow-md transition-all group cursor-pointer h-full flex flex-col">
-                  {/* Colored header with square image icon (#17/#30) */}
+                <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border [@media(hover:hover)]:hover:border-orange-300 [@media(hover:hover)]:hover:shadow-md transition-all group cursor-pointer h-full flex flex-col">
+                  {/* Colored header with image icon + translucent chapter number (#42) */}
                   <div className={`bg-gradient-to-r ${chapterColorMap[ch.chapter]} relative overflow-hidden flex`}>
                     {img && (
                       <img
@@ -134,17 +134,20 @@ export default function Home() {
                       />
                     )}
                     <div className="p-4 relative z-10 flex-1 min-w-0">
-                      <span className="text-white/60 text-xs">Chapter {ch.chapter}</span>
-                      <p className="font-devanagari text-white text-xl leading-tight mt-1">
+                      <span className="inline-block bg-white/20 text-white text-sm font-bold px-2 py-0.5 rounded mb-1">
+                        Chapter {ch.chapter}
+                      </span>
+                      <p className="font-devanagari text-white text-2xl leading-tight mt-1">
                         {chapterDevanagari[ch.chapter] || ch.name_hindi}
                       </p>
-                      <h3 className="text-white font-display font-bold text-lg leading-tight mt-0.5 truncate">
+                      <h3 className="text-white font-display font-bold text-xl leading-tight mt-0.5 truncate">
                         {chapterIAST[ch.chapter] || ""}
                       </h3>
-                      <p className="text-white/80 text-sm mt-0.5">
-                        {ch.name}
-                      </p>
                     </div>
+                    {/* Translucent chapter number on right (#42.3) */}
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 font-display font-bold text-white/10 text-7xl leading-none pointer-events-none select-none">
+                      {ch.chapter}
+                    </span>
                   </div>
 
                   {/* Body: synopsis + meta */}
@@ -152,7 +155,7 @@ export default function Home() {
                     <ChapterSynopsis ch={ch as any} />
                     <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
                       <span className="text-xs text-muted-foreground">{ch.verses_count} verses</span>
-                      <span className="text-xs text-orange-600 font-semibold flex items-center gap-1 group-hover:gap-2 transition-all">
+                      <span className="text-xs text-orange-600 font-semibold flex items-center gap-1 [@media(hover:hover)]:group-hover:gap-2 transition-all">
                         Explore
                         <ChevronRight size={12} />
                       </span>

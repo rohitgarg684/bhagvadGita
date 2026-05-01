@@ -64,15 +64,27 @@ function ImageModal({ src, alt, onClose }: { src: string; alt: string; onClose: 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
     document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handler);
+      document.body.style.overflow = '';
+    };
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-4" onClick={onClose}>
-      <button className="absolute top-4 right-4 text-white/80 hover:text-white z-10" onClick={onClose}>
-        <X size={28} />
+    <div
+      className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-3 sm:p-4 overflow-auto"
+      onClick={onClose}
+    >
+      <button className="fixed top-3 right-3 sm:top-4 sm:right-4 text-white/80 hover:text-white z-[101] bg-black/50 rounded-full p-1.5" onClick={onClose}>
+        <X size={24} />
       </button>
-      <img src={src} alt={alt} className="max-w-full max-h-full object-contain rounded-lg" onClick={(e) => e.stopPropagation()} />
+      <img
+        src={src}
+        alt={alt}
+        className="max-w-[95vw] max-h-[85vh] object-contain rounded-lg"
+        onClick={(e) => e.stopPropagation()}
+      />
     </div>
   );
 }
@@ -294,21 +306,21 @@ export default function VersePage() {
         </div>
 
         <div>
-          {/* Title: "iastName chapter X shloka Y" with meaning image icon (#26.3, #26.7) */}
+          {/* Title: "iastName chapter X shloka Y" — prominent styling (#26.3, #26.7, #38) */}
           <div className="flex items-center gap-3 mb-3">
             {meaningImageUrl && (
               <img
                 src={meaningImageUrl}
                 alt=""
-                className="w-10 h-10 rounded-lg object-cover flex-shrink-0 border border-orange-200"
+                className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-orange-200"
               />
             )}
             <div>
-              <p className="text-orange-700 text-sm font-semibold tracking-wide">
-                {iastName} chapter {chapterNum} shloka {verseNum}
+              <p className="bg-red-900 text-orange-100 text-base sm:text-lg font-bold tracking-wide px-3 py-1.5 rounded-lg inline-block">
+                {iastName} · chapter {chapterNum} · shloka {verseNum}
               </p>
               {verse.title && (
-                <p className="text-orange-900 text-lg font-display font-bold mt-0.5">{verse.title}</p>
+                <p className="text-orange-900 text-lg font-display font-bold mt-1">{verse.title}</p>
               )}
             </div>
           </div>
@@ -386,13 +398,13 @@ export default function VersePage() {
                     </button>
                     <button
                       onClick={() => toggleAudio(verse.audio_url!)}
-                      className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                      className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all ${
                         audioPlaying
                           ? "bg-orange-600 text-white shadow-lg"
                           : "bg-orange-500 text-white hover:bg-orange-600"
                       }`}
                     >
-                      {audioPlaying ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
+                      {audioPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
                     </button>
                     <button
                       onClick={() => skipAudio(5)}
@@ -491,8 +503,8 @@ export default function VersePage() {
         </div>
       </div>
 
-      {/* Tab Navigation — sticky at top (#26.10), compact padding (#26.8) */}
-      <div className="sticky top-0 z-30 bg-white border-b border-border shadow-sm">
+      {/* Tab Navigation — sticky at top (#26.10, #47), compact padding (#26.8) */}
+      <div className="sticky top-0 z-30 bg-white border-b border-border shadow-sm will-change-transform">
         <div className="px-2 py-0.5">
           <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${Math.ceil(availableTabs.length / 2)}, 1fr)` }}>
             {availableTabs.slice(0, Math.ceil(availableTabs.length / 2)).map((tab) => (

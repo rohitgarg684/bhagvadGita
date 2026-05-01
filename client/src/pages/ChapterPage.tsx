@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { Link, useParams, Redirect } from "wouter";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
@@ -19,22 +19,45 @@ function MeaningThumbnail({ chapterNum, verseNum, verse }: { chapterNum: number;
     <img
       src={url}
       alt=""
-      className="w-16 h-16 rounded-lg object-cover flex-shrink-0 border border-orange-200"
+      className="w-14 h-18 sm:w-16 sm:h-20 rounded-lg object-cover flex-shrink-0 border border-orange-200"
       loading="lazy"
     />
   );
 }
 
-function VerseAudioButton({ audioUrl }: { audioUrl: string }) {
+const activeAudioRef: { current: HTMLAudioElement | null; verseNum: number | null; onEnd: (() => void) | null } = {
+  current: null, verseNum: null, onEnd: null,
+};
+
+function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; verseNum: number; onEnded?: () => void }) {
   const [playing, setPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (activeAudioRef.current === audioRef.current) {
+        activeAudioRef.current = null;
+        activeAudioRef.verseNum = null;
+        activeAudioRef.onEnd = null;
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (activeAudioRef.verseNum !== verseNum && playing) {
+      setPlaying(false);
+    }
+  });
 
   const toggle = useCallback(() => {
     if (!audioRef.current) {
       const a = new Audio();
       a.crossOrigin = "anonymous";
       a.src = audioUrl;
-      a.addEventListener("ended", () => setPlaying(false));
+      a.addEventListener("ended", () => {
+        setPlaying(false);
+        activeAudioRef.onEnd?.();
+      });
       a.addEventListener("error", () => setPlaying(false));
       audioRef.current = a;
     }
@@ -42,23 +65,34 @@ function VerseAudioButton({ audioUrl }: { audioUrl: string }) {
     if (playing) {
       a.pause();
       setPlaying(false);
+      if (activeAudioRef.current === a) {
+        activeAudioRef.current = null;
+        activeAudioRef.verseNum = null;
+      }
     } else {
+      if (activeAudioRef.current && activeAudioRef.current !== a) {
+        activeAudioRef.current.pause();
+      }
+      activeAudioRef.current = a;
+      activeAudioRef.verseNum = verseNum;
+      activeAudioRef.onEnd = onEnded || null;
+      a.currentTime = 0;
       a.play().catch(() => setPlaying(false));
       setPlaying(true);
     }
-  }, [audioUrl, playing]);
+  }, [audioUrl, playing, verseNum, onEnded]);
 
   return (
     <button
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(); }}
-      className={`flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+      className={`flex-shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all ${
         playing
-          ? "bg-orange-500 text-white shadow-md"
-          : "bg-orange-100 text-orange-600 hover:bg-orange-200"
+          ? "bg-red-900 text-white border-red-800 shadow-lg"
+          : "bg-red-950 text-orange-300 border-red-900 [@media(hover:hover)]:hover:bg-red-800"
       }`}
       title={playing ? "Pause" : "Play shloka"}
     >
-      {playing ? <Pause size={15} /> : <Play size={15} className="ml-0.5" />}
+      {playing ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
     </button>
   );
 }
@@ -122,7 +156,7 @@ export default function ChapterPage() {
           },
         }}
       />
-      {/* Chapter Header (#24) */}
+      {/* Chapter Header (#24, #44) */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-red-950/60 to-red-900/90 z-[1]" />
         {headerImage && (
@@ -131,6 +165,12 @@ export default function ChapterPage() {
             style={{ backgroundImage: `url(${headerImage})` }}
           />
         )}
+        {/* Translucent chapter number — top right (#44) */}
+        <div className="absolute top-0 right-0 z-[2] pointer-events-none select-none">
+          <span className="font-display font-bold text-white/10 text-[8rem] sm:text-[10rem] lg:text-[12rem] leading-none block -mt-4 -mr-2">
+            {chapterNum}
+          </span>
+        </div>
         <div className="relative z-10 px-4 lg:px-6 py-8 lg:py-12">
           <div className="flex items-center gap-2 text-red-300 text-sm mb-5">
             <Link href="/" className="hover:text-orange-300 transition-colors">Home</Link>
@@ -235,35 +275,52 @@ export default function ChapterPage() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {verses.map((verse) => (
+          {verses.map((verse, idx) => (
             <Link
               key={verse.verse}
               href={`/chapter/${chapterNum}/verse/${verse.verse}`}
+              id={`verse-card-${verse.verse}`}
             >
-              <div className="group bg-card border border-border hover:border-orange-300 rounded-xl p-5 transition-all hover:shadow-lg cursor-pointer h-full flex flex-col relative">
-                {/* Header: verse number + image + audio */}
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-red-950 text-orange-300 flex items-center justify-center font-bold text-sm group-hover:bg-orange-400 group-hover:text-red-950 transition-all">
-                      {chapterNum}.{verse.verse}
+              <div className="group bg-card border border-border [@media(hover:hover)]:hover:border-orange-300 rounded-xl p-3 sm:p-4 transition-all [@media(hover:hover)]:hover:shadow-lg cursor-pointer h-full flex flex-col relative">
+                {/* Header: icon top-left + verse number + title + audio (#39) */}
+                <div className="flex items-start gap-3 mb-2">
+                  <MeaningThumbnail chapterNum={chapterNum} verseNum={verse.verse} verse={verse} />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="text-lg font-bold text-red-950">
+                        {chapterNum}.{verse.verse}
+                      </span>
+                      {verse.audio_url && (
+                        <VerseAudioButton
+                          audioUrl={verse.audio_url}
+                          verseNum={verse.verse}
+                          onEnded={idx < verses.length - 1 && verses[idx + 1].audio_url ? () => {
+                            const nextCard = document.getElementById(`verse-card-${verses[idx + 1].verse}`);
+                            if (nextCard) {
+                              nextCard.scrollIntoView({ behavior: "smooth", block: "center" });
+                            }
+                            setTimeout(() => {
+                              const nextBtn = nextCard?.querySelector<HTMLButtonElement>("button[title='Play shloka']");
+                              nextBtn?.click();
+                            }, 500);
+                          } : undefined}
+                        />
+                      )}
                     </div>
-                    {/* Larger image thumbnail (#28/#33) */}
-                    <MeaningThumbnail chapterNum={chapterNum} verseNum={verse.verse} verse={verse} />
                     {verse.title && (
-                      <span className="text-sm font-semibold text-orange-800 line-clamp-1">{verse.title}</span>
+                      <p className="text-sm font-semibold text-orange-800 line-clamp-1 mt-0.5">{verse.title}</p>
                     )}
                   </div>
-                  {verse.audio_url && <VerseAudioButton audioUrl={verse.audio_url} />}
                 </div>
 
-                {/* Sanskrit (Devanagari) — multi-line, slightly larger (#23) */}
+                {/* Sanskrit (Devanagari) */}
                 <div className="font-devanagari text-red-900 text-lg leading-relaxed mb-1.5">
                   {verse.sanskrit.split('\n').map((line, i) => (
                     <p key={i}>{line}</p>
                   ))}
                 </div>
 
-                {/* IAST transliteration — multi-line (#23) */}
+                {/* IAST transliteration */}
                 {verse.transliteration && (
                   <div className="text-orange-700 text-base italic leading-relaxed mb-2">
                     {verse.transliteration.split('\n').map((line, i) => (
@@ -273,14 +330,33 @@ export default function ChapterPage() {
                 )}
 
                 {/* One-line meaning */}
-                <p className="text-foreground/80 text-base leading-relaxed mb-3 flex-1">
+                <p className="text-foreground/80 text-base leading-relaxed mb-2 flex-1">
                   {verse.one_line_meaning}
                 </p>
 
+                {/* Word-by-word meaning inline (#39.5) */}
+                {verse.rich_grammar?.pratipadarthah && (
+                  <div className="border-t border-border pt-2 mb-2">
+                    <p className="text-sm leading-relaxed">
+                      {verse.rich_grammar.pratipadarthah.split('|').map((item, i, arr) => {
+                        const [word, meaning] = item.split('=').map(s => s.trim());
+                        if (!word || !meaning) return null;
+                        return (
+                          <span key={i}>
+                            <span className="font-devanagari text-red-800 font-semibold">{word}</span>
+                            <span className="text-foreground/70"> = {meaning}</span>
+                            {i < arr.length - 1 && <span className="text-muted-foreground">, </span>}
+                          </span>
+                        );
+                      })}
+                    </p>
+                  </div>
+                )}
+
                 {/* Reflection questions */}
                 {verse.reflection && (
-                  <div className="border-t border-border pt-3 mt-auto">
-                    <p className="text-sm font-semibold text-violet-600 mb-1.5">Reflection</p>
+                  <div className="border-t border-border pt-2 mt-auto">
+                    <p className="text-sm font-semibold text-violet-600 mb-1">Reflection</p>
                     <div className="space-y-1">
                       {verse.reflection.split('\n').filter(l => l.trim()).slice(0, 2).map((q, i) => (
                         <p key={i} className="text-sm text-muted-foreground leading-relaxed flex gap-1.5">
@@ -292,10 +368,10 @@ export default function ChapterPage() {
                   </div>
                 )}
 
-                {/* Touchable indicator (#32) */}
-                <div className="absolute bottom-2 right-3 flex items-center gap-1 text-orange-400 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                {/* Touchable indicator — always visible on mobile, hover-only on desktop (#32, #35) */}
+                <div className="absolute bottom-2 right-3 flex items-center gap-1 text-orange-500 text-xs font-semibold opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity">
                   <span>View details</span>
-                  <ChevronRight size={12} />
+                  <ChevronRight size={14} />
                 </div>
               </div>
             </Link>
