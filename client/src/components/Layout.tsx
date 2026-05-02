@@ -99,7 +99,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
         </div>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 lg:overflow-hidden">
         {/* Sidebar Overlay (mobile) */}
         {sidebarOpen && (
           <div
@@ -164,8 +164,8 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
           </div>
         </aside>
 
-        {/* Main Content — overflow-y-auto enables sticky children (#47) */}
-        <main className="flex-1 min-w-0 overflow-y-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+        {/* Main Content — no overflow on mobile so sticky works with document scroll (#56) */}
+        <main className="flex-1 min-w-0 lg:overflow-y-auto">
           {children}
         </main>
       </div>

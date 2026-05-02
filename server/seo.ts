@@ -118,8 +118,8 @@ export function getMetaForUrl(urlPath: string, data: GitaData): MetaTags {
     const chapter = data.chapters.find((c) => c.chapter === chNum);
     const verses = chNum === 6 ? data.chapter6_full : chapter?.key_verses || [];
     const verse = verses.find((v) => v.verse === vNum);
-    const iastName = chapterIAST[chNum] || chapter?.name || "";
-    const verseTitle = `${iastName} ${chNum}.${vNum}${verse?.title ? ` — ${verse.title}` : ""}`;
+    const chapterName = chapter?.name || chapterIAST[chNum] || "";
+    const verseTitle = `Bhagavad Gita Chapter ${chNum} Shloka ${vNum} — ${chapterName}`;
 
     return {
       title: `${verseTitle} | ${SITE_NAME}`,
@@ -148,9 +148,10 @@ export function getMetaForUrl(urlPath: string, data: GitaData): MetaTags {
   if (chapterMatch) {
     const chNum = parseInt(chapterMatch[1]);
     const chapter = data.chapters.find((c) => c.chapter === chNum);
-    const iastName = chapterIAST[chNum] || chapter?.name || "";
+    const chapterName = chapter?.name || "";
     const devName = chapterDevanagari[chNum] || chapter?.name_hindi || "";
-    const chapterTitle = `Chapter ${chNum} — ${iastName} (${devName})`;
+    const iastName = chapterIAST[chNum] || "";
+    const chapterTitle = `Bhagavad Gita Chapter ${chNum} — ${chapterName} (${devName}, ${iastName})`;
 
     return {
       title: `${chapterTitle} | ${SITE_NAME}`,
@@ -240,6 +241,17 @@ export function injectMetaTags(html: string, meta: MetaTags): string {
     /<meta name="twitter:image" content="[^"]*"/,
     `<meta name="twitter:image" content="${safeImage}"`
   );
+
+  // Update og:image:type for non-default images
+  if (meta.image !== DEFAULT_IMAGE) {
+    const imgType = meta.image.includes('.webp') ? 'image/webp'
+      : meta.image.includes('.jpg') || meta.image.includes('.jpeg') ? 'image/jpeg'
+      : 'image/png';
+    result = result.replace(
+      /<meta property="og:image:type" content="[^"]*"/,
+      `<meta property="og:image:type" content="${imgType}"`
+    );
+  }
 
   return result;
 }

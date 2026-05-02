@@ -61,28 +61,47 @@ function formatText(text: string) {
 }
 
 function ImageModal({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onCloseRef.current(); };
     document.addEventListener('keydown', handler);
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
     document.body.style.overflow = 'hidden';
     return () => {
       document.removeEventListener('keydown', handler);
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
       document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
     };
-  }, [onClose]);
+  }, []);
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-3 sm:p-4 overflow-auto"
+      className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center"
+      style={{ touchAction: 'none' }}
       onClick={onClose}
     >
-      <button className="fixed top-3 right-3 sm:top-4 sm:right-4 text-white/80 hover:text-white z-[101] bg-black/50 rounded-full p-1.5" onClick={onClose}>
+      <button
+        className="absolute top-[env(safe-area-inset-top,12px)] right-3 text-white/90 hover:text-white z-[101] bg-black/60 rounded-full p-2"
+        style={{ marginTop: 'max(12px, env(safe-area-inset-top))' }}
+        onClick={onClose}
+      >
         <X size={24} />
       </button>
       <img
         src={src}
         alt={alt}
-        className="max-w-[95vw] max-h-[85vh] object-contain rounded-lg"
+        className="max-w-[92vw] max-h-[80vh] object-contain rounded-lg"
+        style={{ margin: 'auto' }}
         onClick={(e) => e.stopPropagation()}
       />
     </div>
@@ -503,8 +522,8 @@ export default function VersePage() {
         </div>
       </div>
 
-      {/* Tab Navigation — sticky at top (#26.10, #47), compact padding (#26.8) */}
-      <div className="sticky top-0 z-30 bg-white border-b border-border shadow-sm will-change-transform">
+      {/* Tab Navigation — sticky at viewport top on mobile (document scroll), at top in desktop scroll container (#56) */}
+      <div className="sticky top-0 z-30 bg-white border-b border-border shadow-sm">
         <div className="px-2 py-0.5">
           <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${Math.ceil(availableTabs.length / 2)}, 1fr)` }}>
             {availableTabs.slice(0, Math.ceil(availableTabs.length / 2)).map((tab) => (

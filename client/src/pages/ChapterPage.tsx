@@ -19,7 +19,7 @@ function MeaningThumbnail({ chapterNum, verseNum, verse }: { chapterNum: number;
     <img
       src={url}
       alt=""
-      className="w-14 h-18 sm:w-16 sm:h-20 rounded-lg object-cover flex-shrink-0 border border-orange-200"
+      className="w-20 h-20 rounded-lg object-contain flex-shrink-0 border border-orange-200 bg-orange-50"
       loading="lazy"
     />
   );
@@ -31,10 +31,13 @@ const activeAudioRef: { current: HTMLAudioElement | null; verseNum: number | nul
 
 function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; verseNum: number; onEnded?: () => void }) {
   const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
     return () => {
+      cancelAnimationFrame(rafRef.current);
       if (activeAudioRef.current === audioRef.current) {
         activeAudioRef.current = null;
         activeAudioRef.verseNum = null;
@@ -46,8 +49,18 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
   useEffect(() => {
     if (activeAudioRef.verseNum !== verseNum && playing) {
       setPlaying(false);
+      setProgress(0);
+      cancelAnimationFrame(rafRef.current);
     }
   });
+
+  const updateProgress = useCallback(() => {
+    const a = audioRef.current;
+    if (a && a.duration && !a.paused) {
+      setProgress(a.currentTime / a.duration);
+      rafRef.current = requestAnimationFrame(updateProgress);
+    }
+  }, []);
 
   const toggle = useCallback(() => {
     if (!audioRef.current) {
@@ -56,15 +69,22 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
       a.src = audioUrl;
       a.addEventListener("ended", () => {
         setPlaying(false);
+        setProgress(0);
+        cancelAnimationFrame(rafRef.current);
         activeAudioRef.onEnd?.();
       });
-      a.addEventListener("error", () => setPlaying(false));
+      a.addEventListener("error", () => {
+        setPlaying(false);
+        setProgress(0);
+        cancelAnimationFrame(rafRef.current);
+      });
       audioRef.current = a;
     }
     const a = audioRef.current;
     if (playing) {
       a.pause();
       setPlaying(false);
+      cancelAnimationFrame(rafRef.current);
       if (activeAudioRef.current === a) {
         activeAudioRef.current = null;
         activeAudioRef.verseNum = null;
@@ -79,20 +99,45 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
       a.currentTime = 0;
       a.play().catch(() => setPlaying(false));
       setPlaying(true);
+      rafRef.current = requestAnimationFrame(updateProgress);
     }
-  }, [audioUrl, playing, verseNum, onEnded]);
+  }, [audioUrl, playing, verseNum, onEnded, updateProgress]);
+
+  const SIZE = 44;
+  const STROKE = 3;
+  const RADIUS = (SIZE - STROKE) / 2;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+  const strokeDashoffset = CIRCUMFERENCE * (1 - progress);
 
   return (
     <button
       onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(); }}
-      className={`flex-shrink-0 w-11 h-11 rounded-full border-2 flex items-center justify-center transition-all ${
-        playing
-          ? "bg-red-900 text-white border-red-800 shadow-lg"
-          : "bg-red-950 text-orange-300 border-red-900 [@media(hover:hover)]:hover:bg-red-800"
-      }`}
+      className="flex-shrink-0 relative"
+      style={{ width: SIZE, height: SIZE }}
       title={playing ? "Pause" : "Play shloka"}
     >
-      {playing ? <Pause size={18} /> : <Play size={18} className="ml-0.5" />}
+      <svg width={SIZE} height={SIZE} className="absolute inset-0 -rotate-90">
+        <circle
+          cx={SIZE / 2} cy={SIZE / 2} r={RADIUS}
+          fill="none" stroke="currentColor" strokeWidth={STROKE}
+          className="text-red-200"
+        />
+        {playing && (
+          <circle
+            cx={SIZE / 2} cy={SIZE / 2} r={RADIUS}
+            fill="none" stroke="currentColor" strokeWidth={STROKE}
+            strokeDasharray={CIRCUMFERENCE}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            className="text-orange-500 transition-[stroke-dashoffset] duration-200"
+          />
+        )}
+      </svg>
+      <span className={`absolute inset-[3px] rounded-full flex items-center justify-center transition-all ${
+        playing ? "bg-red-900 text-white" : "bg-red-950 text-orange-300 [@media(hover:hover)]:hover:bg-red-800"
+      }`}>
+        {playing ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
+      </span>
     </button>
   );
 }
@@ -110,6 +155,17 @@ export default function ChapterPage() {
   const chapterNum = parseInt(params.chapterNum || "1");
   const [kidsMode, setKidsMode] = useState(false);
   const [synopsisExpanded, setSynopsisExpanded] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (activeAudioRef.current) {
+        activeAudioRef.current.pause();
+        activeAudioRef.current = null;
+        activeAudioRef.verseNum = null;
+        activeAudioRef.onEnd = null;
+      }
+    };
+  }, []);
 
   const { isChapterVisible } = useChapterVisibility();
   const chapter = data.chapters.find((c) => c.chapter === chapterNum);
@@ -334,10 +390,10 @@ export default function ChapterPage() {
                   {verse.one_line_meaning}
                 </p>
 
-                {/* Word-by-word meaning inline (#39.5) */}
+                {/* Word-by-word meaning inline (#39.5, #54) */}
                 {verse.rich_grammar?.pratipadarthah && (
                   <div className="border-t border-border pt-2 mb-2">
-                    <p className="text-sm leading-relaxed">
+                    <p className="text-base leading-relaxed">
                       {verse.rich_grammar.pratipadarthah.split('|').map((item, i, arr) => {
                         const [word, meaning] = item.split('=').map(s => s.trim());
                         if (!word || !meaning) return null;
@@ -368,10 +424,12 @@ export default function ChapterPage() {
                   </div>
                 )}
 
-                {/* Touchable indicator — always visible on mobile, hover-only on desktop (#32, #35) */}
-                <div className="absolute bottom-2 right-3 flex items-center gap-1 text-orange-500 text-xs font-semibold opacity-100 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 transition-opacity">
-                  <span>View details</span>
-                  <ChevronRight size={14} />
+                {/* View details button — always visible, not overlapping (#52) */}
+                <div className="mt-3 pt-2 border-t border-orange-200">
+                  <span className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-600 text-sm font-semibold px-3 py-1.5 rounded-lg border border-orange-200 [@media(hover:hover)]:group-hover:bg-orange-100 [@media(hover:hover)]:group-hover:border-orange-300 transition-all">
+                    View details
+                    <ChevronRight size={14} />
+                  </span>
                 </div>
               </div>
             </Link>

@@ -94,22 +94,22 @@ export default function Home() {
           },
         }}
       />
-      {/* Hero Banner — constrained height (#29, #41) */}
-      <section className="relative overflow-hidden">
+      {/* Hero Banner (#29, #41, #50) */}
+      <section className="relative overflow-hidden bg-red-950">
         <img
           src={HERO_IMG}
           alt="Bhagavad Gita — Krishna and Arjuna"
-          className="w-full h-auto block max-h-[260px] object-cover opacity-60"
+          className="w-full h-auto block max-h-[260px] object-cover opacity-50"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-red-950/90 via-red-950/50 to-red-950/30" />
-        <div className="absolute inset-x-0 bottom-0 px-6 pb-6 lg:pb-8 text-center">
-          <h1 className="text-white font-display text-4xl lg:text-6xl font-bold leading-tight mb-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+        <div className="absolute inset-0 bg-gradient-to-t from-red-950 via-red-950/60 to-red-950/20" />
+        <div className="absolute inset-x-0 bottom-0 px-4 sm:px-6 pb-4 sm:pb-6 lg:pb-8 text-center">
+          <h1 className="text-white font-display text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
             श्रीमद्भगवद्गीता
           </h1>
-          <p className="text-orange-100 text-lg lg:text-xl italic drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] mb-2 font-semibold">
+          <p className="text-orange-100 text-base sm:text-lg lg:text-xl italic drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] mb-1 sm:mb-2 font-semibold">
             śrīmadbhagavadgītā
           </p>
-          <p className="text-white text-base lg:text-lg leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] font-medium">
+          <p className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] font-medium">
             Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.
           </p>
         </div>
