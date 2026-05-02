@@ -19,7 +19,7 @@ function MeaningThumbnail({ chapterNum, verseNum, verse }: { chapterNum: number;
     <img
       src={url}
       alt=""
-      className="w-20 h-20 rounded-lg object-contain flex-shrink-0 border border-orange-200 bg-orange-50"
+      className="w-20 h-20 rounded-lg object-cover flex-shrink-0 border border-orange-200"
       loading="lazy"
     />
   );
@@ -56,8 +56,10 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
 
   const updateProgress = useCallback(() => {
     const a = audioRef.current;
-    if (a && a.duration && !a.paused) {
-      setProgress(a.currentTime / a.duration);
+    if (a && !a.paused) {
+      if (a.duration && !isNaN(a.duration)) {
+        setProgress(a.currentTime / a.duration);
+      }
       rafRef.current = requestAnimationFrame(updateProgress);
     }
   }, []);
@@ -104,7 +106,7 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
   }, [audioUrl, playing, verseNum, onEnded, updateProgress]);
 
   const SIZE = 44;
-  const STROKE = 3;
+  const STROKE = 4;
   const RADIUS = (SIZE - STROKE) / 2;
   const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
   const strokeDashoffset = CIRCUMFERENCE * (1 - progress);
@@ -133,7 +135,7 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
           />
         )}
       </svg>
-      <span className={`absolute inset-[3px] rounded-full flex items-center justify-center transition-all ${
+      <span className={`absolute inset-[4px] rounded-full flex items-center justify-center transition-all ${
         playing ? "bg-red-900 text-white" : "bg-red-950 text-orange-300 [@media(hover:hover)]:hover:bg-red-800"
       }`}>
         {playing ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}

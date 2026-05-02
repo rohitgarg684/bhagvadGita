@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { Link, useParams, useLocation, Redirect } from "wouter";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
@@ -63,18 +64,24 @@ function formatText(text: string) {
 function ImageModal({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
   const onCloseRef = useRef(onClose);
   onCloseRef.current = onClose;
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onCloseRef.current(); };
+    const preventScroll = (e: TouchEvent) => { e.preventDefault(); };
     document.addEventListener('keydown', handler);
     const scrollY = window.scrollY;
+    document.documentElement.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.top = `-${scrollY}px`;
     document.body.style.left = '0';
     document.body.style.right = '0';
     document.body.style.overflow = 'hidden';
+    overlayRef.current?.addEventListener('touchmove', preventScroll, { passive: false });
     return () => {
       document.removeEventListener('keydown', handler);
+      overlayRef.current?.removeEventListener('touchmove', preventScroll);
+      document.documentElement.style.overflow = '';
       document.body.style.position = '';
       document.body.style.top = '';
       document.body.style.left = '';
@@ -84,27 +91,27 @@ function ImageModal({ src, alt, onClose }: { src: string; alt: string; onClose: 
     };
   }, []);
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center"
+      ref={overlayRef}
+      className="fixed inset-0 z-[9999] bg-black/90 flex items-center justify-center"
       style={{ touchAction: 'none' }}
-      onClick={onClose}
+      onClick={() => onCloseRef.current()}
     >
       <button
-        className="absolute top-[env(safe-area-inset-top,12px)] right-3 text-white/90 hover:text-white z-[101] bg-black/60 rounded-full p-2"
-        style={{ marginTop: 'max(12px, env(safe-area-inset-top))' }}
-        onClick={onClose}
+        className="absolute top-3 right-3 text-white/90 hover:text-white z-[10000] bg-black/60 rounded-full p-2"
+        onClick={() => onCloseRef.current()}
       >
         <X size={24} />
       </button>
       <img
         src={src}
         alt={alt}
-        className="max-w-[92vw] max-h-[80vh] object-contain rounded-lg"
-        style={{ margin: 'auto' }}
+        className="max-w-[92vw] max-h-[85vh] object-contain rounded-lg"
         onClick={(e) => e.stopPropagation()}
       />
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -270,7 +277,13 @@ export default function VersePage() {
   const prevVerse = verseIndex > 0 ? verses[verseIndex - 1] : null;
   const nextVerse = verseIndex < verses.length - 1 ? verses[verseIndex + 1] : null;
   const iastName = chapterIAST[chapterNum] || chapter.name;
-  const meaningImageUrl = verse.images?.meaning?.url || null;
+  const meaningImageUrl = verse.images?.meaning?.url
+    || verse.images?.detailed_meaning?.url
+    || (Array.isArray(verse.images?.story) ? verse.images?.story[0]?.url : verse.images?.story?.url)
+    || verse.images?.modern_life?.url
+    || verse.images?.kids_explain?.url
+    || verse.images?.kids_story?.url
+    || null;
 
   const availableTabs = TABS.filter((tab) => {
     if (tab.id === "story")       return !!(verse.story);

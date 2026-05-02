@@ -73,7 +73,27 @@ interface GitaVerse {
   title?: string;
   one_line_meaning?: string;
   concise_journey?: string;
-  images?: { meaning?: { url?: string } };
+  images?: {
+    meaning?: { url?: string };
+    detailed_meaning?: { url?: string };
+    story?: { url?: string }[] | { url?: string };
+    modern_life?: { url?: string };
+    kids_explain?: { url?: string };
+    kids_story?: { url?: string };
+  };
+}
+
+function getVerseImage(verse: GitaVerse): string | null {
+  const imgs = verse.images;
+  if (!imgs) return null;
+  if (imgs.meaning?.url) return imgs.meaning.url;
+  if (imgs.detailed_meaning?.url) return imgs.detailed_meaning.url;
+  if (imgs.modern_life?.url) return imgs.modern_life.url;
+  if (imgs.kids_explain?.url) return imgs.kids_explain.url;
+  if (imgs.kids_story?.url) return imgs.kids_story.url;
+  if (Array.isArray(imgs.story) && imgs.story[0]?.url) return imgs.story[0].url;
+  if (!Array.isArray(imgs.story) && imgs.story?.url) return imgs.story.url;
+  return null;
 }
 
 interface GitaData {
@@ -128,7 +148,7 @@ export function getMetaForUrl(urlPath: string, data: GitaData): MetaTags {
         verse?.concise_journey ||
         `Bhagavad Gita Chapter ${chNum} Verse ${vNum} — Sanskrit shloka with transliteration, meaning, stories, and grammar analysis.`,
       url: `${BASE_URL}/chapter/${chNum}/verse/${vNum}`,
-      image: verse?.images?.meaning?.url || DEFAULT_IMAGE,
+      image: (verse ? getVerseImage(verse) : null) || DEFAULT_IMAGE,
       type: "article",
     };
   }
@@ -178,7 +198,8 @@ function getChapterImage(chNum: number, data: GitaData): string | null {
   const chapter = data.chapters.find((c) => c.chapter === chNum);
   const verses = chNum === 6 ? data.chapter6_full : chapter?.key_verses || [];
   for (const v of verses) {
-    if (v.images?.meaning?.url) return v.images.meaning.url;
+    const img = getVerseImage(v);
+    if (img) return img;
   }
   return null;
 }
@@ -242,7 +263,6 @@ export function injectMetaTags(html: string, meta: MetaTags): string {
     `<meta name="twitter:image" content="${safeImage}"`
   );
 
-  // Update og:image:type for non-default images
   if (meta.image !== DEFAULT_IMAGE) {
     const imgType = meta.image.includes('.webp') ? 'image/webp'
       : meta.image.includes('.jpg') || meta.image.includes('.jpeg') ? 'image/jpeg'
@@ -250,6 +270,14 @@ export function injectMetaTags(html: string, meta: MetaTags): string {
     result = result.replace(
       /<meta property="og:image:type" content="[^"]*"/,
       `<meta property="og:image:type" content="${imgType}"`
+    );
+    result = result.replace(
+      /<meta property="og:image:width" content="[^"]*"/,
+      `<meta property="og:image:width" content="800"`
+    );
+    result = result.replace(
+      /<meta property="og:image:height" content="[^"]*"/,
+      `<meta property="og:image:height" content="600"`
     );
   }
 
