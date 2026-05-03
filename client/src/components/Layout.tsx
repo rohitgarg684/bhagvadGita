@@ -1,14 +1,16 @@
 // Layout: Modern Vedic Learning Platform
 // Deep maroon sidebar, warm cream content area, saffron orange accents
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData } from "@/types/gita";
-import { BookOpen, Home, Menu, X, Star, ChevronRight, LogOut, Settings } from "lucide-react";
+import { BookOpen, Home, Menu, X, Star, ChevronRight, ChevronLeft, LogOut, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 
 const data = gitaData as unknown as GitaData;
+
+const SIDEBAR_COLLAPSED_KEY = "gita-sidebar-collapsed";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,7 +21,26 @@ interface LayoutProps {
 
 export default function Layout({ children, kidsMode = false, onToggleKids, stickyHeader = true }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [navCollapsed, setNavCollapsed] = useState(false);
   const [location] = useLocation();
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(SIDEBAR_COLLAPSED_KEY) === "1") {
+        setNavCollapsed(true);
+      }
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(SIDEBAR_COLLAPSED_KEY, navCollapsed ? "1" : "0");
+    } catch {
+      /* ignore */
+    }
+  }, [navCollapsed]);
   const { user, isAdmin, signOut } = useAuth();
   const { isChapterVisible } = useChapterVisibility();
 
@@ -112,23 +133,47 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
         <aside
           className={`
             fixed top-16 h-[calc(100vh-4rem)] lg:sticky ${stickyHeader ? 'lg:top-16 lg:h-[calc(100vh-4rem)]' : 'lg:top-0 lg:h-screen'} left-0 z-40
-            w-72 bg-sidebar overflow-y-auto
+            w-[min(15rem,85vw)] lg:transition-[width] lg:duration-300 lg:ease-in-out
+            ${navCollapsed ? "lg:w-14" : "lg:w-56"}
+            bg-sidebar overflow-y-auto overflow-x-hidden
             transform transition-transform duration-300 ease-in-out
             ${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
             flex-shrink-0 border-r border-sidebar-border
           `}
         >
-          <div className="p-4">
-            <div className="flex items-center gap-2 mb-5 px-2">
-              <BookOpen size={17} className="text-orange-600" />
-              <span className="text-orange-700 text-sm font-semibold uppercase tracking-widest">
-                18 Chapters
-              </span>
+          <div className={`${navCollapsed ? "lg:p-2 p-4" : "p-4"}`}>
+            <div
+              className={`flex items-center gap-2 mb-5 px-2 ${navCollapsed ? "lg:justify-center lg:mb-3 lg:px-0" : ""}`}
+            >
+              <div className={`flex items-center gap-2 flex-1 min-w-0 ${navCollapsed ? "lg:hidden" : ""}`}>
+                <BookOpen size={17} className="text-orange-600 flex-shrink-0" />
+                <span className="text-orange-700 text-sm font-semibold uppercase tracking-widest truncate min-w-0">
+                  18 Chapters
+                </span>
+              </div>
+              <button
+                type="button"
+                className={`
+                  hidden lg:inline-flex flex-shrink-0 rounded-lg border border-sidebar-border bg-orange-50/80 p-1.5 text-orange-800
+                  hover:bg-orange-100 transition-colors
+                  ${navCollapsed ? "" : "ml-auto"}
+                `}
+                onClick={() => setNavCollapsed((c) => !c)}
+                aria-expanded={!navCollapsed}
+                aria-label={navCollapsed ? "Expand chapter navigation" : "Collapse chapter navigation"}
+                title={navCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {navCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+              </button>
             </div>
 
             {chapterGroups.map((group) => (
-              <div key={group.label} className="mb-5">
-                <p className={`text-sm font-semibold uppercase tracking-widest px-2 mb-2 ${group.color}`}>
+              <div key={group.label} className={`mb-5 ${navCollapsed ? "lg:mb-3" : ""}`}>
+                <p
+                  className={`text-sm font-semibold uppercase tracking-widest px-2 mb-2 ${group.color} ${
+                    navCollapsed ? "lg:hidden" : ""
+                  }`}
+                >
                   {group.label}
                 </p>
                 <div className="space-y-0.5">
@@ -141,20 +186,26 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
                           key={ch.chapter}
                           href={`/chapter/${ch.chapter}`}
                           onClick={() => setSidebarOpen(false)}
+                          title={`Chapter ${ch.chapter}: ${ch.name}`}
                           className={`
-                            flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-base transition-all group
+                            relative flex items-center gap-2.5 rounded-lg text-base transition-all group
+                            ${navCollapsed ? "lg:justify-center lg:px-1.5 lg:py-2" : "px-3 py-2.5"}
                             ${isActive
-                              ? "bg-orange-100 text-orange-900 font-semibold border-l-2 border-orange-500"
+                              ? `bg-orange-100 text-orange-900 font-semibold border-l-2 border-orange-500 ${
+                                  navCollapsed ? "lg:border-l-0 lg:ring-1 lg:ring-orange-400/70" : ""
+                                }`
                               : "text-gray-700 hover:bg-orange-50 hover:text-gray-900"
                             }
                           `}
                         >
-                          <span className="text-base leading-none w-5 text-center">{ch.icon}</span>
-                          <span className="flex-1 min-w-0">
+                          <span className="text-base leading-none w-5 text-center flex-shrink-0">{ch.icon}</span>
+                          <span className={`flex-1 min-w-0 ${navCollapsed ? "lg:hidden" : ""}`}>
                             <span className="text-sm opacity-60 mr-1">Ch.{ch.chapter}</span>
                             <span className="truncate">{ch.name}</span>
                           </span>
-                          {isActive && <ChevronRight size={12} className="opacity-60" />}
+                          {isActive && (
+                            <ChevronRight size={12} className={`opacity-60 flex-shrink-0 ${navCollapsed ? "lg:hidden" : ""}`} />
+                          )}
                         </Link>
                       );
                     })}

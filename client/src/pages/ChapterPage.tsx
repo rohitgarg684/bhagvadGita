@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useMemo, useEffect } from "react";
+import { useState, useRef, useCallback, useMemo, useEffect, type MouseEvent } from "react";
 import { Link, useParams, Redirect } from "wouter";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
@@ -6,7 +6,7 @@ import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import { useImageUrl } from "@/hooks/useImages";
-import { ChevronLeft, ChevronRight, BookOpen, Sparkles, Gamepad2, Play, Pause } from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, Sparkles, Gamepad2, Play, Pause, RotateCcw, RotateCw } from "lucide-react";
 import { chapterIAST, chapterDevanagari } from "@/lib/chapterMeta";
 import { SandhiText } from "@/components/SandhiText";
 
@@ -65,11 +65,8 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
     }
   }, []);
 
-  const toggle = useCallback(() => {
-    if (!audioRef.current) {
-      const a = new Audio();
-      a.crossOrigin = "anonymous";
-      a.src = audioUrl;
+  const attachAudioListeners = useCallback(
+    (a: HTMLAudioElement) => {
       a.addEventListener("ended", () => {
         setPlaying(false);
         setProgress(0);
@@ -81,9 +78,47 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
         setProgress(0);
         cancelAnimationFrame(rafRef.current);
       });
+    },
+    []
+  );
+
+  const ensureAudio = useCallback(() => {
+    if (!audioRef.current) {
+      const a = new Audio();
+      a.crossOrigin = "anonymous";
+      a.src = audioUrl;
+      attachAudioListeners(a);
       audioRef.current = a;
     }
-    const a = audioRef.current;
+    return audioRef.current;
+  }, [audioUrl, attachAudioListeners]);
+
+  const applySkip = useCallback(
+    (delta: number) => {
+      const a = ensureAudio();
+      const adjust = () => {
+        const d = a.duration;
+        if (!d || isNaN(d)) return;
+        a.currentTime = Math.max(0, Math.min(d, a.currentTime + delta));
+        if (playing && d) setProgress(a.currentTime / d);
+      };
+      if (a.readyState >= HTMLMediaElement.HAVE_METADATA) adjust();
+      else a.addEventListener("loadedmetadata", adjust, { once: true });
+    },
+    [ensureAudio, playing]
+  );
+
+  const skip = useCallback(
+    (delta: number) => (e: MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      applySkip(delta);
+    },
+    [applySkip]
+  );
+
+  const toggle = useCallback(() => {
+    const a = ensureAudio();
     if (playing) {
       a.pause();
       setPlaying(false);
@@ -104,7 +139,7 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
       setPlaying(true);
       rafRef.current = requestAnimationFrame(updateProgress);
     }
-  }, [audioUrl, playing, verseNum, onEnded, updateProgress]);
+  }, [ensureAudio, playing, verseNum, onEnded, updateProgress]);
 
   const SIZE = 44;
   const STROKE = 4;
@@ -113,35 +148,61 @@ function VerseAudioButton({ audioUrl, verseNum, onEnded }: { audioUrl: string; v
   const strokeDashoffset = CIRCUMFERENCE * (1 - progress);
 
   return (
-    <button
-      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(); }}
-      className="flex-shrink-0 relative"
-      style={{ width: SIZE, height: SIZE }}
-      title={playing ? "Pause" : "Play shloka"}
-    >
-      <svg width={SIZE} height={SIZE} className="absolute inset-0 -rotate-90">
-        <circle
-          cx={SIZE / 2} cy={SIZE / 2} r={RADIUS}
-          fill="none" stroke="currentColor" strokeWidth={STROKE}
-          className="text-red-200"
-        />
-        {playing && (
+    <div className="flex items-center gap-0.5 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        onClick={skip(-5)}
+        className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-red-800/90 hover:bg-orange-100/80 transition-colors"
+        title="Rewind 5 seconds"
+        aria-label="Rewind 5 seconds"
+      >
+        <RotateCcw size={14} />
+      </button>
+      <button
+        type="button"
+        data-verse-play
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggle();
+        }}
+        className="flex-shrink-0 relative"
+        style={{ width: SIZE, height: SIZE }}
+        title={playing ? "Pause" : "Play shloka"}
+      >
+        <svg width={SIZE} height={SIZE} className="absolute inset-0 -rotate-90 pointer-events-none">
           <circle
             cx={SIZE / 2} cy={SIZE / 2} r={RADIUS}
             fill="none" stroke="currentColor" strokeWidth={STROKE}
-            strokeDasharray={CIRCUMFERENCE}
-            strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            className="text-orange-500 transition-[stroke-dashoffset] duration-200"
+            className="text-red-200"
           />
-        )}
-      </svg>
-      <span className={`absolute inset-[4px] rounded-full flex items-center justify-center transition-all ${
-        playing ? "bg-red-900 text-white" : "bg-red-950 text-orange-300 [@media(hover:hover)]:hover:bg-red-800"
-      }`}>
-        {playing ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
-      </span>
-    </button>
+          {playing && (
+            <circle
+              cx={SIZE / 2} cy={SIZE / 2} r={RADIUS}
+              fill="none" stroke="currentColor" strokeWidth={STROKE}
+              strokeDasharray={CIRCUMFERENCE}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              className="text-orange-500 transition-[stroke-dashoffset] duration-200"
+            />
+          )}
+        </svg>
+        <span className={`absolute inset-[4px] rounded-full flex items-center justify-center transition-all ${
+          playing ? "bg-red-900 text-white" : "bg-red-950 text-orange-300 [@media(hover:hover)]:hover:bg-red-800"
+        }`}>
+          {playing ? <Pause size={16} /> : <Play size={16} className="ml-0.5" />}
+        </span>
+      </button>
+      <button
+        type="button"
+        onClick={skip(5)}
+        className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-red-800/90 hover:bg-orange-100/80 transition-colors"
+        title="Forward 5 seconds"
+        aria-label="Forward 5 seconds"
+      >
+        <RotateCw size={14} />
+      </button>
+    </div>
   );
 }
 
@@ -371,7 +432,7 @@ export default function ChapterPage() {
                               window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
                             }
                             setTimeout(() => {
-                              nextCard.querySelector<HTMLButtonElement>("button[title='Play shloka']")?.click();
+                              nextCard.querySelector<HTMLButtonElement>("button[data-verse-play]")?.click();
                             }, 600);
                           } : undefined}
                         />
