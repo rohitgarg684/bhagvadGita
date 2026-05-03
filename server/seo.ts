@@ -326,13 +326,11 @@ export function generateSitemap(data: GitaData): string {
       });
     }
 
-    if ((chapter as Record<string, unknown>).synopsis_content) {
-      urls.push({
-        loc: `${BASE_URL}/chapter/${chapter.chapter}/summary`,
-        priority: "0.7",
-        changefreq: "monthly",
-      });
-    }
+    urls.push({
+      loc: `${BASE_URL}/chapter/${chapter.chapter}/summary`,
+      priority: "0.7",
+      changefreq: "monthly",
+    });
 
     if (chapter.chapter === 6) {
       urls.push({

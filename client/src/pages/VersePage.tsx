@@ -279,9 +279,13 @@ export default function VersePage() {
   const prevVerse = verseIndex > 0 ? verses[verseIndex - 1] : null;
   const nextVerse = verseIndex < verses.length - 1 ? verses[verseIndex + 1] : null;
   const iastName = chapterIAST[chapterNum] || chapter.name;
+  const storyImgs = verse.images?.story;
+  const storyImageUrl = Array.isArray(storyImgs)
+    ? storyImgs[0]?.url
+    : (storyImgs as { url?: string } | undefined)?.url;
   const meaningImageUrl = verse.images?.meaning?.url
     || verse.images?.detailed_meaning?.url
-    || (Array.isArray(verse.images?.story) ? verse.images?.story[0]?.url : verse.images?.story?.url)
+    || storyImageUrl
     || verse.images?.modern_life?.url
     || verse.images?.kids_explain?.url
     || verse.images?.kids_story?.url

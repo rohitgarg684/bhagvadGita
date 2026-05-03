@@ -11,7 +11,7 @@ import Home from "./pages/Home";
 import ChapterPage from "./pages/ChapterPage";
 import VersePage from "./pages/VersePage";
 import GamesPage from "./pages/GamesPage";
-import ChapterSummary from "./pages/ChapterSummary";
+import ChapterSummaryPage from "./pages/ChapterSummaryPage";
 import LoginPage from "./pages/LoginPage";
 import SettingsPage from "./pages/SettingsPage";
 import ImageManagerPage from "./pages/ImageManagerPage";
@@ -23,10 +23,10 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/settings" component={SettingsPage} />
       <Route path="/settings/images" component={ImageManagerPage} />
-      <Route path="/chapter/:chapterNum" component={ChapterPage} />
       <Route path="/chapter/:chapterNum/verse/:verseNum" component={VersePage} />
-      <Route path="/chapter/:chapterNum/summary" component={ChapterSummary} />
+      <Route path="/chapter/:chapterNum/summary" component={ChapterSummaryPage} />
       <Route path="/chapter/:chapterNum/games" component={GamesPage} />
+      <Route path="/chapter/:chapterNum" component={ChapterPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

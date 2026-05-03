@@ -288,19 +288,11 @@ export default function ChapterPage() {
           )}
 
           <div className="flex flex-wrap items-center gap-3 mt-5">
-            {chapter.synopsis_content ? (
-              <Link href={`/chapter/${chapterNum}/summary`}>
-                <div className="flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 rounded-full px-3 py-1.5 transition-all cursor-pointer">
-                  <BookOpen size={13} className="text-orange-400" />
-                  <span className="text-white text-sm font-semibold">View Chapter Summary</span>
-                </div>
-              </Link>
-            ) : (
-              <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5">
-                <BookOpen size={13} className="text-orange-400" />
-                <span className="text-white text-sm">{chapter.verses_count} verses</span>
-              </div>
-            )}
+            <Link href={`/chapter/${chapterNum}/summary`}>
+              <span className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 rounded-full px-4 py-2 text-white text-sm font-semibold border border-white/20 cursor-pointer transition-colors">
+                View Chapter Summary
+              </span>
+            </Link>
             {chapterNum === 6 && (
               <>
                 <div className="flex items-center gap-2 bg-orange-400/20 border border-orange-400/40 rounded-full px-3 py-1.5">
