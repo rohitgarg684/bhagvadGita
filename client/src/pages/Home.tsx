@@ -148,8 +148,8 @@ export default function Home() {
                         {chapterIAST[ch.chapter] || ""}
                       </h3>
                     </div>
-                    {/* Translucent chapter number on right (#42.3) */}
-                    <span className="absolute right-2 top-1/2 -translate-y-1/2 font-display font-bold text-white/10 text-7xl leading-none pointer-events-none select-none">
+                    {/* Chapter number watermark — visible but behind title (#82: stronger than /10) */}
+                    <span className="absolute right-2 top-1/2 -translate-y-1/2 font-display font-bold text-white/35 drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)] text-7xl leading-none pointer-events-none select-none">
                       {ch.chapter}
                     </span>
                   </div>

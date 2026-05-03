@@ -415,7 +415,7 @@ export default function ChapterPage() {
               id={`verse-card-${verse.verse}`}
             >
               <div className="group bg-card border border-border [@media(hover:hover)]:hover:border-orange-300 rounded-xl p-3 sm:p-4 transition-all [@media(hover:hover)]:hover:shadow-lg cursor-pointer h-full flex flex-col relative">
-                {/* Header: thumbnail + verse label + audio (titles shown on verse detail page only) */}
+                {/* Header: thumbnail + verse label + optional Listen (titles on verse page only) */}
                 <div className="flex items-start gap-3 mb-2">
                   <MeaningThumbnail chapterNum={chapterNum} verseNum={verse.verse} verse={verse} />
                   <div className="flex-1 min-w-0 flex items-start justify-between gap-2 sm:gap-3">
@@ -424,44 +424,38 @@ export default function ChapterPage() {
                         {chapterNum}.{verse.verse}
                       </span>
                     </div>
-                    <div className="shrink-0 flex flex-col items-center gap-1">
-                      {verse.audio_url && (
-                        <div
-                          className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 rounded-lg border border-orange-200/90 bg-gradient-to-br from-orange-50/95 to-amber-50/70 px-2 py-1.5 shadow-sm max-w-[calc(100%-0.5rem)] sm:max-w-none"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wide text-orange-950">
-                            Listen
-                          </span>
-                          <VerseAudioButton
-                            audioUrl={verse.audio_url}
-                            verseNum={verse.verse}
-                            onEnded={idx < verses.length - 1 && verses[idx + 1].audio_url ? () => {
-                              const nextCard = document.getElementById(`verse-card-${verses[idx + 1].verse}`);
-                              if (!nextCard) return;
-                              const rect = nextCard.getBoundingClientRect();
-                              const headerH = 64;
-                              const cardVisible = rect.top >= headerH && rect.top < window.innerHeight - 100;
-                              if (!cardVisible) {
-                                const y = window.scrollY + rect.top - headerH - 12;
-                                window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
-                              }
-                              setTimeout(() => {
-                                nextCard.querySelector<HTMLButtonElement>("button[data-verse-play]")?.click();
-                              }, 600);
-                            } : undefined}
-                          />
-                        </div>
-                      )}
-                      <span className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-600 text-sm font-semibold px-3 py-1.5 rounded-lg border border-orange-200 [@media(hover:hover)]:group-hover:bg-orange-100 [@media(hover:hover)]:group-hover:border-orange-300 transition-all">
-                        View details
-                        <ChevronRight size={14} />
-                      </span>
-                    </div>
+                    {verse.audio_url && (
+                      <div
+                        className="shrink-0 flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 rounded-lg border border-orange-200/90 bg-gradient-to-br from-orange-50/95 to-amber-50/70 px-2 py-1.5 shadow-sm max-w-[calc(100%-0.5rem)] sm:max-w-none"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wide text-orange-950">
+                          Listen
+                        </span>
+                        <VerseAudioButton
+                          audioUrl={verse.audio_url}
+                          verseNum={verse.verse}
+                          onEnded={idx < verses.length - 1 && verses[idx + 1].audio_url ? () => {
+                            const nextCard = document.getElementById(`verse-card-${verses[idx + 1].verse}`);
+                            if (!nextCard) return;
+                            const rect = nextCard.getBoundingClientRect();
+                            const headerH = 64;
+                            const cardVisible = rect.top >= headerH && rect.top < window.innerHeight - 100;
+                            if (!cardVisible) {
+                              const y = window.scrollY + rect.top - headerH - 12;
+                              window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+                            }
+                            setTimeout(() => {
+                              nextCard.querySelector<HTMLButtonElement>("button[data-verse-play]")?.click();
+                            }, 600);
+                          } : undefined}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Sanskrit — no negative margin (avoids overlap with thumbnail); header keeps Listen + View details */}
+                {/* Sanskrit — no negative margin (avoids overlap with thumbnail) */}
                 <div className="font-devanagari text-red-900 text-lg leading-relaxed mb-1.5">
                   {verse.sanskrit.split('\n').map((line, i) => (
                     <p key={i}><SandhiText text={line} /></p>

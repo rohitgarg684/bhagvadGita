@@ -344,18 +344,20 @@ export default function VersePage() {
         </div>
 
         <div>
-          {/* Title: "iastName chapter X shloka Y" — prominent styling (#26.3, #26.7, #38) */}
-          <div className="flex items-center gap-3 mb-3">
+          {/* Title: iastName · chapter.verse */}
+          <div className="flex gap-3 mb-3 items-stretch">
             {meaningImageUrl && (
-              <img
-                src={meaningImageUrl}
-                alt=""
-                className="w-12 h-12 rounded-lg object-cover flex-shrink-0 border border-orange-200"
-              />
+              <div className="w-[5.25rem] sm:w-32 flex-shrink-0 self-stretch min-h-[5.5rem]">
+                <img
+                  src={meaningImageUrl}
+                  alt=""
+                  className="h-full w-full min-h-[5.5rem] rounded-xl object-cover border border-orange-200 shadow-sm"
+                />
+              </div>
             )}
-            <div>
+            <div className="min-w-0 flex-1 flex flex-col justify-center">
               <p className="bg-red-900 text-orange-100 text-base sm:text-lg font-bold tracking-wide px-3 py-1.5 rounded-lg inline-block">
-                {iastName} · chapter {chapterNum} · shloka {verseNum}
+                {iastName} · {chapterNum}.{verseNum}
               </p>
               {verse.title && (
                 <p className="text-orange-900 text-lg font-display font-bold mt-1">{verse.title}</p>
@@ -420,7 +422,7 @@ export default function VersePage() {
               <div className="font-devanagari text-orange-100 text-xl lg:text-3xl flex-1">
                 {verse.sanskrit.split('\n').map((line, i) => (
                   <p key={i} className="leading-loose">
-                    <SandhiText text={line} sandhiClass="text-orange-300/50" />
+                    <SandhiText text={line} sandhiClass="text-orange-400/95" />
                   </p>
                 ))}
               </div>
@@ -514,17 +516,19 @@ export default function VersePage() {
               )}
             </div>
 
-            {/* IAST + English meaning */}
+            {/* IAST (distinct panel) + one-line meaning */}
             {verse.transliteration && (
-              <div className="bg-orange-50 border border-orange-200 rounded-2xl px-4 py-4 w-full md:flex-1 flex flex-col">
-                <div className="transliteration-text text-orange-900 text-lg lg:text-xl italic flex-1">
-                  {verse.transliteration.split('\n').map((line, i) => (
-                    <p key={i} className="leading-relaxed">
-                      <SandhiText text={line} />
-                    </p>
-                  ))}
+              <div className="w-full md:flex-1 flex flex-col rounded-2xl border border-orange-200 overflow-hidden shadow-sm">
+                <div className="bg-white px-4 py-4 flex-1">
+                  <div className="transliteration-text text-orange-900 text-lg lg:text-xl italic">
+                    {verse.transliteration.split('\n').map((line, i) => (
+                      <p key={i} className="leading-relaxed">
+                        <SandhiText text={line} />
+                      </p>
+                    ))}
+                  </div>
                 </div>
-                <div className="mt-3 pt-2 border-t border-orange-200">
+                <div className="bg-orange-50/95 px-4 py-3 border-t border-orange-200">
                   <p className="text-orange-900 text-base lg:text-lg leading-relaxed font-medium">
                     "{verse.one_line_meaning}"
                   </p>
