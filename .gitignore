@@ -17,6 +17,8 @@ build/
 # IDE and editor files
 .vscode/
 .idea/
+# Cursor project rules (local only; do not commit)
+.cursor/rules/
 *.swp
 *.swo
 *~
