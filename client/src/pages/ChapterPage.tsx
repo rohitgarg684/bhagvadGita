@@ -424,38 +424,44 @@ export default function ChapterPage() {
                         {chapterNum}.{verse.verse}
                       </span>
                     </div>
-                    {verse.audio_url && (
-                      <div
-                        className="shrink-0 flex flex-wrap items-center justify-end gap-x-1.5 gap-y-1 rounded-lg border border-orange-200/90 bg-gradient-to-br from-orange-50/95 to-amber-50/70 px-2 py-1.5 shadow-sm max-w-[calc(100%-0.5rem)] sm:max-w-none self-start"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-orange-900">
-                          Listen
-                        </span>
-                        <VerseAudioButton
-                          audioUrl={verse.audio_url}
-                          verseNum={verse.verse}
-                          onEnded={idx < verses.length - 1 && verses[idx + 1].audio_url ? () => {
-                            const nextCard = document.getElementById(`verse-card-${verses[idx + 1].verse}`);
-                            if (!nextCard) return;
-                            const rect = nextCard.getBoundingClientRect();
-                            const headerH = 64;
-                            const cardVisible = rect.top >= headerH && rect.top < window.innerHeight - 100;
-                            if (!cardVisible) {
-                              const y = window.scrollY + rect.top - headerH - 12;
-                              window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
-                            }
-                            setTimeout(() => {
-                              nextCard.querySelector<HTMLButtonElement>("button[data-verse-play]")?.click();
-                            }, 600);
-                          } : undefined}
-                        />
-                      </div>
-                    )}
+                    <div className="shrink-0 flex flex-col items-center gap-1">
+                      {verse.audio_url && (
+                        <div
+                          className="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1 rounded-lg border border-orange-200/90 bg-gradient-to-br from-orange-50/95 to-amber-50/70 px-2 py-1.5 shadow-sm max-w-[calc(100%-0.5rem)] sm:max-w-none"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wide text-orange-950">
+                            Listen
+                          </span>
+                          <VerseAudioButton
+                            audioUrl={verse.audio_url}
+                            verseNum={verse.verse}
+                            onEnded={idx < verses.length - 1 && verses[idx + 1].audio_url ? () => {
+                              const nextCard = document.getElementById(`verse-card-${verses[idx + 1].verse}`);
+                              if (!nextCard) return;
+                              const rect = nextCard.getBoundingClientRect();
+                              const headerH = 64;
+                              const cardVisible = rect.top >= headerH && rect.top < window.innerHeight - 100;
+                              if (!cardVisible) {
+                                const y = window.scrollY + rect.top - headerH - 12;
+                                window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+                              }
+                              setTimeout(() => {
+                                nextCard.querySelector<HTMLButtonElement>("button[data-verse-play]")?.click();
+                              }, 600);
+                            } : undefined}
+                          />
+                        </div>
+                      )}
+                      <span className="inline-flex items-center gap-1.5 bg-orange-50 text-orange-600 text-sm font-semibold px-3 py-1.5 rounded-lg border border-orange-200 [@media(hover:hover)]:group-hover:bg-orange-100 [@media(hover:hover)]:group-hover:border-orange-300 transition-all">
+                        View details
+                        <ChevronRight size={14} />
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* Sanskrit (Devanagari) */}
+                {/* Sanskrit — no negative margin (avoids overlap with thumbnail); header keeps Listen + View details */}
                 <div className="font-devanagari text-red-900 text-lg leading-relaxed mb-1.5">
                   {verse.sanskrit.split('\n').map((line, i) => (
                     <p key={i}><SandhiText text={line} /></p>
