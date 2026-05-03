@@ -55,6 +55,22 @@ There must be **one** summary implementation: **`ChapterSummaryPage` + `chapterS
 
 - Unlike Firebase-backed verse images, synopsis illustrations are **checked into** `client/public/chapter-summaries/`. Do not invent URLs; add real files and reference them in `chapterSummaries.json`.
 
+## Fix New Issue (Google Sheets)
+
+**Master issue list (canonical):**  
+[https://docs.google.com/spreadsheets/d/1cCdjUu3Vx6i8NHewUy6OktW-b3fzPv0TpK_MStzuy_o/edit?gid=0#gid=0](https://docs.google.com/spreadsheets/d/1cCdjUu3Vx6i8NHewUy6OktW-b3fzPv0TpK_MStzuy_o/edit?gid=0#gid=0)
+
+When the user says **Fix New Issue** (same intent, any reasonable casing):
+
+1. **Open that Google Sheet** and read the issue list (Status column).
+2. **Work only on rows** whose status is **New Issue** or **Not Fixed** (match the sheet’s labels).
+3. **Skip** rows whose status is **Completed** (or clearly equivalent “done” state).
+4. Implement fixes **in sheet order** unless the user specifies otherwise.
+5. **Do not** add repo-local Excel files, npm scripts, or dependencies for this workflow. If the sheet is not fetchable, use a **user-provided export** or pasted rows.
+6. After fixing, the user may mark rows **Completed** in the sheet (the repo does not store sheet edits).
+
+This workflow is also captured in `.cursor/rules/fix-new-issue.mdc` for Cursor agents.
+
 ## Your Task
 
 **Populate the next verse with rich content, following the Chapter 12 Verse 1 gold standard.**

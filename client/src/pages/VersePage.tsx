@@ -16,6 +16,7 @@ import {
   Volume2, VolumeX, Pause, Play, RotateCcw, RotateCw, X
 } from "lucide-react";
 import { chapterIAST } from "@/lib/chapterMeta";
+import { stripTransliterationVerseSuffix } from "@/lib/transliterationDisplay";
 
 const data = gitaData as unknown as GitaData;
 
@@ -559,8 +560,8 @@ export default function VersePage() {
                 <div className="bg-white px-4 py-4 flex-1">
                   <div className="transliteration-text text-orange-900 text-lg lg:text-xl italic">
                     {verse.transliteration.split('\n').map((line, i) => (
-                      <p key={i} className="leading-relaxed">
-                        <SandhiText text={line} />
+                      <p key={i} className="leading-relaxed md:leading-loose">
+                        <SandhiText text={stripTransliterationVerseSuffix(line)} />
                       </p>
                     ))}
                   </div>

@@ -118,11 +118,12 @@ export default function ChapterSummaryPage() {
           <h1 className="text-white font-display text-3xl lg:text-4xl font-bold">
             {title}
           </h1>
-          <p className="text-orange-200 font-devanagari text-lg mt-1">{devanagariName}</p>
-          <p className="text-orange-100/90 text-sm mt-1 italic">{iastName}</p>
-          {rich && isContentFormat(rich) && rich.sourceDoc && (
-            <p className="text-orange-100/70 text-xs mt-2">Source: {rich.sourceDoc}</p>
-          )}
+          <div className="flex flex-wrap items-baseline gap-x-4 gap-y-1 mt-2">
+            <p className="text-orange-200 font-devanagari text-2xl lg:text-3xl font-semibold leading-tight">
+              {devanagariName}
+            </p>
+            <p className="text-orange-100/95 italic text-xl lg:text-2xl font-medium">{iastName}</p>
+          </div>
         </div>
       </div>
 
@@ -138,27 +139,24 @@ export default function ChapterSummaryPage() {
                   {run.heading}
                 </h2>
               )}
+              {run.blocks
+                .filter((b): b is Extract<SummaryBlock, { type: "img" }> => b.type === "img")
+                .map((b, j) => (
+                  <img
+                    key={`img-${j}`}
+                    src={b.src}
+                    alt=""
+                    className="w-full max-h-80 object-cover rounded-xl border border-white/60 shadow mb-4"
+                  />
+                ))}
               <div className="space-y-4">
-                {run.blocks.map((b, j) => {
-                  if (b.type === "p") {
-                    return (
-                      <p key={j} className="text-foreground/90 text-base leading-relaxed">
-                        {b.text}
-                      </p>
-                    );
-                  }
-                  if (b.type === "img") {
-                    return (
-                      <img
-                        key={j}
-                        src={b.src}
-                        alt=""
-                        className="w-full max-h-80 object-cover rounded-xl border border-white/60 shadow"
-                      />
-                    );
-                  }
-                  return null;
-                })}
+                {run.blocks
+                  .filter((b): b is Extract<SummaryBlock, { type: "p" }> => b.type === "p")
+                  .map((b, j) => (
+                    <p key={`p-${j}`} className="text-foreground/90 text-base leading-relaxed">
+                      {b.text}
+                    </p>
+                  ))}
               </div>
             </section>
           ))
@@ -168,6 +166,9 @@ export default function ChapterSummaryPage() {
               key={i}
               className={`rounded-2xl border-2 p-5 lg:p-7 shadow-sm ${sectionShells[i % sectionShells.length]}`}
             >
+              <h2 className="font-display text-xl lg:text-2xl font-bold text-red-950 mb-4">
+                {sec.heading}
+              </h2>
               {sec.image && (
                 <img
                   src={sec.image}
@@ -175,9 +176,6 @@ export default function ChapterSummaryPage() {
                   className="w-full max-h-64 object-cover rounded-xl mb-4 border border-white/60 shadow"
                 />
               )}
-              <h2 className="font-display text-xl lg:text-2xl font-bold text-red-950 mb-3">
-                {sec.heading}
-              </h2>
               <div className="text-foreground/90 text-base leading-relaxed space-y-3">
                 {sec.body.split(/\n\n+/).map((para, j) => (
                   <p key={j}>{para}</p>

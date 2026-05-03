@@ -8,6 +8,7 @@ import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import { useImageUrl } from "@/hooks/useImages";
 import { ChevronLeft, ChevronRight, BookOpen, Sparkles, Gamepad2, Play, Pause, RotateCcw, RotateCw } from "lucide-react";
 import { chapterIAST, chapterDevanagari } from "@/lib/chapterMeta";
+import { stripTransliterationVerseSuffix } from "@/lib/transliterationDisplay";
 import { SandhiText } from "@/components/SandhiText";
 
 const data = gitaData as unknown as GitaData;
@@ -466,7 +467,7 @@ export default function ChapterPage() {
                 {verse.transliteration && (
                   <div className="text-orange-700 text-base italic leading-relaxed mb-2">
                     {verse.transliteration.split('\n').map((line, i) => (
-                      <p key={i}><SandhiText text={line} /></p>
+                      <p key={i}><SandhiText text={stripTransliterationVerseSuffix(line)} /></p>
                     ))}
                   </div>
                 )}

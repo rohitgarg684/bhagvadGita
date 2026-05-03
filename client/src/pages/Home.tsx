@@ -1,12 +1,22 @@
-import { useState } from "react";
-import { Link } from "wouter";
+import { useState, useRef, useEffect } from "react";
+import { Link, useLocation } from "wouter";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import gitaData from "@/data/gitaData.json";
+import heroFeatureData from "@/data/heroFeatureLabels.json";
 import type { GitaData, Verse } from "@/types/gita";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import { ChevronRight } from "lucide-react";
 import { chapterIAST, chapterDevanagari } from "@/lib/chapterMeta";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+type HeroFeature = (typeof heroFeatureData.features)[number];
 
 const data = gitaData as unknown as GitaData;
 
@@ -74,9 +84,27 @@ function ChapterSynopsis({ ch }: { ch: { chapter: number; key_verses: Verse[] } 
   );
 }
 
+function navigateWithViewTransition(navigate: () => void) {
+  const doc = typeof document !== "undefined" ? document : null;
+  const vt = doc && "startViewTransition" in doc ? (doc as Document & { startViewTransition?: (cb: () => void) => void }).startViewTransition : undefined;
+  if (typeof vt === "function") {
+    vt.call(doc, navigate);
+  } else {
+    navigate();
+  }
+}
+
 export default function Home() {
+  const [, setLocation] = useLocation();
   const [kidsMode, setKidsMode] = useState(false);
+  const [heroDialogOpen, setHeroDialogOpen] = useState(false);
+  const [heroFeature, setHeroFeature] = useState<HeroFeature | null>(null);
+  const closeClearTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { isChapterVisible } = useChapterVisibility();
+
+  useEffect(() => () => {
+    if (closeClearTimer.current) clearTimeout(closeClearTimer.current);
+  }, []);
   const visibleChapters = data.chapters.filter((ch) => isChapterVisible(ch.chapter));
 
   return (
@@ -98,35 +126,112 @@ export default function Home() {
           },
         }}
       />
-      {/* Hero Banner (#29, #41, #50) */}
-      <section className="relative overflow-hidden bg-red-950">
+      {/*
+        Mobile: title flows from top with pt-2 (tight to header) + in-flow height → text cannot grow under sticky header.
+        Desktop: original short image + bottom overlay (unchanged).
+      */}
+      <section className="relative isolate overflow-hidden bg-red-950">
+        <img
+          src={HERO_IMG}
+          alt=""
+          className="absolute inset-0 z-0 h-full w-full object-cover opacity-50 md:hidden"
+          aria-hidden
+        />
+        <div
+          className="absolute inset-0 z-[1] bg-gradient-to-t from-red-950 via-red-950/60 to-red-950/20 pointer-events-none md:hidden"
+          aria-hidden
+        />
+
         <img
           src={HERO_IMG}
           alt="Bhagavad Gita — Krishna and Arjuna"
-          className="w-full h-auto block max-h-[260px] object-cover opacity-50"
+          className="relative z-0 hidden w-full object-cover opacity-50 md:block md:max-h-[260px]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-red-950 via-red-950/60 to-red-950/20" />
-        <div className="absolute inset-x-0 bottom-0 px-4 sm:px-6 pb-4 sm:pb-6 lg:pb-8 text-center">
-          <h1 className="text-white font-display text-3xl sm:text-4xl lg:text-6xl font-bold leading-tight mb-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+        <div
+          className="pointer-events-none absolute left-0 right-0 top-0 z-[1] hidden h-[260px] bg-gradient-to-t from-red-950 via-red-950/60 to-red-950/20 md:block"
+          aria-hidden
+        />
+
+        <div className="relative z-10 px-4 pt-2 pb-5 text-center sm:px-6 md:absolute md:inset-x-0 md:bottom-0 md:left-0 md:right-0 md:px-6 md:pb-8 md:pt-0 lg:pb-8">
+          <h1 className="mb-1 text-white font-display text-3xl font-bold leading-tight drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] max-md:text-[1.7rem] max-md:leading-snug sm:text-4xl lg:text-6xl">
             श्रीमद्भगवद्गीता
           </h1>
-          <p className="text-orange-100 text-base sm:text-lg lg:text-xl italic drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] mb-1 sm:mb-2 font-semibold">
+          <p className="mb-1 text-orange-100 text-base italic drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] sm:mb-2 sm:text-lg lg:text-xl font-semibold">
             śrīmadbhagavadgītā
           </p>
-          <p className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-3xl mx-auto drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)] font-medium">
-            Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.
+          <p className="mb-2 mt-1 text-white/95 text-sm font-medium tracking-wide drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)] max-w-2xl mx-auto sm:mb-3 sm:text-base">
+            The only Gita portal you will ever need
           </p>
+          <div className="flex flex-wrap justify-center gap-1.5 max-md:max-w-[100%] sm:gap-2.5 max-w-4xl mx-auto">
+            {heroFeatureData.features.map((chip) => (
+              <button
+                key={chip.id}
+                type="button"
+                onClick={() => {
+                  if (closeClearTimer.current) clearTimeout(closeClearTimer.current);
+                  setHeroFeature(chip);
+                  setHeroDialogOpen(true);
+                }}
+                className={`inline-flex items-center rounded-lg border font-bold px-3 py-1.5 text-xs sm:text-sm shadow-md drop-shadow-[0_1px_3px_rgba(0,0,0,0.35)] cursor-pointer transition-transform duration-200 ease-out hover:scale-[1.03] hover:brightness-[1.06] active:scale-[0.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/90 ${chip.chipClass}`}
+              >
+                {chip.label}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
+
+      <Dialog
+        open={heroDialogOpen}
+        onOpenChange={(open) => {
+          setHeroDialogOpen(open);
+          if (!open) {
+            if (closeClearTimer.current) clearTimeout(closeClearTimer.current);
+            closeClearTimer.current = setTimeout(() => setHeroFeature(null), 280);
+          }
+        }}
+      >
+        <DialogContent
+          className="max-w-md gap-0 border-0 bg-transparent p-0 shadow-none duration-300 sm:max-w-md"
+          showCloseButton
+        >
+          {heroFeature && (
+            <div className="overflow-hidden rounded-2xl border border-orange-200/90 bg-gradient-to-br from-amber-50 via-orange-50/98 to-rose-50/95 shadow-2xl ring-1 ring-orange-900/10">
+              <div
+                className="h-1.5 w-full bg-gradient-to-r from-orange-600 via-amber-500 to-rose-600 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-top-2 motion-safe:duration-500"
+                aria-hidden
+              />
+              <DialogHeader className="space-y-4 px-6 pb-6 pt-5 text-left sm:text-left">
+                <DialogTitle className="font-display text-xl text-red-950 sm:text-2xl motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-1 motion-safe:duration-300 motion-safe:delay-75">
+                  {heroFeature.label}
+                </DialogTitle>
+                <DialogDescription asChild>
+                  <p className="text-base leading-relaxed text-foreground/90 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-500 motion-safe:delay-150">
+                    {heroFeature.description}
+                  </p>
+                </DialogDescription>
+              </DialogHeader>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Chapter Cards — full width (#27) */}
       <section className="px-4 py-8 lg:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {visibleChapters.map((ch) => {
             const img = getChapterImage(ch as any);
+            const chapterHref = `/chapter/${ch.chapter}`;
             return (
-              <Link key={ch.chapter} href={`/chapter/${ch.chapter}`}>
-                <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border [@media(hover:hover)]:hover:border-orange-300 [@media(hover:hover)]:hover:shadow-md transition-all group cursor-pointer h-full flex flex-col">
+              <Link
+                key={ch.chapter}
+                href={chapterHref}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateWithViewTransition(() => setLocation(chapterHref));
+                }}
+              >
+                <div className="chapter-card bg-card rounded-xl overflow-hidden shadow-sm border border-border [@media(hover:hover)]:hover:border-orange-300 [@media(hover:hover)]:hover:shadow-md transition-all group cursor-pointer h-full flex flex-col touch-manipulation">
                   {/* Colored header with image icon + translucent chapter number (#42) */}
                   <div className={`bg-gradient-to-r ${chapterColorMap[ch.chapter]} relative overflow-hidden flex`}>
                     {img && (
