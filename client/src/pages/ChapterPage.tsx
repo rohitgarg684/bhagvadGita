@@ -418,12 +418,25 @@ export default function ChapterPage() {
                 {/* Header: icon top-left + verse number + title + audio (#39) */}
                 <div className="flex items-start gap-3 mb-2">
                   <MeaningThumbnail chapterNum={chapterNum} verseNum={verse.verse} verse={verse} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-red-950">
+                  <div className="flex-1 min-w-0 flex items-start justify-between gap-2 sm:gap-3">
+                    <div className="min-w-0 flex-1">
+                      <span className="text-lg font-bold text-red-950 block">
                         {chapterNum}.{verse.verse}
                       </span>
-                      {verse.audio_url && (
+                      {verse.title && (
+                        <p className="text-sm font-semibold text-orange-800 line-clamp-2 sm:line-clamp-1 mt-0.5 pr-0 sm:pr-1">
+                          {verse.title}
+                        </p>
+                      )}
+                    </div>
+                    {verse.audio_url && (
+                      <div
+                        className="shrink-0 flex flex-wrap items-center justify-end gap-x-1.5 gap-y-1 rounded-lg border border-orange-200/90 bg-gradient-to-br from-orange-50/95 to-amber-50/70 px-2 py-1.5 shadow-sm max-w-[calc(100%-0.5rem)] sm:max-w-none self-start"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-orange-900">
+                          Listen
+                        </span>
                         <VerseAudioButton
                           audioUrl={verse.audio_url}
                           verseNum={verse.verse}
@@ -442,10 +455,7 @@ export default function ChapterPage() {
                             }, 600);
                           } : undefined}
                         />
-                      )}
-                    </div>
-                    {verse.title && (
-                      <p className="text-sm font-semibold text-orange-800 line-clamp-1 mt-0.5">{verse.title}</p>
+                      </div>
                     )}
                   </div>
                 </div>
