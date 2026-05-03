@@ -189,12 +189,49 @@ export default function VersePage() {
     setShowSpeedMenu(false);
   }, [chapterNum, verseNum]);
 
+  useEffect(() => {
+    const chapter = data.chapters.find((c) => c.chapter === chapterNum);
+    const verses: Verse[] = chapterNum === 6 ? data.chapter6_full : chapter?.key_verses || [];
+    const v = verses.find((x) => x.verse === verseNum);
+    const url = v?.audio_url;
+    if (!url) return;
+
+    const a = new Audio();
+    a.crossOrigin = "anonymous";
+    a.preload = "metadata";
+
+    const applyDuration = () => {
+      const d = a.duration;
+      if (Number.isFinite(d) && d > 0 && d !== Number.POSITIVE_INFINITY) {
+        setAudioDuration(d);
+      }
+    };
+
+    a.addEventListener("loadedmetadata", applyDuration);
+    a.addEventListener("durationchange", applyDuration);
+    a.src = url;
+    a.load();
+
+    return () => {
+      a.removeEventListener("loadedmetadata", applyDuration);
+      a.removeEventListener("durationchange", applyDuration);
+      a.pause();
+      a.removeAttribute("src");
+      a.load();
+    };
+  }, [chapterNum, verseNum]);
+
   const initAudio = useCallback((url: string) => {
     if (audioRef.current) return audioRef.current;
     const a = new Audio();
     a.crossOrigin = "anonymous";
     a.preload = "metadata";
-    a.addEventListener("loadedmetadata", () => setAudioDuration(a.duration));
+    a.addEventListener("loadedmetadata", () => {
+      const d = a.duration;
+      if (Number.isFinite(d) && d > 0 && d !== Number.POSITIVE_INFINITY) {
+        setAudioDuration(d);
+      }
+    });
     a.addEventListener("timeupdate", () => setAudioCurrentTime(a.currentTime));
     a.addEventListener("ended", () => { setAudioPlaying(false); setAudioCurrentTime(0); });
     a.addEventListener("error", () => { setAudioPlaying(false); });
@@ -356,7 +393,7 @@ export default function VersePage() {
               </div>
             )}
             <div className="min-w-0 flex-1 flex flex-col justify-center">
-              <p className="bg-red-900 text-orange-100 text-base sm:text-lg font-bold tracking-wide px-3 py-1.5 rounded-lg inline-block">
+              <p className="bg-red-900 text-orange-100 text-lg sm:text-xl md:text-2xl font-bold tracking-wide px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg inline-block">
                 {iastName} · {chapterNum}.{verseNum}
               </p>
               {verse.title && (
@@ -428,30 +465,30 @@ export default function VersePage() {
               </div>
               {verse.audio_url && (
                 <div className="mt-3 bg-orange-100 rounded-xl p-2.5">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1 sm:gap-1.5">
                     <button
                       onClick={() => skipAudio(-5)}
-                      className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
+                      className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
                       title="Rewind 5s"
                     >
-                      <RotateCcw size={14} />
+                      <RotateCcw size={20} strokeWidth={2.25} />
                     </button>
                     <button
                       onClick={() => toggleAudio(verse.audio_url!)}
-                      className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+                      className={`flex-shrink-0 w-14 h-14 rounded-full flex items-center justify-center transition-all ${
                         audioPlaying
                           ? "bg-orange-600 text-white shadow-lg"
                           : "bg-orange-500 text-white hover:bg-orange-600"
                       }`}
                     >
-                      {audioPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
+                      {audioPlaying ? <Pause size={24} /> : <Play size={24} className="ml-0.5" />}
                     </button>
                     <button
                       onClick={() => skipAudio(5)}
-                      className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
+                      className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
                       title="Forward 5s"
                     >
-                      <RotateCw size={14} />
+                      <RotateCw size={20} strokeWidth={2.25} />
                     </button>
                     <div className="flex-1 min-w-0">
                       <input
@@ -473,22 +510,22 @@ export default function VersePage() {
                             : "rgb(254 215 170)",
                         }}
                       />
-                      <div className="flex justify-between text-xs text-orange-600 mt-0.5 px-0.5">
+                      <div className="flex justify-between text-xs text-orange-600 mt-0.5 px-0.5 tabular-nums">
                         <span>{formatTime(audioCurrentTime)}</span>
                         <span>{audioDuration ? formatTime(audioDuration) : "—:——"}</span>
                       </div>
                     </div>
                     <button
                       onClick={toggleMute}
-                      className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
+                      className="flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center text-orange-700 hover:bg-orange-200 transition-all"
                       title={audioMuted ? "Unmute" : "Mute"}
                     >
-                      {audioMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                      {audioMuted ? <VolumeX size={18} strokeWidth={2.25} /> : <Volume2 size={18} strokeWidth={2.25} />}
                     </button>
                     <div className="relative">
                       <button
                         onClick={() => setShowSpeedMenu(!showSpeedMenu)}
-                        className="flex-shrink-0 px-1.5 py-0.5 rounded-md text-xs font-bold text-orange-700 bg-orange-200 hover:bg-orange-300 transition-all"
+                        className="flex-shrink-0 min-w-[2.75rem] px-2 py-1 rounded-lg text-sm font-bold text-orange-700 bg-orange-200 hover:bg-orange-300 transition-all"
                         title="Playback speed"
                       >
                         {playbackSpeed}x
