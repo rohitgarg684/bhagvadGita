@@ -20,6 +20,41 @@ The UI that renders verse content is in:
 client/src/pages/VersePage.tsx
 ```
 
+**Chapter-level synopses** (long-form summaries with optional images, separate from `gitaData.json` verses) use:
+
+```
+client/src/data/chapterSummaries.json
+client/src/pages/ChapterSummaryPage.tsx
+client/src/lib/chapterHeroImage.ts
+client/public/chapter-summaries/
+```
+
+## Chapter summaries (Drive-backed)
+
+These are **not** stored inside `gitaData.json`. They are imported from editorial sources (e.g. Google Drive) into JSON and ship with static images under `client/public/`.
+
+### Files and responsibilities
+
+| Piece | Path |
+|-------|------|
+| Data | `client/src/data/chapterSummaries.json` — object keyed by chapter number as a string (`"12"`, …). Prefer the **block** format: `content` array of `{ type: "h2" \| "p" \| "img", text?: string, src?: string }`, optional `sourceDoc`. A legacy `sections` shape is still supported by the page. |
+| Page | `client/src/pages/ChapterSummaryPage.tsx` — renders blocks, hero, breadcrumbs, fallback when no JSON entry exists (points to the import doc). |
+| Hero image helper | `client/src/lib/chapterHeroImage.ts` — `getChapterHeroImageUrl` for SEO/header (uses verse thumbnails where available). |
+| Public images | `client/public/chapter-summaries/*.png` — reference in JSON as site-root paths, e.g. `/chapter-summaries/ch12-synopsis-img01.png`. Vite serves `client/public` from `/` in dev and copies it into `dist/public` on build. |
+| Import / provenance | `scripts/import-chapter-synopsis.md` — workflow for turning Drive exports into JSON + assets. Optional source binaries under `docs/source/` (e.g. synopsis `.docx`). Drive naming aligns with folders like `chapter0012` and synopsis filenames. |
+
+### Routing and SEO (do not regress)
+
+- **`client/src/App.tsx`**: Import `ChapterSummaryPage` (not a duplicate summary component). Register **`/chapter/:chapterNum/summary` before `/chapter/:chapterNum`** — in wouter, the first matching route wins; the generic chapter route must come last among chapter routes.
+- **`client/src/pages/ChapterPage.tsx`**: Keep the **View Chapter Summary** link to `/chapter/${chapterNum}/summary` so every chapter can open the summary route (rich content when present, friendly fallback otherwise).
+- **`server/seo.ts`**: Keep `summaryMatch` for `/chapter/(\\d+)/summary` in `getMetaForUrl`, and include **`/chapter/{n}/summary` in the sitemap** for each chapter (not gated on optional `synopsis_content` in `gitaData`).
+
+There must be **one** summary implementation: **`ChapterSummaryPage` + `chapterSummaries.json`**. Do not revive a separate page that only reads `synopsis_content` from `gitaData` without the JSON pipeline.
+
+### Images for chapter summaries
+
+- Unlike Firebase-backed verse images, synopsis illustrations are **checked into** `client/public/chapter-summaries/`. Do not invent URLs; add real files and reference them in `chapterSummaries.json`.
+
 ## Your Task
 
 **Populate the next verse with rich content, following the Chapter 12 Verse 1 gold standard.**
@@ -160,14 +195,14 @@ Use these authoritative sources for Bhagavad Gita content:
 
 ## Build & Verify
 
-After editing `gitaData.json`:
+From the project root, after editing `gitaData.json`, `chapterSummaries.json`, or TypeScript:
 
 ```bash
-cd /Users/rohitgarg/Documents/GitHub/bhagvadGita
+npm run check
 npm run build
 ```
 
-This ensures the JSON is valid and the TypeScript types are satisfied. Fix any build errors before committing.
+This validates TypeScript and ensures JSON bundles correctly. Fix any errors before committing. After changing chapter summary images, confirm `/chapter/<n>/summary` in dev or preview and that image paths under `/chapter-summaries/` load.
 
 ## Commit Convention
 
@@ -176,4 +211,12 @@ Add rich content for Chapter X Verse Y
 
 Populate verse X.Y with detailed meaning, stories, kids content,
 grammar analysis, and reflection following the Ch12.1 template.
+```
+
+Chapter summary / synopsis changes (JSON, `ChapterSummaryPage`, `public/chapter-summaries`, import docs):
+
+```
+Add chapter N synopsis to chapterSummaries.json
+
+Import Drive-backed blocks and images; update chapterHeroImage if needed.
 ```
