@@ -315,10 +315,16 @@ export default function ChapterPage() {
             )}
 
             <div className="flex-1 min-w-0">
-              <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest mb-2">
-                Chapter {chapterNum} of 18
+              <p className="text-orange-400 text-xs font-semibold uppercase tracking-widest mb-2 flex flex-wrap items-center gap-x-3 gap-y-2">
+                <span>Chapter {chapterNum} of 18</span>
+                <span
+                  className="inline-flex items-center rounded-lg bg-white/20 border border-white/35 px-2.5 py-1 text-white shadow-md backdrop-blur-sm normal-case tracking-normal font-bold text-[11px] sm:text-xs"
+                  title={`This chapter has ${chapter.verses_count} verses in the Bhagavad Gita`}
+                >
+                  {chapter.verses_count} {chapter.verses_count === 1 ? "Shloka" : "Shlokas"}
+                </span>
                 {chapterNum === 6 && (
-                  <span className="inline-flex items-center gap-1 bg-orange-400 text-red-950 text-xs font-bold px-2 py-0.5 rounded-full ml-3">
+                  <span className="inline-flex items-center gap-1 bg-orange-400 text-red-950 text-xs font-bold px-2 py-0.5 rounded-full">
                     <Sparkles size={10} />
                     Full Journey Content
                   </span>
