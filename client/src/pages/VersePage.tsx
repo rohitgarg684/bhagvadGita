@@ -8,6 +8,7 @@ import EditableImage from "@/components/EditableImage";
 import { useImageUrl } from "@/hooks/useImages";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData, Verse } from "@/types/gita";
+import { SandhiText } from "@/components/SandhiText";
 import {
   ChevronLeft, ChevronRight, Star, Sparkles,
   BookMarked, Lightbulb, Baby, GraduationCap,
@@ -77,10 +78,11 @@ function ImageModal({ src, alt, onClose }: { src: string; alt: string; onClose: 
     document.body.style.left = '0';
     document.body.style.right = '0';
     document.body.style.overflow = 'hidden';
-    overlayRef.current?.addEventListener('touchmove', preventScroll, { passive: false });
+    const overlay = overlayRef.current;
+    overlay?.addEventListener('touchmove', preventScroll, { passive: false });
     return () => {
       document.removeEventListener('keydown', handler);
-      overlayRef.current?.removeEventListener('touchmove', preventScroll);
+      overlay?.removeEventListener('touchmove', preventScroll);
       document.documentElement.style.overflow = '';
       document.body.style.position = '';
       document.body.style.top = '';
@@ -414,7 +416,7 @@ export default function VersePage() {
               <div className="font-devanagari text-orange-100 text-xl lg:text-3xl flex-1">
                 {verse.sanskrit.split('\n').map((line, i) => (
                   <p key={i} className="leading-loose">
-                    {line}
+                    <SandhiText text={line} sandhiClass="text-orange-300/50" />
                   </p>
                 ))}
               </div>
@@ -514,7 +516,7 @@ export default function VersePage() {
                 <div className="transliteration-text text-orange-900 text-lg lg:text-xl italic flex-1">
                   {verse.transliteration.split('\n').map((line, i) => (
                     <p key={i} className="leading-relaxed">
-                      {line}
+                      <SandhiText text={line} />
                     </p>
                   ))}
                 </div>

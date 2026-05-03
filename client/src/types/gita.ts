@@ -1,3 +1,8 @@
+export interface SynopsisSection {
+  heading: string;
+  paragraphs: string[];
+}
+
 export interface ChapterMeta {
   chapter: number;
   name: string;
@@ -9,6 +14,9 @@ export interface ChapterMeta {
   color: string;
   icon: string;
   key_verses: Verse[];
+  synopsis_content?: {
+    sections: SynopsisSection[];
+  };
 }
 
 export interface VerseImage {

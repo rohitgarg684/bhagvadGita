@@ -170,7 +170,14 @@ async function startServer() {
     })
   );
 
-  app.use(express.static(staticPath, { maxAge: 0 }));
+  app.use(express.static(staticPath, {
+    maxAge: 0,
+    setHeaders: (res, filePath) => {
+      if (/\.(jpg|jpeg|png|webp|gif|svg|ico)$/i.test(filePath)) {
+        res.setHeader("Cache-Control", "public, max-age=86400");
+      }
+    },
+  }));
 
   app.get("*", (req, res) => {
     res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");

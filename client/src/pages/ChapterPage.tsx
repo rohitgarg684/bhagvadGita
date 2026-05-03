@@ -8,6 +8,7 @@ import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
 import { useImageUrl } from "@/hooks/useImages";
 import { ChevronLeft, ChevronRight, BookOpen, Sparkles, Gamepad2, Play, Pause } from "lucide-react";
 import { chapterIAST, chapterDevanagari } from "@/lib/chapterMeta";
+import { SandhiText } from "@/components/SandhiText";
 
 const data = gitaData as unknown as GitaData;
 
@@ -186,7 +187,13 @@ export default function ChapterPage() {
 
   const devanagariName = chapterDevanagari[chapterNum] || chapter.name_hindi;
   const iastName = chapterIAST[chapterNum] || "";
-  const headerImage = verses[0]?.images?.meaning?.url || null;
+  const headerImage = (() => {
+    if (chapterNum === 12) {
+      const v2 = verses.find(v => v.verse === 2);
+      if (v2?.images?.meaning?.url) return v2.images.meaning.url;
+    }
+    return verses[0]?.images?.meaning?.url || null;
+  })();
 
   const chapterTitle = `Chapter ${chapterNum} — ${iastName || chapter.name} (${devanagariName})`;
   const chapterDescription = chapter.summary ||
@@ -223,9 +230,9 @@ export default function ChapterPage() {
             style={{ backgroundImage: `url(${headerImage})` }}
           />
         )}
-        {/* Translucent chapter number — top right (#44) */}
-        <div className="absolute top-0 right-0 z-[2] pointer-events-none select-none">
-          <span className="font-display font-bold text-white/10 text-[8rem] sm:text-[10rem] lg:text-[12rem] leading-none block -mt-4 -mr-2">
+        {/* Translucent chapter number — top right (#44, #67) */}
+        <div className="absolute top-0 right-0 z-[2] pointer-events-none select-none pr-4 pt-2 sm:pr-6 sm:pt-3">
+          <span className="font-display font-bold text-white/25 text-[8rem] sm:text-[10rem] lg:text-[12rem] leading-none block">
             {chapterNum}
           </span>
         </div>
@@ -261,44 +268,53 @@ export default function ChapterPage() {
               <h1 className="text-white font-display text-3xl lg:text-5xl font-bold leading-tight mb-1">
                 {iastName || chapter.name}
               </h1>
-              <p className="text-orange-300 font-devanagari text-xl lg:text-2xl mb-3">{devanagariName}</p>
-
-              {/* Synopsis — truncated on mobile (#25) */}
-              {synopsis && (
-                <div>
-                  <p className={`text-red-100 text-sm lg:text-base leading-relaxed w-full ${!synopsisExpanded ? 'line-clamp-3 md:line-clamp-none' : ''}`}>
-                    {synopsis}
-                  </p>
-                  <button
-                    onClick={() => setSynopsisExpanded(!synopsisExpanded)}
-                    className="text-orange-300 text-xs font-semibold mt-1 hover:underline md:hidden"
-                  >
-                    {synopsisExpanded ? 'less' : 'more'}
-                  </button>
-                </div>
-              )}
-
-              <div className="flex flex-wrap items-center gap-3 mt-5">
-                <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5">
-                  <BookOpen size={13} className="text-orange-400" />
-                  <span className="text-white text-sm">{chapter.verses_count} verses</span>
-                </div>
-                {chapterNum === 6 && (
-                  <>
-                    <div className="flex items-center gap-2 bg-orange-400/20 border border-orange-400/40 rounded-full px-3 py-1.5">
-                      <Sparkles size={13} className="text-orange-400" />
-                      <span className="text-orange-300 text-sm font-semibold">{verses.length} full explanations</span>
-                    </div>
-                    <Link href={`/chapter/${chapterNum}/games`}>
-                      <div className="flex items-center gap-2 bg-pink-400/20 border border-pink-400/40 hover:bg-pink-400/30 rounded-full px-3 py-1.5 transition-all cursor-pointer">
-                        <Gamepad2 size={13} className="text-pink-300" />
-                        <span className="text-pink-200 text-sm font-semibold">5 Interactive Games</span>
-                      </div>
-                    </Link>
-                  </>
-                )}
-              </div>
+              <p className="text-orange-300 font-devanagari text-xl lg:text-2xl mb-0">{devanagariName}</p>
             </div>
+          </div>
+
+          {/* Synopsis — below image level, full width (#68) */}
+          {synopsis && (
+            <div className="mt-3">
+              <p className={`text-red-100 text-sm lg:text-base leading-relaxed w-full ${!synopsisExpanded ? 'line-clamp-3 md:line-clamp-none' : ''}`}>
+                {synopsis}
+              </p>
+              <button
+                onClick={() => setSynopsisExpanded(!synopsisExpanded)}
+                className="text-orange-300 text-xs font-semibold mt-1 hover:underline md:hidden"
+              >
+                {synopsisExpanded ? 'less' : 'more'}
+              </button>
+            </div>
+          )}
+
+          <div className="flex flex-wrap items-center gap-3 mt-5">
+            {chapter.synopsis_content ? (
+              <Link href={`/chapter/${chapterNum}/summary`}>
+                <div className="flex items-center gap-2 bg-white/15 hover:bg-white/25 border border-white/20 rounded-full px-3 py-1.5 transition-all cursor-pointer">
+                  <BookOpen size={13} className="text-orange-400" />
+                  <span className="text-white text-sm font-semibold">View Chapter Summary</span>
+                </div>
+              </Link>
+            ) : (
+              <div className="flex items-center gap-2 bg-white/10 rounded-full px-3 py-1.5">
+                <BookOpen size={13} className="text-orange-400" />
+                <span className="text-white text-sm">{chapter.verses_count} verses</span>
+              </div>
+            )}
+            {chapterNum === 6 && (
+              <>
+                <div className="flex items-center gap-2 bg-orange-400/20 border border-orange-400/40 rounded-full px-3 py-1.5">
+                  <Sparkles size={13} className="text-orange-400" />
+                  <span className="text-orange-300 text-sm font-semibold">{verses.length} full explanations</span>
+                </div>
+                <Link href={`/chapter/${chapterNum}/games`}>
+                  <div className="flex items-center gap-2 bg-pink-400/20 border border-pink-400/40 hover:bg-pink-400/30 rounded-full px-3 py-1.5 transition-all cursor-pointer">
+                    <Gamepad2 size={13} className="text-pink-300" />
+                    <span className="text-pink-200 text-sm font-semibold">5 Interactive Games</span>
+                  </div>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -354,13 +370,17 @@ export default function ChapterPage() {
                           verseNum={verse.verse}
                           onEnded={idx < verses.length - 1 && verses[idx + 1].audio_url ? () => {
                             const nextCard = document.getElementById(`verse-card-${verses[idx + 1].verse}`);
-                            if (nextCard) {
-                              nextCard.scrollIntoView({ behavior: "smooth", block: "center" });
+                            if (!nextCard) return;
+                            const rect = nextCard.getBoundingClientRect();
+                            const headerH = 64;
+                            const cardVisible = rect.top >= headerH && rect.top < window.innerHeight - 100;
+                            if (!cardVisible) {
+                              const y = window.scrollY + rect.top - headerH - 12;
+                              window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
                             }
                             setTimeout(() => {
-                              const nextBtn = nextCard?.querySelector<HTMLButtonElement>("button[title='Play shloka']");
-                              nextBtn?.click();
-                            }, 500);
+                              nextCard.querySelector<HTMLButtonElement>("button[title='Play shloka']")?.click();
+                            }, 600);
                           } : undefined}
                         />
                       )}
@@ -374,7 +394,7 @@ export default function ChapterPage() {
                 {/* Sanskrit (Devanagari) */}
                 <div className="font-devanagari text-red-900 text-lg leading-relaxed mb-1.5">
                   {verse.sanskrit.split('\n').map((line, i) => (
-                    <p key={i}>{line}</p>
+                    <p key={i}><SandhiText text={line} /></p>
                   ))}
                 </div>
 
@@ -382,7 +402,7 @@ export default function ChapterPage() {
                 {verse.transliteration && (
                   <div className="text-orange-700 text-base italic leading-relaxed mb-2">
                     {verse.transliteration.split('\n').map((line, i) => (
-                      <p key={i}>{line}</p>
+                      <p key={i}><SandhiText text={line} /></p>
                     ))}
                   </div>
                 )}

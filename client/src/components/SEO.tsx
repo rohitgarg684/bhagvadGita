@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 
 const SITE_NAME = "Bhagavad Gita - Gurukula.com";
 const BASE_URL = "https://gita.gurukula.com";
-const DEFAULT_IMAGE = `${BASE_URL}/gita-banner.png`;
+const DEFAULT_IMAGE = `${BASE_URL}/gita-og.jpg`;
 const DEFAULT_DESCRIPTION =
   "Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.";
 

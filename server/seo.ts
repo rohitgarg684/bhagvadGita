@@ -3,7 +3,7 @@ import path from "path";
 
 const BASE_URL = "https://gita.gurukula.com";
 const SITE_NAME = "Bhagavad Gita - Gurukula.com";
-const DEFAULT_IMAGE = `${BASE_URL}/gita-banner.png`;
+const DEFAULT_IMAGE = `${BASE_URL}/gita-og.jpg`;
 const DEFAULT_DESCRIPTION =
   "Bhagavad Gita with authentic pronunciation, detailed meaning, stories and practical application tips for kids and adults.";
 
@@ -131,6 +131,20 @@ export function getMetaForUrl(urlPath: string, data: GitaData): MetaTags {
   const chapterMatch = urlPath.match(/^\/chapter\/(\d+)$/);
   const verseMatch = urlPath.match(/^\/chapter\/(\d+)\/verse\/(\d+)$/);
   const gamesMatch = urlPath.match(/^\/chapter\/(\d+)\/games$/);
+  const summaryMatch = urlPath.match(/^\/chapter\/(\d+)\/summary$/);
+
+  if (summaryMatch) {
+    const chNum = parseInt(summaryMatch[1]);
+    const chapter = data.chapters.find((c) => c.chapter === chNum);
+    const chapterName = chapter?.name || chapterIAST[chNum] || "";
+    return {
+      title: `Chapter ${chNum} Summary — ${chapterName} | ${SITE_NAME}`,
+      description: `Summary of Bhagavad Gita Chapter ${chNum} (${chapterName}) — ${chapter?.subtitle || ""}`,
+      url: `${BASE_URL}/chapter/${chNum}/summary`,
+      image: getChapterImage(chNum, data) || DEFAULT_IMAGE,
+      type: "article",
+    };
+  }
 
   if (verseMatch) {
     const chNum = parseInt(verseMatch[1]);
@@ -197,6 +211,10 @@ export function getMetaForUrl(urlPath: string, data: GitaData): MetaTags {
 function getChapterImage(chNum: number, data: GitaData): string | null {
   const chapter = data.chapters.find((c) => c.chapter === chNum);
   const verses = chNum === 6 ? data.chapter6_full : chapter?.key_verses || [];
+  if (chNum === 12) {
+    const v2 = verses.find(v => v.verse === 2);
+    if (v2) { const img = getVerseImage(v2); if (img) return img; }
+  }
   for (const v of verses) {
     const img = getVerseImage(v);
     if (img) return img;
@@ -304,6 +322,14 @@ export function generateSitemap(data: GitaData): string {
       urls.push({
         loc: `${BASE_URL}/chapter/${chapter.chapter}/verse/${verse.verse}`,
         priority: "0.6",
+        changefreq: "monthly",
+      });
+    }
+
+    if ((chapter as Record<string, unknown>).synopsis_content) {
+      urls.push({
+        loc: `${BASE_URL}/chapter/${chapter.chapter}/summary`,
+        priority: "0.7",
         changefreq: "monthly",
       });
     }

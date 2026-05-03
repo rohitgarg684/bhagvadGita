@@ -35,6 +35,10 @@ const chapterColorMap: Record<number, string> = {
 
 function getChapterImage(ch: { chapter: number; key_verses: Verse[] }): string | null {
   const verses: Verse[] = ch.chapter === 6 ? data.chapter6_full : ch.key_verses;
+  if (ch.chapter === 12) {
+    const v2 = verses.find(v => v.verse === 2);
+    if (v2?.images?.meaning?.url) return v2.images.meaning.url;
+  }
   for (const v of verses) {
     if (v.images?.meaning?.url) return v.images.meaning.url;
   }
