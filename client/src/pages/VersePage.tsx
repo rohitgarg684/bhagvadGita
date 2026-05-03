@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { chapterIAST } from "@/lib/chapterMeta";
 import { stripTransliterationVerseSuffix } from "@/lib/transliterationDisplay";
+import { navigateWithViewTransition } from "@/lib/navigateWithViewTransition";
 
 const data = gitaData as unknown as GitaData;
 
@@ -290,7 +291,7 @@ export default function VersePage() {
     return `${m}:${s.toString().padStart(2, "0")}`;
   }
 
-  const [, navigate] = useLocation();
+  const [, setLocation] = useLocation();
   const { isChapterVisible } = useChapterVisibility();
   const chapter = data.chapters.find((c) => c.chapter === chapterNum);
   if (!isChapterVisible(chapterNum)) return <Redirect to="/" />;
@@ -306,7 +307,14 @@ export default function VersePage() {
       <Layout>
         <div className="p-8 text-center">
           <p className="text-muted-foreground">Verse not found.</p>
-          <Link href={`/chapter/${chapterNum}`} className="text-orange-600 hover:underline mt-2 inline-block">
+          <Link
+            href={`/chapter/${chapterNum}`}
+            className="text-orange-600 hover:underline mt-2 inline-block touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}`));
+            }}
+          >
             ← Back to Chapter {chapterNum}
           </Link>
         </div>
@@ -372,9 +380,25 @@ export default function VersePage() {
       <div className="bg-gradient-to-b from-orange-50 to-amber-50 border-b border-orange-200 px-4 py-4 lg:py-6">
         {/* Breadcrumb — "Shloka" instead of "Verse" (#26.2) */}
         <div className="flex items-center gap-1.5 text-orange-700 text-sm mb-3 flex-wrap">
-          <Link href="/" className="hover:text-orange-900 transition-colors">Home</Link>
+          <Link
+            href="/"
+            className="hover:text-orange-900 transition-colors touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation("/"));
+            }}
+          >
+            Home
+          </Link>
           <ChevronRight size={12} />
-          <Link href={`/chapter/${chapterNum}`} className="hover:text-orange-900 transition-colors">
+          <Link
+            href={`/chapter/${chapterNum}`}
+            className="hover:text-orange-900 transition-colors touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}`));
+            }}
+          >
             Chapter {chapterNum}
           </Link>
           <ChevronRight size={12} />
@@ -406,8 +430,19 @@ export default function VersePage() {
           {/* Prev / Dropdowns / Next Shloka navigation */}
           <div className="flex items-center justify-between gap-2 mb-3">
             {prevVerse ? (
-              <Link href={`/chapter/${chapterNum}/verse/${prevVerse.verse}`}>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-orange-700 bg-orange-100 hover:bg-orange-200 border border-orange-300 transition-all">
+              <Link
+                href={`/chapter/${chapterNum}/verse/${prevVerse.verse}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateWithViewTransition(() =>
+                    setLocation(`/chapter/${chapterNum}/verse/${prevVerse.verse}`)
+                  );
+                }}
+              >
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-orange-700 bg-orange-100 hover:bg-orange-200 border border-orange-300 transition-all touch-manipulation"
+                >
                   <ChevronLeft size={16} />
                   <span className="hidden sm:inline">Prev Shloka</span>
                   <span className="sm:hidden">Prev</span>
@@ -420,7 +455,7 @@ export default function VersePage() {
                 value={chapterNum}
                 onChange={(e) => {
                   const ch = parseInt(e.target.value);
-                  navigate(`/chapter/${ch}/verse/1`);
+                  navigateWithViewTransition(() => setLocation(`/chapter/${ch}/verse/1`));
                 }}
                 className="px-2 py-1.5 rounded-lg text-sm font-semibold text-orange-800 bg-orange-100 border border-orange-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-400"
               >
@@ -432,7 +467,7 @@ export default function VersePage() {
                 value={verseNum}
                 onChange={(e) => {
                   const v = parseInt(e.target.value);
-                  navigate(`/chapter/${chapterNum}/verse/${v}`);
+                  navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}/verse/${v}`));
                 }}
                 className="px-2 py-1.5 rounded-lg text-sm font-semibold text-orange-800 bg-orange-100 border border-orange-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-400"
               >
@@ -443,8 +478,19 @@ export default function VersePage() {
             </div>
 
             {nextVerse ? (
-              <Link href={`/chapter/${chapterNum}/verse/${nextVerse.verse}`}>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-orange-700 bg-orange-100 hover:bg-orange-200 border border-orange-300 transition-all">
+              <Link
+                href={`/chapter/${chapterNum}/verse/${nextVerse.verse}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateWithViewTransition(() =>
+                    setLocation(`/chapter/${chapterNum}/verse/${nextVerse.verse}`)
+                  );
+                }}
+              >
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold text-orange-700 bg-orange-100 hover:bg-orange-200 border border-orange-300 transition-all touch-manipulation"
+                >
                   <span className="hidden sm:inline">Next Shloka</span>
                   <span className="sm:hidden">Next</span>
                   <ChevronRight size={16} />
@@ -993,8 +1039,19 @@ export default function VersePage() {
         {/* Verse Navigation */}
         <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
           {prevVerse ? (
-            <Link href={`/chapter/${chapterNum}/verse/${prevVerse.verse}`}>
-              <button className="flex items-center gap-2 bg-card border border-border hover:border-orange-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group">
+            <Link
+              href={`/chapter/${chapterNum}/verse/${prevVerse.verse}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() =>
+                  setLocation(`/chapter/${chapterNum}/verse/${prevVerse.verse}`)
+                );
+              }}
+            >
+              <button
+                type="button"
+                className="flex items-center gap-2 bg-card border border-border hover:border-orange-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group touch-manipulation"
+              >
                 <ChevronLeft size={18} className="group-hover:text-orange-500" />
                 <div className="text-left hidden sm:block">
                   <div className="text-sm text-muted-foreground">Previous</div>
@@ -1004,23 +1061,46 @@ export default function VersePage() {
               </button>
             </Link>
           ) : (
-            <Link href={`/chapter/${chapterNum}`}>
-              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              href={`/chapter/${chapterNum}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}`));
+              }}
+            >
+              <button type="button" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors touch-manipulation">
                 <ChevronLeft size={16} />
                 Chapter
               </button>
             </Link>
           )}
 
-          <Link href={`/chapter/${chapterNum}`}>
-            <button className="text-xs text-muted-foreground hover:text-orange-600 transition-colors px-3 py-2">
+          <Link
+            href={`/chapter/${chapterNum}`}
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}`));
+            }}
+          >
+            <button type="button" className="text-xs text-muted-foreground hover:text-orange-600 transition-colors px-3 py-2 touch-manipulation">
               {chapter.name}
             </button>
           </Link>
 
           {nextVerse ? (
-            <Link href={`/chapter/${chapterNum}/verse/${nextVerse.verse}`}>
-              <button className="flex items-center gap-2 bg-card border border-border hover:border-orange-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group">
+            <Link
+              href={`/chapter/${chapterNum}/verse/${nextVerse.verse}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() =>
+                  setLocation(`/chapter/${chapterNum}/verse/${nextVerse.verse}`)
+                );
+              }}
+            >
+              <button
+                type="button"
+                className="flex items-center gap-2 bg-card border border-border hover:border-orange-300 rounded-xl px-4 py-3 text-base font-semibold text-foreground transition-all group touch-manipulation"
+              >
                 <div className="text-right hidden sm:block">
                   <div className="text-sm text-muted-foreground">Next</div>
                   <div>Shloka {nextVerse.verse}</div>
@@ -1030,8 +1110,14 @@ export default function VersePage() {
               </button>
             </Link>
           ) : (
-            <Link href={`/chapter/${chapterNum}`}>
-              <button className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link
+              href={`/chapter/${chapterNum}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}`));
+              }}
+            >
+              <button type="button" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors touch-manipulation">
                 Chapter
                 <ChevronRight size={16} />
               </button>

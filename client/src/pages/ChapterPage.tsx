@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useMemo, useEffect, type MouseEvent } from "react";
-import { Link, useParams, Redirect } from "wouter";
+import { Link, useParams, Redirect, useLocation } from "wouter";
+import { navigateWithViewTransition } from "@/lib/navigateWithViewTransition";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import gitaData from "@/data/gitaData.json";
@@ -218,6 +219,7 @@ function buildSynopsis(verses: Verse[]): string {
 export default function ChapterPage() {
   const params = useParams<{ chapterNum: string }>();
   const chapterNum = parseInt(params.chapterNum || "1");
+  const [, setLocation] = useLocation();
   const [kidsMode, setKidsMode] = useState(false);
   const [synopsisExpanded, setSynopsisExpanded] = useState(false);
 
@@ -300,7 +302,16 @@ export default function ChapterPage() {
         </div>
         <div className="relative z-10 px-4 lg:px-6 py-8 lg:py-12">
           <div className="flex items-center gap-2 text-red-300 text-sm mb-5">
-            <Link href="/" className="hover:text-orange-300 transition-colors">Home</Link>
+            <Link
+              href="/"
+              className="hover:text-orange-300 transition-colors touch-manipulation"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation("/"));
+              }}
+            >
+              Home
+            </Link>
             <ChevronRight size={14} />
             <span className="text-orange-300">Chapter {chapterNum}</span>
           </div>
@@ -356,8 +367,14 @@ export default function ChapterPage() {
           )}
 
           <div className="flex flex-wrap items-center gap-3 mt-5">
-            <Link href={`/chapter/${chapterNum}/summary`}>
-              <span className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 rounded-full px-4 py-2 text-white text-sm font-semibold border border-white/20 cursor-pointer transition-colors">
+            <Link
+              href={`/chapter/${chapterNum}/summary`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}/summary`));
+              }}
+            >
+              <span className="inline-flex items-center gap-2 bg-white/15 hover:bg-white/25 rounded-full px-4 py-2 text-white text-sm font-semibold border border-white/20 cursor-pointer transition-colors touch-manipulation">
                 View Chapter Summary
               </span>
             </Link>
@@ -367,8 +384,14 @@ export default function ChapterPage() {
                   <Sparkles size={13} className="text-orange-400" />
                   <span className="text-orange-300 text-sm font-semibold">{verses.length} full explanations</span>
                 </div>
-                <Link href={`/chapter/${chapterNum}/games`}>
-                  <div className="flex items-center gap-2 bg-pink-400/20 border border-pink-400/40 hover:bg-pink-400/30 rounded-full px-3 py-1.5 transition-all cursor-pointer">
+                <Link
+                  href={`/chapter/${chapterNum}/games`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}/games`));
+                  }}
+                >
+                  <div className="flex items-center gap-2 bg-pink-400/20 border border-pink-400/40 hover:bg-pink-400/30 rounded-full px-3 py-1.5 transition-all cursor-pointer touch-manipulation">
                     <Gamepad2 size={13} className="text-pink-300" />
                     <span className="text-pink-200 text-sm font-semibold">5 Interactive Games</span>
                   </div>
@@ -391,8 +414,14 @@ export default function ChapterPage() {
 
         {chapterNum === 6 && (
           <div className="mb-6">
-            <Link href={`/chapter/${chapterNum}/games`}>
-              <div className="bg-gradient-to-r from-pink-500 to-violet-600 rounded-2xl p-5 flex items-center justify-between shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer">
+            <Link
+              href={`/chapter/${chapterNum}/games`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}/games`));
+              }}
+            >
+              <div className="bg-gradient-to-r from-pink-500 to-violet-600 rounded-2xl p-5 flex items-center justify-between shadow-lg hover:shadow-xl transition-all hover:-translate-y-0.5 cursor-pointer touch-manipulation">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-2xl">🎮</span>
@@ -414,8 +443,14 @@ export default function ChapterPage() {
               key={verse.verse}
               href={`/chapter/${chapterNum}/verse/${verse.verse}`}
               id={`verse-card-${verse.verse}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() =>
+                  setLocation(`/chapter/${chapterNum}/verse/${verse.verse}`)
+                );
+              }}
             >
-              <div className="group bg-card border border-border [@media(hover:hover)]:hover:border-orange-300 rounded-xl p-3 sm:p-4 transition-all [@media(hover:hover)]:hover:shadow-lg cursor-pointer h-full flex flex-col relative">
+              <div className="group bg-card border border-border [@media(hover:hover)]:hover:border-orange-300 rounded-xl p-3 sm:p-4 transition-all [@media(hover:hover)]:hover:shadow-lg cursor-pointer h-full flex flex-col relative touch-manipulation">
                 {/* Header: thumbnail + verse label + optional Listen (titles on verse page only) */}
                 <div className="flex items-start gap-3 mb-2">
                   <MeaningThumbnail chapterNum={chapterNum} verseNum={verse.verse} verse={verse} />
@@ -526,23 +561,41 @@ export default function ChapterPage() {
         {/* Chapter Navigation */}
         <div className="flex items-center justify-between mt-10 pt-6 border-t border-border">
           {prevChapter ? (
-            <Link href={`/chapter/${prevChapter}`}>
-              <button className="flex items-center gap-2 text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold">
+            <Link
+              href={`/chapter/${prevChapter}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation(`/chapter/${prevChapter}`));
+              }}
+            >
+              <button type="button" className="flex items-center gap-2 text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold touch-manipulation">
                 <ChevronLeft size={16} />
                 Chapter {prevChapter}
               </button>
             </Link>
           ) : <div />}
 
-          <Link href="/">
-            <button className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <Link
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation("/"));
+            }}
+          >
+            <button type="button" className="text-sm text-muted-foreground hover:text-foreground transition-colors touch-manipulation">
               All Chapters
             </button>
           </Link>
 
           {nextChapter ? (
-            <Link href={`/chapter/${nextChapter}`}>
-              <button className="flex items-center gap-2 text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold">
+            <Link
+              href={`/chapter/${nextChapter}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation(`/chapter/${nextChapter}`));
+              }}
+            >
+              <button type="button" className="flex items-center gap-2 text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold touch-manipulation">
                 Chapter {nextChapter}
                 <ChevronRight size={16} />
               </button>

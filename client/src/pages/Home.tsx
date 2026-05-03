@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { navigateWithViewTransition } from "@/lib/navigateWithViewTransition";
 
 type HeroFeature = (typeof heroFeatureData.features)[number];
 
@@ -82,16 +83,6 @@ function ChapterSynopsis({ ch }: { ch: { chapter: number; key_verses: Verse[] } 
       </button>
     </div>
   );
-}
-
-function navigateWithViewTransition(navigate: () => void) {
-  const doc = typeof document !== "undefined" ? document : null;
-  const vt = doc && "startViewTransition" in doc ? (doc as Document & { startViewTransition?: (cb: () => void) => void }).startViewTransition : undefined;
-  if (typeof vt === "function") {
-    vt.call(doc, navigate);
-  } else {
-    navigate();
-  }
 }
 
 export default function Home() {

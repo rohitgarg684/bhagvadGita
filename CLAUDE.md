@@ -20,6 +20,15 @@ The UI that renders verse content is in:
 client/src/pages/VersePage.tsx
 ```
 
+The home page (hero, chapter cards, feature chips / dialogs) is in:
+
+```
+client/src/pages/Home.tsx
+client/src/data/heroFeatureLabels.json
+```
+
+Edit `heroFeatureLabels.json` to change chip labels, descriptions, and chip styling tokens (`chipClass`) without touching layout logic in `Home.tsx` unless needed.
+
 **Chapter-level synopses** (long-form summaries with optional images, separate from `gitaData.json` verses) use:
 
 ```
@@ -75,19 +84,24 @@ This workflow is also captured in `.cursor/rules/fix-new-issue.mdc` for Cursor a
 
 **Populate the next verse with rich content, following the Chapter 12 Verse 1 gold standard.**
 
-The app currently has 18 chapters with sparse `key_verses` (basic fields only). Chapter 12 Verse 1 is the only verse with the full rich content structure. Your job is to create the same depth of content for the next verse.
+All **Chapter 12** `key_verses` in `gitaData.json` are fully enriched (same field set as the template). The other chapters still have sparse `key_verses` (basic fields only). Your job is to bring the **next** verse up to that depth.
 
 ### How to determine which verse to work on
 
-1. Open `client/src/data/gitaData.json`
-2. Look through the `chapters` array and the `chapter6_full` array
-3. Find the next verse that is MISSING these rich fields: `meaning_detail`, `kids_content`, `detailed_meaning`, `more_stories`, `rich_grammar`
-4. If the user specifies a verse (e.g., "do 12.2"), work on that one instead
-5. Chapter 6 verses already have `full_journey_text` and `grammar_notes` — these need to be CONVERTED to the rich format (see below)
+1. Open `client/src/data/gitaData.json`.
+2. Walk `chapters` in **chapter order** (ascending `chapter`). Within each chapter, consider `key_verses` in **verse number order**.
+3. The **next** verse to enrich is the first `key_verse` missing **any** of: `meaning_detail`, `kids_content`, `detailed_meaning`, `more_stories`, `rich_grammar`.
+4. Also check `chapter6_full[]` for Chapter 6: those entries still need the rich fields (and Chapter 6–specific conversion rules below).
+5. If the user specifies a verse (e.g., "do 12.2" or "enrich 2.11"), work on that one instead.
+6. Re-scan the file before editing—another commit may have filled the next gap.
+
+### Reference verse (gold standard)
+
+Use **Chapter 12 Verse 1** as the structural reference: in `gitaData.json`, find the chapter block with `"chapter": 12`, then the `key_verses` entry with `"verse": 1`. Do not rely on fixed line numbers; they shift as JSON grows.
 
 ## Content Schema — The Gold Standard
 
-Every fully populated verse MUST have ALL of these fields. Use Chapter 12 Verse 1 (lines ~326-401 in gitaData.json) as your reference.
+Every fully populated verse MUST have ALL of these fields. Use **Chapter 12 Verse 1** in `gitaData.json` as your reference (see above).
 
 ### Required Fields
 
@@ -96,7 +110,7 @@ Every fully populated verse MUST have ALL of these fields. Use Chapter 12 Verse 
   "verse": number,              // verse number
   "chapter": number,            // chapter number
   "title": string,              // short evocative title (e.g., "The Question of Two Paths")
-  "sanskrit": string,           // Devanagari text with verse number (e.g., "॥12.1॥")
+  "sanskrit": string,           // Devanagari śloka; closing ॥ on the last line (see editorial convention above)
   "transliteration": string,    // IAST transliteration with diacritics
   "one_line_meaning": string,   // single sentence English meaning
   "concise_journey": string,    // 2-3 sentence summary paragraph
@@ -142,9 +156,10 @@ Every fully populated verse MUST have ALL of these fields. Use Chapter 12 Verse 
 ## Content Quality Guidelines
 
 ### Sanskrit & Transliteration
-- Sanskrit MUST be accurate Devanagari with proper verse numbering (e.g., `॥12.2॥`)
+- Sanskrit MUST be accurate Devanagari. Follow the **in-repo convention**: do not paste `॥ch.v॥`-style labels on every line; the śloka closes with `॥` on the **last** line only (see existing Chapter 12 entries).
 - IAST transliteration MUST use proper diacritical marks: ā, ī, ū, ṛ, ṭ, ḍ, ṇ, ś, ṣ, ṁ, ḥ
 - Use `|` for half-verse break and `||` for full verse break in transliteration
+- **Display:** `VersePage` strips trailing `chapter.verse॥` fragments from each transliteration line via `client/src/lib/transliterationDisplay.ts` so the visible IAST matches the Sanskrit line breaks without duplicating verse numbers on every line
 
 ### meaning_detail
 - 2-4 substantive paragraphs separated by `\n\n`
@@ -192,6 +207,16 @@ Every fully populated verse MUST have ALL of these fields. Use Chapter 12 Verse 
 4. **Preserve all other data** — do not modify any other verses or chapters
 5. **Validate JSON** — ensure the file is valid JSON after editing
 
+### Bulk transliteration cleanup
+
+To strip trailing `chapter.verse॥` suffixes from **all** `transliteration` fields in `key_verses` and `chapter6_full` (after a bad import or paste), from the repo root:
+
+```bash
+npm run strip-translit
+```
+
+This runs `scripts/strip-transliteration-json.mjs`. Review the diff before committing.
+
 ### For Chapter 6 Conversion
 
 Chapter 6 verses already have `full_journey_text` and `grammar_notes` as flat text. When enriching these:
@@ -219,6 +244,8 @@ npm run build
 ```
 
 This validates TypeScript and ensures JSON bundles correctly. Fix any errors before committing. After changing chapter summary images, confirm `/chapter/<n>/summary` in dev or preview and that image paths under `/chapter-summaries/` load.
+
+Other useful scripts: `npm run strip-translit` (see above), `npm run format` (Prettier).
 
 ## Commit Convention
 

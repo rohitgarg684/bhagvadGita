@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import { navigateWithViewTransition } from "@/lib/navigateWithViewTransition";
 import Layout from "@/components/Layout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useChapterVisibility } from "@/contexts/ChapterVisibilityContext";
@@ -10,6 +11,7 @@ import { Settings, ChevronRight, Eye, EyeOff, ShieldAlert, ImageIcon } from "luc
 const data = gitaData as unknown as GitaData;
 
 export default function SettingsPage() {
+  const [, setLocation] = useLocation();
   const [kidsMode, setKidsMode] = useState(false);
   const { user, isAdmin, signIn } = useAuth();
   const { visibleChapters, loading, toggleChapter } = useChapterVisibility();
@@ -33,7 +35,14 @@ export default function SettingsPage() {
               Sign in as Admin
             </button>
           )}
-          <Link href="/" className="text-sm text-orange-600 hover:underline mt-4">
+          <Link
+            href="/"
+            className="text-sm text-orange-600 hover:underline mt-4 touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation("/"));
+            }}
+          >
             ← Back to Home
           </Link>
         </div>
@@ -46,7 +55,16 @@ export default function SettingsPage() {
       <div className="px-4 py-8 max-w-3xl mx-auto">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <Link href="/" className="hover:text-orange-600 transition-colors">Home</Link>
+          <Link
+            href="/"
+            className="hover:text-orange-600 transition-colors touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation("/"));
+            }}
+          >
+            Home
+          </Link>
           <ChevronRight size={14} />
           <span className="text-foreground font-medium">Settings</span>
         </div>
@@ -60,7 +78,11 @@ export default function SettingsPage() {
 
         <Link
           href="/settings/images"
-          className="flex items-center gap-3 p-4 mb-6 bg-orange-50 border border-orange-200 rounded-xl hover:bg-orange-100 transition-colors group"
+          className="flex items-center gap-3 p-4 mb-6 bg-orange-50 border border-orange-200 rounded-xl hover:bg-orange-100 transition-colors group touch-manipulation"
+          onClick={(e) => {
+            e.preventDefault();
+            navigateWithViewTransition(() => setLocation("/settings/images"));
+          }}
         >
           <ImageIcon size={20} className="text-orange-600" />
           <div className="flex-1">

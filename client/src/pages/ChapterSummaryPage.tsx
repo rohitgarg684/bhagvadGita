@@ -1,4 +1,5 @@
-import { Link, useParams, Redirect } from "wouter";
+import { Link, useParams, Redirect, useLocation } from "wouter";
+import { navigateWithViewTransition } from "@/lib/navigateWithViewTransition";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import gitaData from "@/data/gitaData.json";
@@ -63,6 +64,7 @@ function groupContentByHeading(blocks: SummaryBlock[]): { heading: string; block
 export default function ChapterSummaryPage() {
   const params = useParams<{ chapterNum: string }>();
   const chapterNum = parseInt(params.chapterNum || "1", 10);
+  const [, setLocation] = useLocation();
   const { isChapterVisible } = useChapterVisibility();
   const chapter = data.chapters.find((c) => c.chapter === chapterNum);
 
@@ -105,11 +107,25 @@ export default function ChapterSummaryPage() {
         )}
         <div className="relative z-10 px-4 lg:px-6 py-8">
           <div className="flex items-center gap-2 text-red-200 text-sm mb-4">
-            <Link href="/" className="hover:text-orange-200 transition-colors">
+            <Link
+              href="/"
+              className="hover:text-orange-200 transition-colors touch-manipulation"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation("/"));
+              }}
+            >
               Home
             </Link>
             <ChevronRight size={14} />
-            <Link href={`/chapter/${chapterNum}`} className="hover:text-orange-200 transition-colors">
+            <Link
+              href={`/chapter/${chapterNum}`}
+              className="hover:text-orange-200 transition-colors touch-manipulation"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}`));
+              }}
+            >
               Chapter {chapterNum}
             </Link>
             <ChevronRight size={14} />
@@ -198,8 +214,14 @@ export default function ChapterSummaryPage() {
         )}
 
         <div className="flex justify-between pt-4">
-          <Link href={`/chapter/${chapterNum}`}>
-            <span className="inline-flex items-center gap-2 text-red-800 font-semibold hover:text-orange-600 cursor-pointer">
+          <Link
+            href={`/chapter/${chapterNum}`}
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}`));
+            }}
+          >
+            <span className="inline-flex items-center gap-2 text-red-800 font-semibold hover:text-orange-600 cursor-pointer touch-manipulation">
               <ChevronLeft size={18} />
               Back to chapter
             </span>

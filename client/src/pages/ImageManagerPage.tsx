@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
+import { navigateWithViewTransition } from "@/lib/navigateWithViewTransition";
 import Layout from "@/components/Layout";
 import EditableImage from "@/components/EditableImage";
 import { useAuth } from "@/contexts/AuthContext";
@@ -119,6 +120,7 @@ function VerseImageManager({ chapter, verse }: { chapter: number; verse: Verse }
 }
 
 export default function ImageManagerPage() {
+  const [, setLocation] = useLocation();
   const { isAdmin, user, signIn } = useAuth();
   const { isChapterVisible } = useChapterVisibility();
   const [selectedChapter, setSelectedChapter] = useState<number>(12);
@@ -142,7 +144,14 @@ export default function ImageManagerPage() {
               Sign in as Admin
             </button>
           )}
-          <Link href="/" className="text-sm text-orange-600 hover:underline mt-4">
+          <Link
+            href="/"
+            className="text-sm text-orange-600 hover:underline mt-4 touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation("/"));
+            }}
+          >
             ← Back to Home
           </Link>
         </div>
@@ -161,9 +170,27 @@ export default function ImageManagerPage() {
     <Layout>
       <div className="px-4 py-8 max-w-5xl mx-auto">
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <Link href="/" className="hover:text-orange-600 transition-colors">Home</Link>
+          <Link
+            href="/"
+            className="hover:text-orange-600 transition-colors touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation("/"));
+            }}
+          >
+            Home
+          </Link>
           <ChevronRight size={14} />
-          <Link href="/settings" className="hover:text-orange-600 transition-colors">Settings</Link>
+          <Link
+            href="/settings"
+            className="hover:text-orange-600 transition-colors touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation("/settings"));
+            }}
+          >
+            Settings
+          </Link>
           <ChevronRight size={14} />
           <span className="text-foreground font-medium">Image Manager</span>
         </div>

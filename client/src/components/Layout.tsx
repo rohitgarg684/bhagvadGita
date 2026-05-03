@@ -2,6 +2,7 @@
 // Deep maroon sidebar, warm cream content area, saffron orange accents
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
+import { navigateWithViewTransition } from "@/lib/navigateWithViewTransition";
 import gitaData from "@/data/gitaData.json";
 import type { GitaData } from "@/types/gita";
 import { BookOpen, Home, Menu, X, Star, ChevronRight, LogOut, Settings } from "lucide-react";
@@ -47,7 +48,7 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [navCollapsed, setNavCollapsed] = useState(readNavCollapsedFromStorage);
   const isLgViewport = useIsLgViewport();
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
 
   const isHome = location === "/" || location === "";
 
@@ -106,7 +107,14 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
                 {!isLgViewport && sidebarOpen ? <X size={22} /> : <Menu size={22} />}
               </button>
             )}
-            <Link href="/" className="flex items-center gap-2 group">
+            <Link
+              href="/"
+              className="flex items-center gap-2 group touch-manipulation"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation("/"));
+              }}
+            >
               <img src="/gurukula-g-logo.png" alt="Gurukula" className="w-8 h-8 rounded-full shadow-md" />
               <span className="font-display text-white font-semibold text-lg lg:text-xl tracking-wide group-hover:text-orange-100 transition-colors">
                 Bhagavad Gita Gurukula.com
@@ -130,7 +138,11 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
             )}
             <Link
               href="/"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-white hover:text-orange-100 hover:bg-white/20 transition-all"
+              className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full text-sm text-white hover:text-orange-100 hover:bg-white/20 transition-all touch-manipulation"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation("/"));
+              }}
             >
               <Home size={15} />
               Home
@@ -139,8 +151,12 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
               <>
                 <Link
                   href="/settings"
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all touch-manipulation"
                   title="Settings"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigateWithViewTransition(() => setLocation("/settings"));
+                  }}
                 >
                   <Settings size={12} />
                 </Link>
@@ -213,7 +229,13 @@ export default function Layout({ children, kidsMode = false, onToggleKids, stick
                         <Link
                           key={ch.chapter}
                           href={`/chapter/${ch.chapter}`}
-                          onClick={() => setSidebarOpen(false)}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            navigateWithViewTransition(() => {
+                              setSidebarOpen(false);
+                              setLocation(`/chapter/${ch.chapter}`);
+                            });
+                          }}
                           title={`Chapter ${ch.chapter}: ${ch.name}`}
                           className={`
                             relative flex items-center gap-2 rounded-lg text-base transition-all group

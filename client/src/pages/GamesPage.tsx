@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, useParams } from "wouter";
+import { Link, useParams, useLocation } from "wouter";
+import { navigateWithViewTransition } from "@/lib/navigateWithViewTransition";
 import Layout from "@/components/Layout";
 import SEO from "@/components/SEO";
 import { ChevronLeft, Trophy, Zap, Puzzle, Shuffle, Target, Star } from "lucide-react";
@@ -87,6 +88,7 @@ const GAMES = [
 export default function GamesPage() {
   const params = useParams<{ chapterNum: string }>();
   const chapterNum = parseInt(params.chapterNum || "6");
+  const [, setLocation] = useLocation();
   const [activeGame, setActiveGame] = useState<GameId>(null);
   const [kidsMode, setKidsMode] = useState(true);
 
@@ -102,9 +104,25 @@ export default function GamesPage() {
       {/* Header */}
       <div className="bg-gradient-to-b from-red-950 to-red-900 px-4 py-8 lg:py-10">
         <div className="flex items-center gap-2 text-red-300 text-xs mb-4">
-          <Link href="/" className="hover:text-orange-300 transition-colors">Home</Link>
+          <Link
+            href="/"
+            className="hover:text-orange-300 transition-colors touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation("/"));
+            }}
+          >
+            Home
+          </Link>
           <span>/</span>
-          <Link href={`/chapter/${chapterNum}`} className="hover:text-orange-300 transition-colors">
+          <Link
+            href={`/chapter/${chapterNum}`}
+            className="hover:text-orange-300 transition-colors touch-manipulation"
+            onClick={(e) => {
+              e.preventDefault();
+              navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}`));
+            }}
+          >
             Chapter {chapterNum}
           </Link>
           <span>/</span>
@@ -207,8 +225,17 @@ export default function GamesPage() {
 
           {/* Back to chapter */}
           <div className="mt-8 text-center">
-            <Link href={`/chapter/${chapterNum}`}>
-              <button className="flex items-center gap-2 mx-auto text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold font-kids">
+            <Link
+              href={`/chapter/${chapterNum}`}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateWithViewTransition(() => setLocation(`/chapter/${chapterNum}`));
+              }}
+            >
+              <button
+                type="button"
+                className="flex items-center gap-2 mx-auto text-sm text-red-800 hover:text-orange-600 transition-colors font-semibold font-kids touch-manipulation"
+              >
                 <ChevronLeft size={16} />
                 Back to Chapter {chapterNum} Verses
               </button>
