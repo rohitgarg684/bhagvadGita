@@ -415,19 +415,14 @@ export default function ChapterPage() {
               id={`verse-card-${verse.verse}`}
             >
               <div className="group bg-card border border-border [@media(hover:hover)]:hover:border-orange-300 rounded-xl p-3 sm:p-4 transition-all [@media(hover:hover)]:hover:shadow-lg cursor-pointer h-full flex flex-col relative">
-                {/* Header: icon top-left + verse number + title + audio (#39) */}
+                {/* Header: thumbnail + verse label + audio (titles shown on verse detail page only) */}
                 <div className="flex items-start gap-3 mb-2">
                   <MeaningThumbnail chapterNum={chapterNum} verseNum={verse.verse} verse={verse} />
                   <div className="flex-1 min-w-0 flex items-start justify-between gap-2 sm:gap-3">
                     <div className="min-w-0 flex-1">
-                      <span className="text-lg font-bold text-red-950 block">
+                      <span className="text-xl sm:text-2xl font-bold text-red-950 block tabular-nums tracking-tight">
                         {chapterNum}.{verse.verse}
                       </span>
-                      {verse.title && (
-                        <p className="text-sm font-semibold text-orange-800 line-clamp-2 sm:line-clamp-1 mt-0.5 pr-0 sm:pr-1">
-                          {verse.title}
-                        </p>
-                      )}
                     </div>
                     {verse.audio_url && (
                       <div
